@@ -1,7 +1,11 @@
 
-# This plugin allows NVDA to navigate by indentation level.
-# This means for whitespace-sensitive text, such as Python code, you can jump over entire blocks with one keystroke.
-# Sean Mealin <spmealin@gmail.com>
+# This addon allows to navigate documents by indentation or offset level.
+# In browsers you can navigate by object location on the screen.
+# In editable text fields you can navigate by the indentation level.
+# This is useful for editing source code.
+# Author: Tony Malykh <anton.malykh@gmail.com>
+# https://github.com/mltony/nvda-indent-nav/ 
+# Original author: Sean Mealin <spmealin@gmail.com>
 
 import api
 import controlTypes
@@ -95,11 +99,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
         textInfo.expand(textInfos.UNIT_LINE)
         indentationLevel = self.getIndentLevel(textInfo.text)
-        self.mylog("inc=%d, text=%s" % (increment, textInfo.text.rstrip("\r\n")))
-        for s in dir(textInfo):
-            pass
-            #self.mylog("%s" % str(s))
-        #self.mylog("%s" % str(dir(textInfo)))
         onEmptyLine = self.isEmptyLine(textInfo.text) == 1  # 1 because an empty line will have the \n character
         
         # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with the same indentation level
@@ -108,10 +107,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         while True:
             errCode = textInfo.move(textInfos.UNIT_LINE, increment) 
             if errCode  == 0:
-                self.mylog("Cannot move by increment errCode=%d" % errCode)
                 break
             textInfo.expand(textInfos.UNIT_LINE)
-            self.mylog("inc=%d, text=%s" % (increment, textInfo.text.rstrip("\r\n")))
             newIndentation = self.getIndentLevel(textInfo.text)
             
             # Skip over empty lines if we didn't start on one.
@@ -124,7 +121,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 textInfo.updateCaret()
                 self.crackle(indentLevels)
                 speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
-                break
+                return
             elif newIndentation < indentationLevel:
                 # Not found in this indentation block
                 if not force:
@@ -135,7 +132,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if not found:
             ui.message(errorMessage)
             
-        focus = api.getFocusObject()
     def moveToSiblingInBrowser(self, increment, errorMessage):
         focus = api.getFocusObject()
         focus = focus.treeInterceptor 
