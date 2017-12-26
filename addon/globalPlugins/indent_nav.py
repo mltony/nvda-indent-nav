@@ -81,11 +81,25 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     
     def script_moveToNextSibling(self, gesture):
         self.moveToSibling(1, "No next line within indentation block")
+
+    def script_moveToNextSiblingForce(self, gesture):
+        self.moveToSibling(1, "No next line in the document", True)
     
     def script_moveToPreviousSibling(self, gesture):
         self.moveToSibling(-1, "No previous line within indentation block")
+    def script_moveToPreviousSiblingForce(self, gesture):
+        self.moveToSibling(-1, "No previous line in the document", True)
+        
+    script_moveToNextSibling.__doc__ = "Moves to the next line with the same indentation level as the current line within the current indentation block."
+    script_moveToNextSiblingForce.__doc__ = "Moves to the next line with the same indentation level as the current line potentially in the following indentation block."
+
+    
+    script_moveToPreviousSibling.__doc__ = "Moves to the previous line with the same indentation level as the current line within the current indentation block."
+    script_moveToPreviousSiblingForce.__doc__ = "Moves to the previous line with the same indentation level as the current line within the current indentation block."
     
     def moveToSibling(self, increment, errorMessage, force=False):
+        self.mylog("%d %s" % (increment, str(force)))
+        self.mylog("%d %s" % (increment, str(force)))
         focus = api.getFocusObject()
         if focus.role == controlTypes.ROLE_EDITABLETEXT:
             return self.moveToSiblingInEditable(increment, errorMessage, force)
@@ -152,10 +166,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 ui.message(text)
                 return
 
-    script_moveToNextSibling.__doc__ = "Moves to the next line with the same indentation level as the current line within the current indentation block."
-    
-    script_moveToPreviousSibling.__doc__ = "Moves to the previous line with the same indentation level as the current line within the current indentation block."
-    
     def script_moveToChild(self, gesture):
         # Make sure we're in a editable control
         focus = api.getFocusObject()
@@ -232,8 +242,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     script_moveToParent.__doc__ = "Moves to the previous line with a lesser indentation level than the current line within the current indentation block."
     
     __gestures = {
-        "kb:NVDA+shift+numpad2": "moveToNextSibling",
-        "kb:NVDA+shift+numpad8": "moveToPreviousSibling",
+        "kb:NVDA+alt+DownArrow": "moveToNextSibling",
+        "kb:NVDA+alt+control+DownArrow": "moveToNextSiblingForce",
+        "kb:NVDA+alt+UpArrow": "moveToPreviousSibling",
+        "kb:NVDA+alt+control+UpArrow": "moveToPreviousSiblingForce",
         "kb:NVDA+shift+numpad4": "moveToParent",
         "kb:NVDA+shift+numpad6": "moveToChild"
     }
