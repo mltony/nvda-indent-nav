@@ -11,7 +11,8 @@ import api
 import controlTypes
 import ctypes
 import globalPluginHandler
-from NVDAHelper import generateBeep
+import NVDAHelper
+import operator 
 import speech
 import textInfos
 import tones
@@ -66,13 +67,13 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         levels = self.uniformSample(levels, self.MAX_BEEP_COUNT )
         beepLen = self.BEEP_LEN 
         pauseLen = self.PAUSE_LEN
-        pauseBufSize = generateBeep(None,self.BASE_FREQ,pauseLen,0, 0)
-        beepBufSizes = [generateBeep(None,self.getPitch(l), beepLen, 50, 50) for l in levels]
+        pauseBufSize = NVDAHelper.generateBeep(None,self.BASE_FREQ,pauseLen,0, 0)
+        beepBufSizes = [NVDAHelper.generateBeep(None,self.getPitch(l), beepLen, 50, 50) for l in levels]
         bufSize = sum(beepBufSizes) + len(levels) * pauseBufSize
         buf = ctypes.create_string_buffer(bufSize)
         bufPtr = 0
         for l in levels:
-            bufPtr += generateBeep(
+            bufPtr += NVDAHelper.generateBeep(
                 ctypes.cast(ctypes.byref(buf, bufPtr), ctypes.POINTER(ctypes.c_char)), 
                 self.getPitch(l), beepLen, 50, 50)
             bufPtr += pauseBufSize # add a short pause
@@ -97,17 +98,16 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     script_moveToPreviousSibling.__doc__ = "Moves to the previous line with the same indentation level as the current line within the current indentation block."
     script_moveToPreviousSiblingForce.__doc__ = "Moves to the previous line with the same indentation level as the current line within the current indentation block."
     
-    def moveToSibling(self, increment, errorMessage, force=False):
-        self.mylog("%d %s" % (increment, str(force)))
-        self.mylog("%d %s" % (increment, str(force)))
+    def moveToSibling(self, increment, errorMessage, unbounded=False, op=operator.eq):
+        self.mylog("%d %s" % (increment, str(unbounded)))
         focus = api.getFocusObject()
         if focus.role == controlTypes.ROLE_EDITABLETEXT:
-            return self.moveToSiblingInEditable(increment, errorMessage, force)
+            self.moveToSiblingInEditable(increment, errorMessage, unbounded, op)
         else:
-            return self.moveToSiblingInBrowser(increment, errorMessage)
+            self.moveToSiblingInBrowser(increment, errorMessage, op)
 
 
-    def moveToSiblingInEditable(self, increment, errorMessage, force=False): 
+    def moveToSiblingInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq): 
         focus = api.getFocusObject()
         # Get the current indentation level 
         textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
@@ -119,8 +119,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         found = False
         indentLevels = []
         while True:
-            errCode = textInfo.move(textInfos.UNIT_LINE, increment) 
-            if errCode  == 0:
+            result = textInfo.move(textInfos.UNIT_LINE, increment) 
+            if result == 0:
                 break
             textInfo.expand(textInfos.UNIT_LINE)
             newIndentation = self.getIndentLevel(textInfo.text)
@@ -129,7 +129,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             if not onEmptyLine and self.isEmptyLine(textInfo.text):
                 continue
             
-            if newIndentation == indentationLevel:
+            if op(newIndentation, indentationLevel):
                 # Found it
                 found = True
                 textInfo.updateCaret()
@@ -138,7 +138,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 return
             elif newIndentation < indentationLevel:
                 # Not found in this indentation block
-                if not force:
+                if not unbounded:
                     break
             indentLevels.append(newIndentation )
         
@@ -146,7 +146,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if not found:
             ui.message(errorMessage)
             
-    def moveToSiblingInBrowser(self, increment, errorMessage):
+    def moveToSiblingInBrowser(self, increment, errorMessage, op):
         focus = api.getFocusObject()
         focus = focus.treeInterceptor 
         textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
@@ -159,7 +159,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 return
             textInfo.expand(textInfos.UNIT_PARAGRAPH)
             location = textInfo.NVDAObjectAtStart.location
-            if location[0] == origLocation[0]:
+            if op(location[0], origLocation[0]):
                 text = textInfo.text
                 textInfo.collapse(False)
                 textInfo.updateCaret()
@@ -167,77 +167,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 return
 
     def script_moveToChild(self, gesture):
-        # Make sure we're in a editable control
-        focus = api.getFocusObject()
-        if focus.role != controlTypes.ROLE_EDITABLETEXT:
-            ui.message("Not in an edit control.")
-            return
-        
-        # Get the current indentation level 
-        textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
-        textInfo.expand(textInfos.UNIT_LINE)
-        indentationLevel = len(textInfo.text) - len(textInfo.text.strip())
-        onEmptyLine = len(textInfo.text) == 1  # 1 because an empty line will have the \n character
-        
-        # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with grater indentation level
-        found = False
-        while textInfo.move(textInfos.UNIT_LINE, 1) == 1:
-            textInfo.expand(textInfos.UNIT_LINE)
-            newIndentation = len(textInfo.text) - len(textInfo.text.strip())
-            
-            # Skip over empty lines if we didn't start on one.
-            if not onEmptyLine and len(textInfo.text) == 1:
-                continue
-            
-            if newIndentation > indentationLevel:
-                # Found it
-                found = True
-                textInfo.updateCaret()
-                speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
-                break
-            elif newIndentation < indentationLevel:
-                # Not found in this indentation block
-                break
-        
-        # If we didn't find it, tell the user
-        if not found:
-            ui.message("No child block within indentation block")
+        self.moveToSibling(1, "No child block within indentation block", unbounded=False, op=operator.gt)
 
     script_moveToChild.__doc__ = "Moves to the next line with a greater indentation level than the current line within the current indentation block."
     
     def script_moveToParent(self, gesture):
-        # Make sure we're in a editable control
-        focus = api.getFocusObject()
-        if focus.role != controlTypes.ROLE_EDITABLETEXT:
-            ui.message("Not in an edit control.")
-            return
-        
-        # Get the current indentation level 
-        textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
-        textInfo.expand(textInfos.UNIT_LINE)
-        indentationLevel = len(textInfo.text) - len(textInfo.text.strip())
-        onEmptyLine = len(textInfo.text) == 1  # 1 because an empty line will have the \n character
-        
-        # Scan each line until we hit the start of the indentation block, the start of the edit area, or find a line with less indentation level
-        found = False
-        while textInfo.move(textInfos.UNIT_LINE, -2) == -2:
-            textInfo.expand(textInfos.UNIT_LINE)
-            newIndentation = len(textInfo.text) - len(textInfo.text.strip())
-            
-            # Skip over empty lines if we didn't start on one.
-            if not onEmptyLine and len(textInfo.text) == 1:
-                continue
-            
-            if newIndentation < indentationLevel:
-                # Found it
-                found = True
-                textInfo.updateCaret()
-                speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
-                break
-        
-        # If we didn't find it, tell the user
-        if not found:
-            ui.message("No parent of indentation block")
+        self.moveToSibling(-1, "No parent of indentation block", unbounded=True, op=operator.lt)
 
     script_moveToParent.__doc__ = "Moves to the previous line with a lesser indentation level than the current line within the current indentation block."
     
@@ -246,7 +181,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         "kb:NVDA+alt+control+DownArrow": "moveToNextSiblingForce",
         "kb:NVDA+alt+UpArrow": "moveToPreviousSibling",
         "kb:NVDA+alt+control+UpArrow": "moveToPreviousSiblingForce",
-        "kb:NVDA+shift+numpad4": "moveToParent",
-        "kb:NVDA+shift+numpad6": "moveToChild"
+        "kb:NVDA+alt+LeftArrow": "moveToParent",
+        "kb:NVDA+alt+RightArrow": "moveToChild"
     }
 pass
