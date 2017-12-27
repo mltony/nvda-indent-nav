@@ -95,22 +95,20 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         return config.conf["documentFormatting"]["reportLineIndentationWithTones"]
     
     def script_moveToNextSibling(self, gesture):
+        """Moves to the next line with the same indentation level as the current line within the current indentation block."""
         self.moveToSibling(1, "No next line within indentation block")
 
     def script_moveToNextSiblingForce(self, gesture):
+        """Moves to the next line with the same indentation level as the current line potentially in the following indentation block."""
         self.moveToSibling(1, "No next line in the document", True)
     
+        """Moves to the previous line with the same indentation level as the current line within the current indentation block."""
     def script_moveToPreviousSibling(self, gesture):
         self.moveToSibling(-1, "No previous line within indentation block")
-    def script_moveToPreviousSiblingForce(self, gesture):
-        self.moveToSibling(-1, "No previous line in the document", True)
         
-    script_moveToNextSibling.__doc__ = "Moves to the next line with the same indentation level as the current line within the current indentation block."
-    script_moveToNextSiblingForce.__doc__ = "Moves to the next line with the same indentation level as the current line potentially in the following indentation block."
-
-    
-    script_moveToPreviousSibling.__doc__ = "Moves to the previous line with the same indentation level as the current line within the current indentation block."
-    script_moveToPreviousSiblingForce.__doc__ = "Moves to the previous line with the same indentation level as the current line within the current indentation block."
+    def script_moveToPreviousSiblingForce(self, gesture):
+        """Moves to the previous line with the same indentation level as the current line within the current indentation block."""
+        self.moveToSibling(-1, "No previous line in the document", True)
     
     def moveToSibling(self, increment, errorMessage, unbounded=False, op=operator.eq):
         self.mylog("%d %s" % (increment, str(unbounded)))
@@ -184,16 +182,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             distance += 1
 
     def script_moveToChild(self, gesture):
+        """Moves to the next line with a greater indentation level than the current line within the current indentation block."""
         self.moveToSibling(1, "No child block within indentation block", unbounded=False, op=operator.gt)
 
-    script_moveToChild.__doc__ = "Moves to the next line with a greater indentation level than the current line within the current indentation block."
-    
     def script_moveToParent(self, gesture):
+        """Moves to the previous line with a lesser indentation level than the current line within the current indentation block."""    
         self.moveToSibling(-1, "No parent of indentation block", unbounded=True, op=operator.lt)
-
-    script_moveToParent.__doc__ = "Moves to the previous line with a lesser indentation level than the current line within the current indentation block."
-    
     __gestures = {
+
         "kb:NVDA+alt+DownArrow": "moveToNextSibling",
         "kb:NVDA+alt+control+DownArrow": "moveToNextSiblingForce",
         "kb:NVDA+alt+UpArrow": "moveToPreviousSibling",
