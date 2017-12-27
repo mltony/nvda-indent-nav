@@ -60,9 +60,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         return self.BASE_FREQ*2**(indent/24.0) #24 quarter tones per octave.
 
     BEEP_LEN = 10 # millis
-    PAUSE_LEN = 2 # millis
+    PAUSE_LEN = 5 # millis
     MAX_CRACKLE_LEN = 400 # millis
     MAX_BEEP_COUNT = MAX_CRACKLE_LEN / (BEEP_LEN + PAUSE_LEN)
+
     def crackle(self, levels):
         levels = self.uniformSample(levels, self.MAX_BEEP_COUNT )
         beepLen = self.BEEP_LEN 
@@ -79,6 +80,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             bufPtr += pauseBufSize # add a short pause
         tones.player.stop()
         tones.player.feed(buf.raw)
+
+    def simpleCrackle(self, n):
+        return self.crackle([0] * n)
     
     def script_moveToNextSibling(self, gesture):
         self.moveToSibling(1, "No next line within indentation block")
@@ -145,13 +149,14 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         # If we didn't find it, tell the user
         if not found:
             ui.message(errorMessage)
-            
+
     def moveToSiblingInBrowser(self, increment, errorMessage, op):
         focus = api.getFocusObject()
         focus = focus.treeInterceptor 
         textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
         textInfo.expand(textInfos.UNIT_PARAGRAPH)
         origLocation= textInfo.NVDAObjectAtStart.location
+        distance = 0
         while True:
             result =textInfo.move(textInfos.UNIT_PARAGRAPH, increment)
             if result == 0:
@@ -163,8 +168,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 text = textInfo.text
                 textInfo.collapse(False)
                 textInfo.updateCaret()
+                self.simpleCrackle(distance)
                 ui.message(text)
                 return
+            distance += 1
 
     def script_moveToChild(self, gesture):
         self.moveToSibling(1, "No child block within indentation block", unbounded=False, op=operator.gt)
