@@ -96,30 +96,42 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     
     def script_moveToNextSibling(self, gesture):
         """Moves to the next line with the same indentation level as the current line within the current indentation block."""
-        self.moveToSibling(1, "No next line within indentation block")
+        self.move(1, "No next line within indentation block")
 
     def script_moveToNextSiblingForce(self, gesture):
         """Moves to the next line with the same indentation level as the current line potentially in the following indentation block."""
-        self.moveToSibling(1, "No next line in the document", True)
+        self.move(1, "No next line in the document", True)
     
         """Moves to the previous line with the same indentation level as the current line within the current indentation block."""
     def script_moveToPreviousSibling(self, gesture):
-        self.moveToSibling(-1, "No previous line within indentation block")
+        self.move(-1, "No previous line within indentation block")
         
     def script_moveToPreviousSiblingForce(self, gesture):
         """Moves to the previous line with the same indentation level as the current line within the current indentation block."""
-        self.moveToSibling(-1, "No previous line in the document", True)
+        self.move(-1, "No previous line in the document", True)
     
-    def moveToSibling(self, increment, errorMessage, unbounded=False, op=operator.eq):
-        self.mylog("%d %s" % (increment, str(unbounded)))
+    def move(self, increment, errorMessage, unbounded=False, op=operator.eq):
+        """Moves to another line in current document.
+        This function will call one of its implementations dependingon whether the focus is in an editable text or in a browser. 
+        @paramincrement: Direction to move, should be either 1 or -1.  
+        @param errorMessage: Error message to speak if the desired line cannot be found. 
+        @param unbounded: When in an indented text file whether to allow to jump to another indentation block.
+        For example, in a python source code, when set to True, it will be able to jump from the body of one function to another.
+        When set to false, it will be constrained within the current indentation block, suchas a function.
+        @param op: Operator that is applied to the indentation level of lines being searched.
+        This operator should returntrue only on the desired string.
+        For example, when looking for a string of the same indent, this should be operator.eq.
+        When searching for a string with greater indent, this should be set to operator.gt, and so on.   
+        """ 
         focus = api.getFocusObject()
         if focus.role == controlTypes.ROLE_EDITABLETEXT:
-            self.moveToSiblingInEditable(increment, errorMessage, unbounded, op)
+            self.moveInEditable(increment, errorMessage, unbounded, op)
+        elif hasattr(focus, "treeInterceptor ") and hasattr(focus.treeInterceptor, "textInfo"):  
+            self.moveInBrowser(increment, errorMessage, op)
         else:
-            self.moveToSiblingInBrowser(increment, errorMessage, op)
+            ui.message("Cannot move here")
 
-
-    def moveToSiblingInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq): 
+    def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq): 
         focus = api.getFocusObject()
         # Get the current indentation level 
         textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
@@ -158,7 +170,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if not found:
             ui.message(errorMessage)
 
-    def moveToSiblingInBrowser(self, increment, errorMessage, op):
+    def moveInBrowser(self, increment, errorMessage, op):
         focus = api.getFocusObject()
         focus = focus.treeInterceptor 
         textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
@@ -183,11 +195,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def script_moveToChild(self, gesture):
         """Moves to the next line with a greater indentation level than the current line within the current indentation block."""
-        self.moveToSibling(1, "No child block within indentation block", unbounded=False, op=operator.gt)
+        self.move(1, "No child block within indentation block", unbounded=False, op=operator.gt)
 
     def script_moveToParent(self, gesture):
         """Moves to the previous line with a lesser indentation level than the current line within the current indentation block."""    
-        self.moveToSibling(-1, "No parent of indentation block", unbounded=True, op=operator.lt)
+        self.move(-1, "No parent of indentation block", unbounded=True, op=operator.lt)
     __gestures = {
 
         "kb:NVDA+alt+DownArrow": "moveToNextSibling",
