@@ -1,4 +1,3 @@
-
 # This addon allows to navigate documents by indentation or offset level.
 # In browsers you can navigate by object location on the screen.
 # In editable text fields you can navigate by the indentation level.
