@@ -9,6 +9,7 @@
 
 import api
 import controlTypes
+import config
 import ctypes
 import globalPluginHandler
 import NVDAHelper
@@ -65,6 +66,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     MAX_BEEP_COUNT = MAX_CRACKLE_LEN / (BEEP_LEN + PAUSE_LEN)
 
     def crackle(self, levels):
+        if self.isReportIndentWithTones():
+            self.fancyCrackle(levels)
+        else:
+            self.simpleCrackle(len(levels))
+
+    def fancyCrackle(self, levels):
         levels = self.uniformSample(levels, self.MAX_BEEP_COUNT )
         beepLen = self.BEEP_LEN 
         pauseLen = self.PAUSE_LEN
@@ -82,7 +89,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         tones.player.feed(buf.raw)
 
     def simpleCrackle(self, n):
-        return self.crackle([0] * n)
+        return self.fancyCrackle([0] * n)
+    
+    def isReportIndentWithTones(self):
+        return config.conf["documentFormatting"]["reportLineIndentationWithTones"]
     
     def script_moveToNextSibling(self, gesture):
         self.moveToSibling(1, "No next line within indentation block")
