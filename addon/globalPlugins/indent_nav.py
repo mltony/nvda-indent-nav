@@ -19,7 +19,7 @@ import tones
 import ui
 
 
-class GlobalPlugin(globalPluginHandler.GlobalPlugin):
+class IndentNavigator(globalPluginHandler.GlobalPlugin):
     MY_LOG_NAME = "C:\\Users\\tony\\1.txt" 
     open(MY_LOG_NAME, "w").close()
     
