@@ -19,23 +19,7 @@ import tones
 import ui
 
 
-class IndentNavigator(globalPluginHandler.GlobalPlugin):
-    MY_LOG_NAME = "C:\\Users\\tony\\1.txt" 
-    open(MY_LOG_NAME, "w").close()
-    
-    def mylog(self, s):
-        f = open(self.MY_LOG_NAME, "a")
-        f.write(str(s))
-        f.write("\n")        
-        f.close()
-    
-    def describe(self, obj):
-        self.mylog(str(obj))
-        self.mylog(str(type(obj)))
-        for s in dir(obj):
-            self.mylog("." + str(s))
-        
-
+class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def isEmptyLine(self, s):
         return len(s.strip().strip("\n\r")) == 0
         
