@@ -79,25 +79,29 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     
     def script_moveToNextSibling(self, gesture):
         """Moves to the next line with the same indentation level as the current line within the current indentation block."""
-        self.move(1, "No next line within indentation block")
+        self.move(1, 
+                  ["No next line within indentation block",
+                   "No next paragraph with the same offset in the document"])
 
     def script_moveToNextSiblingForce(self, gesture):
         """Moves to the next line with the same indentation level as the current line potentially in the following indentation block."""
-        self.move(1, "No next line in the document", True)
+        self.move(1, ["No next line in the document"], True)
     
-        """Moves to the previous line with the same indentation level as the current line within the current indentation block."""
     def script_moveToPreviousSibling(self, gesture):
-        self.move(-1, "No previous line within indentation block")
+        """Moves to the previous line with the same indentation level as the current line within the current indentation block."""
+        self.move(-1, 
+                  ["No previous line within indentation block",
+                   "No previous paragraph with the same offset in the document"])
         
     def script_moveToPreviousSiblingForce(self, gesture):
         """Moves to the previous line with the same indentation level as the current line within the current indentation block."""
-        self.move(-1, "No previous line in the document", True)
+        self.move(-1, ["No previous line in the document"], True)
     
-    def move(self, increment, errorMessage, unbounded=False, op=operator.eq):
+    def move(self, increment, errorMessages, unbounded=False, op=operator.eq):
         """Moves to another line in current document.
         This function will call one of its implementations dependingon whether the focus is in an editable text or in a browser. 
         @paramincrement: Direction to move, should be either 1 or -1.  
-        @param errorMessage: Error message to speak if the desired line cannot be found. 
+        @param errorMessages: Error message to speak if the desired line cannot be found. 
         @param unbounded: When in an indented text file whether to allow to jump to another indentation block.
         For example, in a python source code, when set to True, it will be able to jump from the body of one function to another.
         When set to false, it will be constrained within the current indentation block, suchas a function.
@@ -108,9 +112,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         """ 
         focus = api.getFocusObject()
         if focus.role == controlTypes.ROLE_EDITABLETEXT:
-            self.moveInEditable(increment, errorMessage, unbounded, op)
-        elif hasattr(focus, "treeInterceptor ") and hasattr(focus.treeInterceptor, "textInfo"):  
-            self.moveInBrowser(increment, errorMessage, op)
+            self.moveInEditable(increment, errorMessages[0], unbounded, op)
+        elif (len(errorMessages) >= 2) and hasattr(focus, "treeInterceptor") and hasattr(focus.treeInterceptor, "makeTextInfo"):  
+            self.moveInBrowser(increment, errorMessages[1], op)
         else:
             ui.message("Cannot move here")
 
@@ -178,11 +182,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def script_moveToChild(self, gesture):
         """Moves to the next line with a greater indentation level than the current line within the current indentation block."""
-        self.move(1, "No child block within indentation block", unbounded=False, op=operator.gt)
+        self.move(1, 
+                  ["No child block within indentation block",
+                   "No next paragraph with greater offset in the document"], 
+                  unbounded=False, op=operator.gt)
 
     def script_moveToParent(self, gesture):
         """Moves to the previous line with a lesser indentation level than the current line within the current indentation block."""    
-        self.move(-1, "No parent of indentation block", unbounded=True, op=operator.lt)
+        self.move(-1, 
+                  ["No parent of indentation block",
+                   "No previous paragraph with smaller offset in the document"], 
+                  unbounded=True, op=operator.lt)
+        
     __gestures = {
 
         "kb:NVDA+alt+DownArrow": "moveToNextSibling",
