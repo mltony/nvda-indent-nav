@@ -1,7 +1,7 @@
 # IndentNav addon for NVDA
 This addon allows NVDA users to navigate by indentation level or offset of lines or paragraphs.
 In browsers it allows to quickly find paragraphs with the same offset from the left edge of the screen, such as first level comments in a hierarchical tree of comments.
-Also while editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level.fc R
+Also while editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level.
 ## Download
 TBB
 ## Usage in browsers
