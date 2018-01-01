@@ -23,7 +23,7 @@ Otherwise it will only crackle to roughly denote the number of skipped lines.
 
 ## Keyboard shortcuts
 | Keystroke | Action in browser mode | Action in editor mode |
-| -- | -- | -- |
+| --- | --- | --- |
 | NVDA+Alt+UpArrow or DownArrow | Jump to previous or next paragraph with the same offset. | Jump to previous or next line with the same indentation level within the current indetnation block. |
 ## Feedback
 If you have any questions or comments, or if you find this addon useful, please don't hesitate to contact me at anton.malykh /at/ gmail.com.
