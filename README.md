@@ -21,7 +21,7 @@ You can also press NVDA+Alt+RightArrow to go to the first child of current line,
 If your NVDA is set to express line indentation as tones, then IndentNav will quickly play the tones of all the skipped lines.
 Otherwise it will only crackle to roughly denote the number of skipped lines.
 
-##Keyboard shortcuts
+## Keyboard shortcuts
 | Keystroke | Action in browser mode | Action in editor mode |
 | -- | -- | -- |
 | NVDA+Alt+UpArrow or DownArrow | Jump to previous or next paragraph with the same offset. | Jump to previous or next line with the same indentation level within the current indetnation block. |
