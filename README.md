@@ -25,5 +25,8 @@ Otherwise it will only crackle to roughly denote the number of skipped lines.
 | Keystroke | Action in browser mode | Action in editor mode |
 | --- | --- | --- |
 | NVDA+Alt+UpArrow or DownArrow | Jump to previous or next paragraph with the same offset. | Jump to previous or next line with the same indentation level within the current indetnation block. |
+| NVDA+Alt+Control+UpArrow or DownArrow |  N/A | Force-jump to previous or next line with the same indentation level. This command will jump to other indentation blocks (such as other Python functions) if necessary. |
+| NVDA+alt+LeftArrow | Jump to previous paragraph with lesser offset. | Jump to parent - that is previous line with lesser indentation level. |
+| NVDA+Alt+RightArrow | Jump to next paragraph with greater offset. | Jump to first child - that is next line with greater indentation level within the same indentation block. |
 ## Feedback
 If you have any questions or comments, or if you find this addon useful, please don't hesitate to contact me at anton.malykh /at/ gmail.com.
