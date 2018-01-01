@@ -3,7 +3,8 @@ This addon allows NVDA users to navigate by indentation level or offset of lines
 In browsers it allows to quickly find paragraphs with the same offset from the left edge of the screen, such as first level comments in a hierarchical tree of comments.
 Also while editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level.
 ## Download
-TBB
+[Current stable release](https://github.com/mltony/nvda-indent-nav/raw/master/releases/IndentNav-1.1.nvda-addon)
+
 ## Usage in browsers
 IndentNav can be used to navigate by  offset from the left edge of the screen. 
 IN particular, you can press NVDA+Alt+DownArrow or UpArrow to jump to the next or previous paragraph that has the same offset. 
@@ -29,4 +30,4 @@ Otherwise it will only crackle to roughly denote the number of skipped lines.
 | NVDA+alt+LeftArrow | Jump to previous paragraph with lesser offset. | Jump to parent - that is previous line with lesser indentation level. |
 | NVDA+Alt+RightArrow | Jump to next paragraph with greater offset. | Jump to first child - that is next line with greater indentation level within the same indentation block. |
 ## Feedback
-If you have any questions or comments, or if you find this addon useful, please don't hesitate to contact me at anton.malykh /at/ gmail.com.
+If you have any questions or comments, or if you find this addon useful, please don't hesitate to contact me at anton.malykh *at* gmail.com.
