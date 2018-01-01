@@ -1,4 +1,4 @@
-# -*- coding: UTF-8 -*-
+		# -*- coding: UTF-8 -*-
 
 # Build customizations
 # Change this file instead of sconstruct or manifest files, whenever possible.
@@ -20,7 +20,7 @@ addon_info = {
 	"addon_description" : _("""Indentation Navigation addon.
 It allows NVDA users to navigate by indentation level or offset of lines or paragraphs.
 In browsers it allows to quickly find paragraphs with the same offset from the left edge of the screen, such as first level comments in a hierarchical tree of comments.
-Also while editing source code in many languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level."""),
+Also while editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level."""),
 	# version
 	"addon_version" : "0.5",
 	# Author(s)
