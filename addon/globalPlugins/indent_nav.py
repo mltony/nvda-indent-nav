@@ -11,6 +11,7 @@
 # https://github.com/mltony/nvda-indent-nav/ 
 # Original author: Sean Mealin <spmealin@gmail.com>
 
+import addonHandler
 import api
 import controlTypes
 import config
@@ -23,6 +24,7 @@ import textInfos
 import tones
 import ui
 
+addonHandler.initTranslation()
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def getIndentLevel(self, s):
@@ -81,23 +83,29 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     
     def script_moveToNextSibling(self, gesture):
         """Moves to the next line with the same indentation level as the current line within the current indentation block."""
-        self.move(1, 
-                  ["No next line within indentation block",
-                   "No next paragraph with the same offset in the document"])
+        # Translators: error message if next sibling couldn't be found (in editable control or in browser) 
+        msgEditable = _("No next line within indentation block")
+        msgBrowser = _("No next paragraph with the same offset in the document") 
+        self.move(1, [msgEditable,msgBrowser])
 
     def script_moveToNextSiblingForce(self, gesture):
         """Moves to the next line with the same indentation level as the current line potentially in the following indentation block."""
-        self.move(1, ["No next line in the document"], True)
+        # Translators: error message if next sibling couldn't be found in editable control (forced command)
+        msgEditable = _("No next line in the document")
+        self.move(1, [msgEditable], True)
     
     def script_moveToPreviousSibling(self, gesture):
         """Moves to the previous line with the same indentation level as the current line within the current indentation block."""
-        self.move(-1, 
-                  ["No previous line within indentation block",
-                   "No previous paragraph with the same offset in the document"])
+        # Translators: error message if previous sibling couldn't be found (in editable control or in browser)
+        msgEditable = _("No previous line within indentation block")
+        msgBrowser = _("No previous paragraph with the same offset in the document") 
+        self.move(-1, [msgEditable, msgBrowser])
         
     def script_moveToPreviousSiblingForce(self, gesture):
         """Moves to the previous line with the same indentation level as the current line within the current indentation block."""
-        self.move(-1, ["No previous line in the document"], True)
+        # Translators: error message if previous sibling couldn't be found in editable control (forced command)
+        msgEditable = _("No previous line in the document")
+        self.move(-1, [msgEditable], True)
     
     def move(self, increment, errorMessages, unbounded=False, op=operator.eq):
         """Moves to another line in current document.
@@ -118,7 +126,8 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         elif (len(errorMessages) >= 2) and hasattr(focus, "treeInterceptor") and hasattr(focus.treeInterceptor, "makeTextInfo"):  
             self.moveInBrowser(increment, errorMessages[1], op)
         else:
-            ui.message("Cannot move here")
+            errorMsg = _("Cannot move here")
+            ui.message(errorMsg)
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq): 
         focus = api.getFocusObject()
@@ -184,17 +193,17 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def script_moveToChild(self, gesture):
         """Moves to the next line with a greater indentation level than the current line within the current indentation block."""
-        self.move(1, 
-                  ["No child block within indentation block",
-                   "No next paragraph with greater offset in the document"], 
-                  unbounded=False, op=operator.gt)
+        # Translators: error message if a child couldn't be found (in editable control or in browser)
+        msgEditable = _("No child block within indentation block")
+        msgBrowser = _("No next paragraph with greater offset in the document")
+        self.move(1, [msgEditable, msgBrowser], unbounded=False, op=operator.gt)
 
     def script_moveToParent(self, gesture):
-        """Moves to the previous line with a lesser indentation level than the current line within the current indentation block."""    
-        self.move(-1, 
-                  ["No parent of indentation block",
-                   "No previous paragraph with smaller offset in the document"], 
-                  unbounded=True, op=operator.lt)
+        """Moves to the previous line with a lesser indentation level than the current line within the current indentation block."""
+        # Translators: error message if parent couldn't be found (in editable control or in browser)
+        msgEditable = _("No parent of indentation block")
+        msgBrowser = _("No previous paragraph with smaller offset in the document")
+        self.move(-1, [msgEditable, msgBrowser], unbounded=True, op=operator.lt)
         
     __gestures = {
 
