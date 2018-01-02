@@ -1,3 +1,8 @@
+#A part of the IndentNav addon for NVDA
+#Copyright (C) 2017-2018 Tony Malykh
+#This file is covered by the GNU General Public License.
+#See the file LICENSE  for more details.
+
 # This addon allows to navigate documents by indentation or offset level.
 # In browsers you can navigate by object location on the screen.
 # In editable text fields you can navigate by the indentation level.
