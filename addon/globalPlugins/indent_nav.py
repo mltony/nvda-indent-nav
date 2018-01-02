@@ -208,4 +208,3 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         "kb:NVDA+alt+LeftArrow": "moveToParent",
         "kb:NVDA+alt+RightArrow": "moveToChild"
     }
-pass
