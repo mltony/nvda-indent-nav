@@ -25,11 +25,8 @@ import ui
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
-    def isEmptyLine(self, s):
-        return len(s.strip().strip("\n\r")) == 0
-        
     def getIndentLevel(self, s):
-        if self.isEmptyLine(s):
+        if speech.isBlank(s):
             return 0
         indent = speech.splitTextIndentation(s)[0]
         return len(indent.replace("\t", " " * 4))
@@ -129,7 +126,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
         textInfo.expand(textInfos.UNIT_LINE)
         indentationLevel = self.getIndentLevel(textInfo.text)
-        onEmptyLine = self.isEmptyLine(textInfo.text) == 1  # 1 because an empty line will have the \n character
+        onEmptyLine = speech.isBlank(textInfo.text)
         
         # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with the same indentation level
         found = False
@@ -142,7 +139,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             newIndentation = self.getIndentLevel(textInfo.text)
             
             # Skip over empty lines if we didn't start on one.
-            if not onEmptyLine and self.isEmptyLine(textInfo.text):
+            if not onEmptyLine and speech.isBlank(textInfo.text):
                 continue
             
             if op(newIndentation, indentationLevel):
