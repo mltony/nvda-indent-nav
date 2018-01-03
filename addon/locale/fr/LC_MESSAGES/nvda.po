@@ -1,0 +1,102 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: 'IndentNav' '1.2dev'\n"
+"Report-Msgid-Bugs-To: 'nvda-translations@freelists.org'\n"
+"POT-Creation-Date: 2018-01-02 22:59+0100\n"
+"PO-Revision-Date: 2018-01-03 17:26+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.0.4\n"
+"Last-Translator: André-Abush CLAUSE <dev@andreabc.net>\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: fr\n"
+
+#. Translators: error message if next sibling couldn't be found (in editable control or in browser)
+#: addon\GlobalPlugins\indent_nav.py:87
+msgid "No next line within indentation block"
+msgstr "Aucune ligne suivante dans ce bloc d'indentation"
+
+#: addon\GlobalPlugins\indent_nav.py:88
+msgid "No next paragraph with the same offset in the document"
+msgstr "Aucun paragraphe suivant avec le même décalage dans le document"
+
+#. Translators: error message if next sibling couldn't be found in editable control (forced command)
+#: addon\GlobalPlugins\indent_nav.py:94
+msgid "No next line in the document"
+msgstr "Aucune ligne suivante dans le document"
+
+#. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
+#: addon\GlobalPlugins\indent_nav.py:100
+msgid "No previous line within indentation block"
+msgstr "Aucune ligne précédente dans ce bloc d'indentation"
+
+#: addon\GlobalPlugins\indent_nav.py:101
+msgid "No previous paragraph with the same offset in the document"
+msgstr "Aucun paragraphe précédent avec le même décalage dans le document"
+
+#. Translators: error message if previous sibling couldn't be found in editable control (forced command)
+#: addon\GlobalPlugins\indent_nav.py:107
+msgid "No previous line in the document"
+msgstr "Aucune ligne précédente dans le document"
+
+#: addon\GlobalPlugins\indent_nav.py:129
+msgid "Cannot move here"
+msgstr "Impossible de se déplacer ici"
+
+#. Translators: error message if a child couldn't be found (in editable control or in browser)
+#: addon\GlobalPlugins\indent_nav.py:197
+msgid "No child block within indentation block"
+msgstr "Aucun bloc enfant pour ce bloc d'indentation"
+
+#: addon\GlobalPlugins\indent_nav.py:198
+msgid "No next paragraph with greater offset in the document"
+msgstr ""
+"Pas de paragraphe suivant avec un plus grand décallage dans le document"
+
+#. Translators: error message if parent couldn't be found (in editable control or in browser)
+#: addon\GlobalPlugins\indent_nav.py:204
+msgid "No parent of indentation block"
+msgstr "Aucun parent pour ce bloc d'indentation"
+
+#: addon\GlobalPlugins\indent_nav.py:205
+msgid "No previous paragraph with smaller offset in the document"
+msgstr ""
+"Aucun paragraphe précédent avec un plus petit décalage dans le document"
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#: buildVars.py:17
+msgid "IndentNav"
+msgstr ""
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+#: buildVars.py:20
+msgid ""
+"Indentation Navigation addon.\n"
+"It allows NVDA users to navigate by indentation level or offset of lines or "
+"paragraphs.\n"
+"In browsers it allows to quickly find paragraphs with the same offset from "
+"the left edge of the screen, such as first level comments in a hierarchical "
+"tree of comments.\n"
+"Also while editing source code in many programming languages, it allows to "
+"jump between the lines of the same indentation level, as well as quickly "
+"find lines with greater or lesser indentation level."
+msgstr ""
+"Module complémentaire navigation par indentation.\n"
+"Il permet aux utilisateurs de NVDA de naviguer par niveau d'indentation ou "
+"par décalage de lignes ou de paragraphes.\n"
+"Dans les navigateurs, il permet de trouver rapidement des paragraphes ayant "
+"le même décalage par rapport au bord gauche de l'écran, tels que des "
+"commentaires de premier niveau dans un arbre hiérarchique de commentaires.\n"
+"Aussi lors de l'édition du code source dans de nombreux langages de "
+"programmation, il permet de sauter entre les lignes du même niveau "
+"d'indentation, ainsi que de trouver rapidement des lignes avec un niveau "
+"d'indentation plus ou moins élevé."
