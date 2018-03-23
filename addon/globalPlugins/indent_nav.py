@@ -181,9 +181,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
                 ui.message(errorMessage)
                 return
             textInfo.expand(textInfos.UNIT_PARAGRAPH)
+            text = textInfo.text
+            if speech.isBlank(text):
+                continue
             location = textInfo.NVDAObjectAtStart.location
             if op(location[0], origLocation[0]):
-                text = textInfo.text
                 textInfo.collapse(False)
                 textInfo.updateCaret()
                 self.simpleCrackle(distance)
