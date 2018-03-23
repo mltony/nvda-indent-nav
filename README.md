@@ -3,7 +3,7 @@ This addon allows NVDA users to navigate by indentation level or offset of lines
 In browsers it allows to quickly find paragraphs with the same offset from the left edge of the screen, such as first level comments in a hierarchical tree of comments.
 Also while editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level.
 ## Download
-Current stable release: [IndentNav v1.2](https://github.com/mltony/nvda-indent-nav/raw/master/releases/IndentNav-1.2.nvda-addon)
+Current stable release: [IndentNav v1.3](https://github.com/mltony/nvda-indent-nav/releases/download/v1.3/IndentNav-1.3.nvda-addon)
 
 ## Usage in browsers
 IndentNav can be used to navigate by  offset from the left edge of the screen. 
@@ -37,11 +37,14 @@ Keystrokes:
 * NVDA+Alt+RightArrow: Jump to first child - that is next line with greater indentation level within the same indentation block.
 
 ## Release history
-* [v1.2](https://github.com/mltony/nvda-indent-nav/raw/master/releases/IndentNav-1.2.nvda-addon)
+* [v1.3](https://github.com/mltony/nvda-indent-nav/releases/download/v1.3/IndentNav-1.3.nvda-addon)
+  * French translation.
+  * Bugfixes.
+* [v1.2](https://github.com/mltony/nvda-indent-nav/releases/download/v1.2/IndentNav-1.2.nvda-addon)
   * Added support for i18n.
   * Added GPL headers in the source files.
   * Minor fixes.
-* [v1.1](https://github.com/mltony/nvda-indent-nav/raw/master/releases/IndentNav-1.1.nvda-addon)
+* v1.1
   * Initial release.
 
 ## Source code
