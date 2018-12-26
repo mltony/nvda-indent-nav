@@ -3,20 +3,22 @@ This addon allows NVDA users to navigate by indentation level or offset of lines
 In browsers it allows to quickly find paragraphs with the same offset from the left edge of the screen, such as first level comments in a hierarchical tree of comments.
 Also while editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level.
 ## Download
-Current stable release: [IndentNav v1.3](https://github.com/mltony/nvda-indent-nav/releases/download/v1.3/IndentNav-1.3.nvda-addon)
+Current stable release: [IndentNav v1.4](https://github.com/mltony/nvda-indent-nav/releases/download/v1.4/IndentNav-1.4.nvda-addon).
 
 ## Usage in browsers
-IndentNav can be used to navigate by  offset from the left edge of the screen. 
-IN particular, you can press NVDA+Alt+DownArrow or UpArrow to jump to the next or previous paragraph that has the same offset. 
-For example, this can be useful when browsing hierarchical trees of comments (e.g. on reddit.com) to jump between  first level comments and skipping all the higher level comments.
+IndentNav can be used to navigate by  horizontal offset from the left edge of the screen, by font size, or by font style. 
+* When navigating by horizontal offset, you can easily find paragraphs that are vertically aligned on the page. IN particular, you can press NVDA+Alt+DownArrow or UpArrow to jump to the next or previous paragraph that has the same offset. For example, this can be useful when browsing hierarchical trees of comments (e.g. on reddit.com) to jump between  first level comments and skipping all the higher level comments.
+* When navigating by font size, you can easily find paragraphs written in the same font size, or smaller/greater font size.
+* You can also navigate by font size with the constraint of same font style.
 
 Strictly speaking, IndentNav can be used in any application, for which NVDA provides a tree interceptor object.
 
 Keystrokes:
 
-* NVDA+Alt+UpArrow or DownArrow: Jump to previous or next paragraph with the same offset.
-* NVDA+alt+LeftArrow: Jump to previous paragraph with lesser offset.
-* NVDA+Alt+RightArrow: Jump to next paragraph with greater offset.
+* NVDA+Alt+UpArrow or DownArrow: Jump to previous or next paragraph with the same horizontal offset or font size.
+* NVDA+alt+LeftArrow: Jump to previous paragraph with lesser offset or greater font size.
+* NVDA+Alt+RightArrow: Jump to next paragraph with greater offset or smaller font size.
+* NVDA+I: Switch rotor setting between horizontal offset, font size, font size with font style.
 
 ## Usage in text editors
 IndentNav can also be useful for editing source code in many programming languages. 
@@ -31,17 +33,19 @@ Otherwise it will only crackle to roughly denote the number of skipped lines.
 
 Keystrokes:
 
-* NVDA+Alt+UpArrow or DownArrow: Jump to previous or next line with the same indentation level within the current indetnation block.
+* NVDA+Alt+UpArrow or DownArrow: Jump to previous or next line with the same indentation level within the current indentation block.
 * NVDA+Alt+Control+UpArrow or DownArrow: Force-jump to previous or next line with the same indentation level. This command will jump to other indentation blocks (such as other Python functions) if necessary.
+* NVDA+Alt+Shift+UpArrow or DownArrow: Jump to first or last line with the same indentation level within the current indentation block.
 * NVDA+alt+LeftArrow: Jump to parent - that is previous line with lesser indentation level.
 * NVDA+Alt+RightArrow: Jump to first child - that is next line with greater indentation level within the same indentation block.
+* NVDA+I: Announce parent line wihtout moving the cursor there. Press twice or multiple times to query second level or further level parent.
 
 ## Known issues
 * IndentNav doesn't  support VSCode at this time. Due to its internal optimizations, VSCode doesn't load the entire document in the editable control, which makes it impossible to find lines far from current line.  
   Please consider using [Indentation Level Movement](https://marketplace.visualstudio.com/items?itemName=kaiwood.indentation-level-movement) VSCode extension instead.
 
 ## Release history
-* v1.4 - not yet released:
+* [v1.4](https://github.com/mltony/nvda-indent-nav/releases/download/v1.4/IndentNav-1.4.nvda-addon) - 12/25/2018
   * Added move to first/last line with the same indentation level commands.
   * Added navigation in browser by font size and font style options.
   * Added rotor to adjust navigation mode in browser.
