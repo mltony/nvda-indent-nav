@@ -42,6 +42,10 @@ Keystrokes:
 
 ## Release history
 * v1.4 - not yet released:
+  * Added move to first/last line with the same indentation level commands.
+  * Added navigation in browser by font size and font style options.
+  * Added rotor to adjust navigation mode in browser.
+  * Added configuration dialog.
   * Translations
 * [v1.3](https://github.com/mltony/nvda-indent-nav/releases/download/v1.3/IndentNav-1.3.nvda-addon)
   * French translation.
