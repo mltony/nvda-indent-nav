@@ -17,19 +17,127 @@ import controlTypes
 import config
 import ctypes
 import globalPluginHandler
+import gui
 import NVDAHelper
 import operator
+import re
 import scriptHandler
 from scriptHandler import script
 import speech
+import struct
 import textInfos
 import tones
 import ui
+import wx
+
+def myAssert(condition):
+    if not condition:
+        raise RuntimeError("Assertion failed")
+
+
+def createMenu():
+    def _popupMenu(evt):
+        gui.mainFrame._popupSettingsDialog(SettingsDialog)
+    prefsMenuItem  = gui.mainFrame.sysTrayIcon.preferencesMenu.Append(wx.ID_ANY, _("IndentNav..."))
+    gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, _popupMenu, prefsMenuItem)
+
+def initConfiguration():
+    confspec = {
+        "crackleVolume" : "integer( default=25, min=0, max=100)",
+        "noNextTextChimeVolume" : "integer( default=50, min=0, max=100)",
+        "noNextTextMessage" : "boolean( default=False)",
+        "browserMode" : "integer( default=0, min=0, max=2)",
+        "useFontFamily" : "boolean( default=True)",
+        "useColor" : "boolean( default=True)",
+        "useBackgroundColor" : "boolean( default=True)",
+    }
+    config.conf.spec["indentnav"] = confspec
+
+def getConfig(key):
+    value = config.conf["indentnav"][key]
+    return value
+
+def setConfig(key, value):
+    config.conf["indentnav"][key] = value
+
 
 addonHandler.initTranslation()
+initConfiguration()
+createMenu()
+
+
+class SettingsDialog(gui.SettingsDialog):
+    # Translators: Title for the settings dialog
+    title = _("IndentNav settings")
+
+    def __init__(self, *args, **kwargs):
+        super(SettingsDialog, self).__init__(*args, **kwargs)
+
+    def makeSettings(self, settingsSizer):
+        sHelper = gui.guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
+      # crackleVolumeSlider
+        sizer=wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: volume of crackling slider
+        label=wx.StaticText(self,wx.ID_ANY,label=_("Crackling volume"))
+        slider=wx.Slider(self, wx.NewId(), minValue=0,maxValue=100)
+        slider.SetValue(getConfig("crackleVolume"))
+        sizer.Add(label)
+        sizer.Add(slider)
+        settingsSizer.Add(sizer)
+        self.crackleVolumeSlider = slider
+
+      # noNextTextChimeVolumeSlider
+        sizer=wx.BoxSizer(wx.HORIZONTAL)
+        # Translators: End of document chime volume
+        label=wx.StaticText(self,wx.ID_ANY,label=_("Volume of chime when no more sentences available"))
+        slider=wx.Slider(self, wx.NewId(), minValue=0,maxValue=100)
+        slider.SetValue(getConfig("noNextTextChimeVolume"))
+        sizer.Add(label)
+        sizer.Add(slider)
+        settingsSizer.Add(sizer)
+        self.noNextTextChimeVolumeSlider = slider
+
+      # Checkboxes
+        # Translators: Checkbox that controls spoken message when no next or previous text paragraph is available in the document
+        label = _("Speak message when no next paragraph containing text available in the document")
+        self.noNextTextMessageCheckbox = sHelper.addItem(wx.CheckBox(self, label=label))
+        self.noNextTextMessageCheckbox.Value = getConfig("noNextTextMessage")
+
+        # Translators: Checkbox that controls whether font family should be used for style
+        label = _("Use font family for style")
+        self.useFontFamilyCheckBox = sHelper.addItem(wx.CheckBox(self, label=label))
+        self.useFontFamilyCheckBox.Value = getConfig("useFontFamily")
+
+        # Translators: Checkbox that controls whether font color should be used for style
+        label = _("Use font color for style")
+        self.useColorCheckBox = sHelper.addItem(wx.CheckBox(self, label=label))
+        self.useColorCheckBox.Value = getConfig("useColor")
+
+        # Translators: Checkbox that controls whether background color should be used for style
+        label = _("Use background color for style")
+        self.useBackgroundColorCheckBox = sHelper.addItem(wx.CheckBox(self, label=label))
+        self.useBackgroundColorCheckBox.Value = getConfig("useBackgroundColor")
+
+    def onOk(self, evt):
+        config.conf["indentnav"]["crackleVolume"] = self.crackleVolumeSlider.Value
+        config.conf["indentnav"]["noNextTextChimeVolume"] = self.noNextTextChimeVolumeSlider.Value
+        config.conf["indentnav"]["noNextTextMessage"] = self.noNextTextMessageCheckbox.Value
+        config.conf["indentnav"]["useFontFamily"] = self.useFontFamilyCheckBox.Value
+        config.conf["indentnav"]["useColor"] = self.useColorCheckBox.Value
+        config.conf["indentnav"]["useBackgroundColor"] = self.useBackgroundColorCheckBox.Value
+        super(SettingsDialog, self).onOk(evt)
+
+# Browse mode constants:
+BROWSE_MODES = [
+    _("horizontal offset"),
+    _("font size"),
+    _("font size and same style"),
+]
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     scriptCategory = _("IndentNav")
+
+
 
     def getIndentLevel(self, s):
         if speech.isBlank(s):
@@ -58,29 +166,70 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def crackle(self, levels):
         if self.isReportIndentWithTones():
-            self.fancyCrackle(levels)
+            self.fancyCrackle(levels, volume=getConfig("crackleVolume"))
         else:
-            self.simpleCrackle(len(levels))
+            self.simpleCrackle(len(levels), volume=getConfig("crackleVolume"))
 
-    def fancyCrackle(self, levels):
+    def fancyCrackle(self, levels, volume):
         levels = self.uniformSample(levels, self.MAX_BEEP_COUNT )
         beepLen = self.BEEP_LEN
         pauseLen = self.PAUSE_LEN
         pauseBufSize = NVDAHelper.generateBeep(None,self.BASE_FREQ,pauseLen,0, 0)
-        beepBufSizes = [NVDAHelper.generateBeep(None,self.getPitch(l), beepLen, 50, 50) for l in levels]
+        beepBufSizes = [NVDAHelper.generateBeep(None,self.getPitch(l), beepLen, volume, volume) for l in levels]
         bufSize = sum(beepBufSizes) + len(levels) * pauseBufSize
         buf = ctypes.create_string_buffer(bufSize)
         bufPtr = 0
         for l in levels:
             bufPtr += NVDAHelper.generateBeep(
                 ctypes.cast(ctypes.byref(buf, bufPtr), ctypes.POINTER(ctypes.c_char)),
-                self.getPitch(l), beepLen, 50, 50)
+                self.getPitch(l), beepLen, volume, volume)
             bufPtr += pauseBufSize # add a short pause
         tones.player.stop()
         tones.player.feed(buf.raw)
 
-    def simpleCrackle(self, n):
-        return self.fancyCrackle([0] * n)
+    def simpleCrackle(self, n, volume):
+        return self.fancyCrackle([0] * n, volume)
+
+
+    NOTES = "A,B,H,C,C#,D,D#,E,F,F#,G,G#".split(",")
+    NOTE_RE = re.compile("[A-H][#]?")
+    BASE_FREQ = 220
+    def getChordFrequencies(self, chord):
+        myAssert(len(self.NOTES) == 12)
+        prev = -1
+        result = []
+        for m in self.NOTE_RE.finditer(chord):
+            s = m.group()
+            i =self.NOTES.index(s)
+            while i < prev:
+                i += 12
+            result.append(int(self.BASE_FREQ * (2 ** (i / 12.0))))
+            prev = i
+        return result
+
+    def fancyBeep(self, chord, length, left=10, right=10):
+        beepLen = length
+        freqs = self.getChordFrequencies(chord)
+        intSize = 8 # bytes
+        bufSize = max([NVDAHelper.generateBeep(None,freq, beepLen, right, left) for freq in freqs])
+        if bufSize % intSize != 0:
+            bufSize += intSize
+            bufSize -= (bufSize % intSize)
+        tones.player.stop()
+        bbs = []
+        result = [0] * (bufSize/intSize)
+        for freq in freqs:
+            buf = ctypes.create_string_buffer(bufSize)
+            NVDAHelper.generateBeep(buf, freq, beepLen, right, left)
+            bytes = bytearray(buf)
+            unpacked = struct.unpack("<%dQ" % (bufSize / intSize), bytes)
+            result = map(operator.add, result, unpacked)
+        maxInt = 1 << (8 * intSize)
+        result = map(lambda x : x %maxInt, result)
+        packed = struct.pack("<%dQ" % (bufSize / intSize), *result)
+        tones.player.feed(packed)
+
+
 
     def isReportIndentWithTones(self):
         return config.conf["documentFormatting"]["reportLineIndentationWithTones"]
@@ -89,12 +238,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def script_moveToNextSibling(self, gesture):
         # Translators: error message if next sibling couldn't be found (in editable control or in browser)
         msgEditable = _("No next line within indentation block")
-        msgBrowser = _("No next paragraph with the same offset in the document")
+        msgBrowser = _("No next paragraph with the same {modeDescription} in the document")
         self.move(1, [msgEditable,msgBrowser])
 
     @script(description="Moves to the next line with the same indentation level as the current line potentially in the following indentation block.", gestures=['kb:NVDA+alt+control+DownArrow'])
     def script_moveToNextSiblingForce(self, gesture):
-        count=scriptHandler.getLastScriptRepeatCount()
         # Translators: error message if next sibling couldn't be found in editable control (forced command)
         msgEditable = _("No next line in the document")
         self.move(1, [msgEditable], unbounded=True)
@@ -110,7 +258,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def script_moveToPreviousSibling(self, gesture):
         # Translators: error message if previous sibling couldn't be found (in editable control or in browser)
         msgEditable = _("No previous line within indentation block")
-        msgBrowser = _("No previous paragraph with the same offset in the document")
+        msgBrowser = _("No previous paragraph with the same {modeDescription} in the document")
         self.move(-1, [msgEditable, msgBrowser])
 
     @script(description="Moves to the previous line with the same indentation level as the current line within the current indentation block.", gestures=['kb:NVDA+alt+control+UpArrow'])
@@ -127,14 +275,47 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     @script(description="Speak parent line.", gestures=['kb:NVDA+I'])
     def script_speakParent(self, gesture):
+        focus = api.getFocusObject()
+        if hasattr(focus, "treeInterceptor") and hasattr(focus.treeInterceptor, "makeTextInfo"):
+            # We must be in browser
+            mode = getConfig("browserMode")
+            mode = (mode + 1) % len(BROWSE_MODES)
+            setConfig("browserMode", mode)
+            ui.message("IndentNav navigates by " + BROWSE_MODES[mode])
+            return
         count=scriptHandler.getLastScriptRepeatCount()
         # Translators: error message if parent couldn't be found (in editable control or in browser)
         msgEditable = _("No parent of indentation block")
         msgBrowser = _("No previous paragraph with smaller offset in the document")
         self.move(-1, [msgEditable, msgBrowser], unbounded=True, op=operator.lt, speakOnly=True, moveCount=count+1)
 
-
-
+    def generateBrowseModeExtractors(self):
+        def getFontSize(textInfo, formatting):
+            try:
+                size =float( formatting["font-size"].replace("pt", ""))
+                return size
+            except:
+                return 0
+        mode = getConfig("browserMode")
+        if mode == 0:
+            # horizontal offset
+            extractFormattingFunc = lambda x: None
+            extractIndentFunc = lambda textInfo,x: textInfo.NVDAObjectAtStart.location[0]
+            extractStyleFunc = lambda x,y: None
+        elif mode in [1,2]:
+            extractFormattingFunc = lambda textInfo: self.getFormatting(textInfo)
+            extractIndentFunc = getFontSize
+            if mode == 1:
+                # Font size only
+                extractStyleFunc = lambda textInfo, formatting: None
+            else:
+                # Both font fsize and style
+                extractStyleFunc = lambda textInfo, formatting: self.formattingToStyle(formatting)
+        return (
+            extractFormattingFunc,
+            extractIndentFunc,
+            extractStyleFunc
+        )
     def move(self, increment, errorMessages, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1,):
         """Moves to another line in current document.
         This function will call one of its implementations dependingon whether the focus is in an editable text or in a browser.
@@ -154,7 +335,37 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if focus.role == controlTypes.ROLE_EDITABLETEXT:
             self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount)
         elif (len(errorMessages) >= 2) and hasattr(focus, "treeInterceptor") and hasattr(focus.treeInterceptor, "makeTextInfo"):
-            self.moveInBrowser(increment, errorMessages[1], op)
+            mode = getConfig("browserMode")
+            errorMessage = errorMessages[1]
+            if op == operator.eq:
+                errorMessage = errorMessage.format(modeDescription=BROWSE_MODES[mode])
+            else:
+                if mode in [1,2]:
+                    if increment > 0:
+                        op =operator.lt
+                    else:
+                        op =operator.gt
+                else:
+                    if increment > 0:
+                        op =operator.gt
+                    else:
+                        op =operator.lt
+                if op == operator.gt:
+                    qualifier = _("greater")
+                else:
+                    qualifier = _("smaller")
+                errorMessage = errorMessage.format(
+                modeDescription=BROWSE_MODES[mode],
+                qualifier=qualifier)
+            (
+                extractFormattingFunc,
+                extractIndentFunc,
+                extractStyleFunc
+            ) = self.generateBrowseModeExtractors()
+            self.moveInBrowser(increment, errorMessage, op,
+                extractFormattingFunc=extractFormattingFunc,
+                extractIndentFunc=extractIndentFunc,
+                extractStyleFunc=extractStyleFunc)
         else:
             errorMsg = _("Cannot move here")
             ui.message(errorMsg)
@@ -201,31 +412,58 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             self.crackle(indentLevels)
             speech.speakTextInfo(resultTextInfo, unit=textInfos.UNIT_LINE)
         else:
-            ui.message(errorMessage)
+            self.endOfDocument(errorMessage)
 
-    def moveInBrowser(self, increment, errorMessage, op):
+    def getFormatting(self, info):
+        formatField=textInfos.FormatField()
+        formatConfig=config.conf['documentFormatting']
+        for field in info.getTextWithFields(formatConfig):
+            #if isinstance(field,textInfos.FieldCommand): and isinstance(field.field,textInfos.FormatField):
+            try:
+                formatField.update(field.field)
+            except:
+                pass
+        return formatField
+
+    def formattingToStyle(self, formatting):
+        result = []
+        if getConfig("useFontFamily"):
+            result.append(formatting.get("font-family", None))
+        if getConfig("useColor"):
+            result.append(formatting.get("color", None))
+        if getConfig("useBackgroundColor"):
+            result.append(formatting.get("background-color", None))
+        return tuple(result)
+
+    def moveInBrowser(self, increment, errorMessage, op,
+        extractFormattingFunc,
+        extractIndentFunc,
+        extractStyleFunc):
         focus = api.getFocusObject()
         focus = focus.treeInterceptor
         textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
         textInfo.expand(textInfos.UNIT_PARAGRAPH)
-        origLocation= textInfo.NVDAObjectAtStart.location
+        origFormatting = extractFormattingFunc(textInfo)
+        origIndent = extractIndentFunc(textInfo, origFormatting)
+        origStyle = extractStyleFunc(textInfo, origFormatting)
         distance = 0
         while True:
             result =textInfo.move(textInfos.UNIT_PARAGRAPH, increment)
             if result == 0:
-                ui.message(errorMessage)
-                return
+                return self.endOfDocument(errorMessage)
             textInfo.expand(textInfos.UNIT_PARAGRAPH)
             text = textInfo.text
             if speech.isBlank(text):
                 continue
-            location = textInfo.NVDAObjectAtStart.location
-            if op(location[0], origLocation[0]):
-                textInfo.collapse(False)
-                textInfo.updateCaret()
-                self.simpleCrackle(distance)
-                ui.message(text)
-                return
+            formatting = extractFormattingFunc(textInfo)
+            indent = extractIndentFunc(textInfo, formatting)
+            style = extractStyleFunc(textInfo, formatting)
+            if style == origStyle:
+                if op(indent, origIndent):
+                    textInfo.updateCaret()
+                    self.simpleCrackle(distance, volume=getConfig("crackleVolume"))
+                    speech.speakTextInfo(textInfo, reason=controlTypes.REASON_CARET)
+                    return
             distance += 1
 
 
@@ -233,12 +471,18 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def script_moveToChild(self, gesture):
         # Translators: error message if a child couldn't be found (in editable control or in browser)
         msgEditable = _("No child block within indentation block")
-        msgBrowser = _("No next paragraph with greater offset in the document")
+        msgBrowser = _("No next paragraph with {qualifier} {modeDescription} in the document")
         self.move(1, [msgEditable, msgBrowser], unbounded=False, op=operator.gt)
 
     @script(description="Moves to the previous line with a lesser indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+alt+LeftArrow'])
     def script_moveToParent(self, gesture):
         # Translators: error message if parent couldn't be found (in editable control or in browser)
         msgEditable = _("No parent of indentation block")
-        msgBrowser = _("No previous paragraph with smaller offset in the document")
+        msgBrowser = _("No previous paragraph with {qualifier} {modeDescription} in the document")
         self.move(-1, [msgEditable, msgBrowser], unbounded=True, op=operator.lt)
+
+    def endOfDocument(self, message):
+        volume = getConfig("noNextTextChimeVolume")
+        self.fancyBeep("HF", 100, volume, volume)
+        if getConfig("noNextTextMessage"):
+            ui.message(message)
