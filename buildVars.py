@@ -1,4 +1,4 @@
-		# -*- coding: UTF-8 -*-
+# -*- coding: UTF-8 -*-
 
 # Build customizations
 # Change this file instead of sconstruct or manifest files, whenever possible.
@@ -27,8 +27,14 @@ Also while editing source code in many programming languages, it allows to jump 
 	"addon_author" : u"Tony Malykh <anton.malykh@gmail.com>",
 	# URL for the add-on documentation support
 	"addon_url" : "https://github.com/mltony/nvda-indent-nav",
-	# Documentation file name
+		# Documentation file name
 	"addon_docFileName" : "readme.html",
+	# Minimum NVDA version supported (e.g. "2018.3")
+	"addon_minimumNVDAVersion" : "2018.1",
+	# Last NVDA version supported/tested (e.g. "2018.4", ideally more recent than minimum version)
+	"addon_lastTestedNVDAVersion" : "2019.1",
+	# Add-on update channel (default is stable or None)
+	"addon_updateChannel" : None,
 }
 
 
@@ -36,7 +42,7 @@ import os.path
 
 # Define the python files that are the sources of your add-on.
 # You can use glob expressions here, they will be expanded.
-pythonSources = [os.path.join("addon", "GlobalPlugins", "*.py"), ]
+pythonSources = []
 
 # Files that contain strings for translation. Usually your python sources
 i18nSources = pythonSources + ["buildVars.py"]
