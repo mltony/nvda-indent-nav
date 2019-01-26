@@ -1,5 +1,5 @@
 #A part of the IndentNav addon for NVDA
-#Copyright (C) 2017-2018 Tony Malykh
+#Copyright (C) 2017-2019 Tony Malykh
 #This file is covered by the GNU General Public License.
 #See the file LICENSE  for more details.
 
@@ -19,6 +19,8 @@ import ctypes
 import globalPluginHandler
 import gui
 import NVDAHelper
+from NVDAObjects.IAccessible import IAccessible
+from NVDAObjects import NVDAObject
 import operator
 import re
 import scriptHandler
@@ -137,24 +139,18 @@ BROWSE_MODES = [
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     scriptCategory = _("IndentNav")
 
+    def chooseNVDAObjectOverlayClasses (self, obj, clsList):
+        if obj.windowClassName == u'Scintilla' and obj.windowControlID == 0:
+            clsList.append(EditableIndentNav)
+            return
+        if obj.role == controlTypes.ROLE_EDITABLETEXT:
+            clsList.append(EditableIndentNav)
+            return
+        if obj.role == controlTypes.ROLE_TREEVIEWITEM:
+            clsList.append(TreeIndentNav)
+            return
 
-
-    def getIndentLevel(self, s):
-        if speech.isBlank(s):
-            return 0
-        indent = speech.splitTextIndentation(s)[0]
-        return len(indent.replace("\t", " " * 4))
-
-    def uniformSample(self, a, m):
-        n = len(a)
-        if n <= m:
-            return a
-        # Here assume n > m
-        result = []
-        for i in xrange(0, m*n, n):
-            result.append(a[i  / m])
-        return result
-
+class Beeper:
     BASE_FREQ = speech.IDT_BASE_FREQUENCY
     def getPitch(self, indent):
         return self.BASE_FREQ*2**(indent/24.0) #24 quarter tones per octave.
@@ -164,11 +160,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     MAX_CRACKLE_LEN = 400 # millis
     MAX_BEEP_COUNT = MAX_CRACKLE_LEN / (BEEP_LEN + PAUSE_LEN)
 
-    def crackle(self, levels):
-        if self.isReportIndentWithTones():
-            self.fancyCrackle(levels, volume=getConfig("crackleVolume"))
-        else:
-            self.simpleCrackle(len(levels), volume=getConfig("crackleVolume"))
 
     def fancyCrackle(self, levels, volume):
         levels = self.uniformSample(levels, self.MAX_BEEP_COUNT )
@@ -229,17 +220,41 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         packed = struct.pack("<%dQ" % (bufSize / intSize), *result)
         tones.player.feed(packed)
 
+    def uniformSample(self, a, m):
+        n = len(a)
+        if n <= m:
+            return a
+        # Here assume n > m
+        result = []
+        for i in xrange(0, m*n, n):
+            result.append(a[i  / m])
+        return result
 
+
+class EditableIndentNav(NVDAObject):
+    scriptCategory = _("IndentNav")
+    beeper = Beeper()
+    def getIndentLevel(self, s):
+        if speech.isBlank(s):
+            return 0
+        indent = speech.splitTextIndentation(s)[0]
+        return len(indent.replace("\t", " " * 4))
 
     def isReportIndentWithTones(self):
         return config.conf["documentFormatting"]["reportLineIndentationWithTones"]
+
+    def crackle(self, levels):
+        if self.isReportIndentWithTones():
+            self.beeper.fancyCrackle(levels, volume=getConfig("crackleVolume"))
+        else:
+            self.beeper.simpleCrackle(len(levels), volume=getConfig("crackleVolume"))
+
 
     @script(description="Moves to the next line with the same indentation level as the current line within the current indentation block.", gestures=['kb:NVDA+alt+DownArrow'])
     def script_moveToNextSibling(self, gesture):
         # Translators: error message if next sibling couldn't be found (in editable control or in browser)
         msgEditable = _("No next line within indentation block")
-        msgBrowser = _("No next paragraph with the same {modeDescription} in the document")
-        self.move(1, [msgEditable,msgBrowser])
+        self.move(1, [msgEditable])
 
     @script(description="Moves to the next line with the same indentation level as the current line potentially in the following indentation block.", gestures=['kb:NVDA+alt+control+DownArrow'])
     def script_moveToNextSiblingForce(self, gesture):
@@ -258,8 +273,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     def script_moveToPreviousSibling(self, gesture):
         # Translators: error message if previous sibling couldn't be found (in editable control or in browser)
         msgEditable = _("No previous line within indentation block")
-        msgBrowser = _("No previous paragraph with the same {modeDescription} in the document")
-        self.move(-1, [msgEditable, msgBrowser])
+        self.move(-1, [msgEditable])
 
     @script(description="Moves to the previous line with the same indentation level as the current line within the current indentation block.", gestures=['kb:NVDA+alt+control+UpArrow'])
     def script_moveToPreviousSiblingForce(self, gesture):
@@ -276,46 +290,11 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     @script(description="Speak parent line.", gestures=['kb:NVDA+I'])
     def script_speakParent(self, gesture):
         focus = api.getFocusObject()
-        if hasattr(focus, "treeInterceptor") and hasattr(focus.treeInterceptor, "makeTextInfo"):
-            # We must be in browser
-            mode = getConfig("browserMode")
-            mode = (mode + 1) % len(BROWSE_MODES)
-            setConfig("browserMode", mode)
-            ui.message("IndentNav navigates by " + BROWSE_MODES[mode])
-            return
         count=scriptHandler.getLastScriptRepeatCount()
         # Translators: error message if parent couldn't be found (in editable control or in browser)
         msgEditable = _("No parent of indentation block")
-        msgBrowser = _("No previous paragraph with smaller offset in the document")
-        self.move(-1, [msgEditable, msgBrowser], unbounded=True, op=operator.lt, speakOnly=True, moveCount=count+1)
+        self.move(-1, [msgEditable], unbounded=True, op=operator.lt, speakOnly=True, moveCount=count+1)
 
-    def generateBrowseModeExtractors(self):
-        def getFontSize(textInfo, formatting):
-            try:
-                size =float( formatting["font-size"].replace("pt", ""))
-                return size
-            except:
-                return 0
-        mode = getConfig("browserMode")
-        if mode == 0:
-            # horizontal offset
-            extractFormattingFunc = lambda x: None
-            extractIndentFunc = lambda textInfo,x: textInfo.NVDAObjectAtStart.location[0]
-            extractStyleFunc = lambda x,y: None
-        elif mode in [1,2]:
-            extractFormattingFunc = lambda textInfo: self.getFormatting(textInfo)
-            extractIndentFunc = getFontSize
-            if mode == 1:
-                # Font size only
-                extractStyleFunc = lambda textInfo, formatting: None
-            else:
-                # Both font fsize and style
-                extractStyleFunc = lambda textInfo, formatting: self.formattingToStyle(formatting)
-        return (
-            extractFormattingFunc,
-            extractIndentFunc,
-            extractStyleFunc
-        )
     def move(self, increment, errorMessages, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1,):
         """Moves to another line in current document.
         This function will call one of its implementations dependingon whether the focus is in an editable text or in a browser.
@@ -332,43 +311,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         @param moveCount: perform move operation this many times.
         """
         focus = api.getFocusObject()
-        if focus.role == controlTypes.ROLE_EDITABLETEXT:
-            self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount)
-        elif (len(errorMessages) >= 2) and hasattr(focus, "treeInterceptor") and hasattr(focus.treeInterceptor, "makeTextInfo"):
-            mode = getConfig("browserMode")
-            errorMessage = errorMessages[1]
-            if op == operator.eq:
-                errorMessage = errorMessage.format(modeDescription=BROWSE_MODES[mode])
-            else:
-                if mode in [1,2]:
-                    if increment > 0:
-                        op =operator.lt
-                    else:
-                        op =operator.gt
-                else:
-                    if increment > 0:
-                        op =operator.gt
-                    else:
-                        op =operator.lt
-                if op == operator.gt:
-                    qualifier = _("greater")
-                else:
-                    qualifier = _("smaller")
-                errorMessage = errorMessage.format(
-                modeDescription=BROWSE_MODES[mode],
-                qualifier=qualifier)
-            (
-                extractFormattingFunc,
-                extractIndentFunc,
-                extractStyleFunc
-            ) = self.generateBrowseModeExtractors()
-            self.moveInBrowser(increment, errorMessage, op,
-                extractFormattingFunc=extractFormattingFunc,
-                extractIndentFunc=extractIndentFunc,
-                extractStyleFunc=extractStyleFunc)
-        else:
-            errorMsg = _("Cannot move here")
-            ui.message(errorMsg)
+        self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount)
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
         focus = api.getFocusObject()
@@ -414,75 +357,129 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         else:
             self.endOfDocument(errorMessage)
 
-    def getFormatting(self, info):
-        formatField=textInfos.FormatField()
-        formatConfig=config.conf['documentFormatting']
-        for field in info.getTextWithFields(formatConfig):
-            #if isinstance(field,textInfos.FieldCommand): and isinstance(field.field,textInfos.FormatField):
-            try:
-                formatField.update(field.field)
-            except:
-                pass
-        return formatField
-
-    def formattingToStyle(self, formatting):
-        result = []
-        if getConfig("useFontFamily"):
-            result.append(formatting.get("font-family", None))
-        if getConfig("useColor"):
-            result.append(formatting.get("color", None))
-        if getConfig("useBackgroundColor"):
-            result.append(formatting.get("background-color", None))
-        return tuple(result)
-
-    def moveInBrowser(self, increment, errorMessage, op,
-        extractFormattingFunc,
-        extractIndentFunc,
-        extractStyleFunc):
-        focus = api.getFocusObject()
-        focus = focus.treeInterceptor
-        textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
-        textInfo.expand(textInfos.UNIT_PARAGRAPH)
-        origFormatting = extractFormattingFunc(textInfo)
-        origIndent = extractIndentFunc(textInfo, origFormatting)
-        origStyle = extractStyleFunc(textInfo, origFormatting)
-        distance = 0
-        while True:
-            result =textInfo.move(textInfos.UNIT_PARAGRAPH, increment)
-            if result == 0:
-                return self.endOfDocument(errorMessage)
-            textInfo.expand(textInfos.UNIT_PARAGRAPH)
-            text = textInfo.text
-            if speech.isBlank(text):
-                continue
-            formatting = extractFormattingFunc(textInfo)
-            indent = extractIndentFunc(textInfo, formatting)
-            style = extractStyleFunc(textInfo, formatting)
-            if style == origStyle:
-                if op(indent, origIndent):
-                    textInfo.updateCaret()
-                    self.simpleCrackle(distance, volume=getConfig("crackleVolume"))
-                    speech.speakTextInfo(textInfo, reason=controlTypes.REASON_CARET)
-                    return
-            distance += 1
-
-
     @script(description="Moves to the next line with a greater indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+alt+RightArrow'])
     def script_moveToChild(self, gesture):
         # Translators: error message if a child couldn't be found (in editable control or in browser)
         msgEditable = _("No child block within indentation block")
-        msgBrowser = _("No next paragraph with {qualifier} {modeDescription} in the document")
-        self.move(1, [msgEditable, msgBrowser], unbounded=False, op=operator.gt)
+        self.move(1, [msgEditable], unbounded=False, op=operator.gt)
 
     @script(description="Moves to the previous line with a lesser indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+alt+LeftArrow'])
     def script_moveToParent(self, gesture):
         # Translators: error message if parent couldn't be found (in editable control or in browser)
         msgEditable = _("No parent of indentation block")
-        msgBrowser = _("No previous paragraph with {qualifier} {modeDescription} in the document")
-        self.move(-1, [msgEditable, msgBrowser], unbounded=True, op=operator.lt)
+        self.move(-1, [msgEditable], unbounded=True, op=operator.lt)
 
     def endOfDocument(self, message):
         volume = getConfig("noNextTextChimeVolume")
-        self.fancyBeep("HF", 100, volume, volume)
+        self.beeper.fancyBeep("HF", 100, volume, volume)
         if getConfig("noNextTextMessage"):
             ui.message(message)
+
+class TreeIndentNav(NVDAObject):
+    scriptCategory = _("IndentNav")
+    beeper = Beeper()
+
+    @script(description="Moves to the next item on the same level within current subtree.", gestures=['kb:NVDA+alt+DownArrow'])
+    def script_moveToNextSibling(self, gesture):
+        # Translators: error message if next sibling couldn't be found in Tree view
+        errorMsg = _("No next item on the same level within this subtree")
+        self.moveInTree(1, errorMsg, op=operator.eq)
+
+    @script(description="Moves to the previous item on the same level within current subtree.", gestures=['kb:NVDA+alt+UpArrow'])
+    def script_moveToPreviousSibling(self, gesture):
+        # Translators: error message if next sibling couldn't be found in Tree view
+        errorMsg = _("No previous item on the same level within this subtree")
+        self.moveInTree(-1, errorMsg, op=operator.eq)
+
+    @script(description="Moves to the next item on the same level.", gestures=['kb:NVDA+Control+alt+DownArrow'])
+    def script_moveToNextSiblingForce(self, gesture):
+        # Translators: error message if next sibling couldn't be found in Tree view
+        errorMsg = _("No next item on the same level in this tree view")
+        self.moveInTree(1, errorMsg, op=operator.eq, unbounded=True)
+
+    @script(description="Moves to the previous item on the same level.", gestures=['kb:NVDA+Control+alt+UpArrow'])
+    def script_moveToPreviousSiblingForce(self, gesture):
+        # Translators: error message if previous sibling couldn't be found in Tree view
+        errorMsg = _("No previous item on the same level in this tree view")
+        self.moveInTree(-1, errorMsg, op=operator.eq, unbounded=True)
+
+    @script(description="Moves to the last item on the same level within current subtree.", gestures=['kb:NVDA+alt+Shift+DownArrow'])
+    def script_moveToLastSibling(self, gesture):
+        # Translators: error message if next sibling couldn't be found in Tree view
+        errorMsg = _("No next item on the same level within this subtree")
+        self.moveInTree(1, errorMsg, op=operator.eq, moveCount=1000)
+
+    @script(description="Moves to the first item on the same level within current subtree.", gestures=['kb:NVDA+alt+Shift+UpArrow'])
+    def script_moveToFirstSibling(self, gesture):
+        # Translators: error message if next sibling couldn't be found in Tree view
+        errorMsg = _("No previous item on the same level within this subtree")
+        self.moveInTree(-1, errorMsg, op=operator.eq, moveCount=1000)
+
+    @script(description="Speak parent item.", gestures=['kb:NVDA+I'])
+    def script_speakParent(self, gesture):
+        count=scriptHandler.getLastScriptRepeatCount()
+        # Translators: error message if parent couldn't be found)
+        errorMsg = _("No parent item in this tree view")
+        self.moveInTree(-1, errorMsg, unbounded=True, op=operator.lt, speakOnly=True, moveCount=count+1)
+
+    @script(description="Moves to the next child in tree view.", gestures=['kb:NVDA+alt+RightArrow'])
+    def script_moveToChild(self, gesture):
+        # Translators: error message if a child couldn't be found
+        errorMsg = _("NO child")
+        self.moveInTree(1, errorMsg, unbounded=False, op=operator.gt)
+
+    @script(description="Moves to parent in tree view.", gestures=['kb:NVDA+alt+LeftArrow'])
+    def script_moveToParent(self, gesture):
+        # Translators: error message if parent couldn't be found
+        errorMsg = _("No parent")
+        self.moveInTree(-1, errorMsg, unbounded=True, op=operator.lt)
+
+    def getLevel(self, obj):
+        try:
+            return obj.positionInfo["level"]
+        except AttributeError:
+            return None
+        except KeyError:
+            return None
+
+    def moveInTree(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
+        obj = api.getFocusObject()
+        level = self.getLevel(obj)
+        found = False
+        levels = []
+        while True:
+            if increment > 0:
+                obj = obj.next
+            else:
+                obj = obj.previous
+            newLevel = self.getLevel(obj)
+            if newLevel is None:
+                break
+            if op(newLevel, level):
+                found = True
+                level = newLevel
+                result = obj
+                moveCount -= 1
+                if moveCount == 0:
+                    break
+            elif newLevel < level:
+                # Not found in this subtree
+                if not unbounded:
+                    break
+            levels.append(newLevel )
+
+        if found:
+            self.beeper.fancyCrackle(levels, volume=getConfig("crackleVolume"))
+            if not speakOnly:
+                result.setFocus()
+            else:
+                speech.speakObject(result)
+        else:
+            self.endOfDocument(errorMessage)
+
+    def endOfDocument(self, message):
+        volume = getConfig("noNextTextChimeVolume")
+        self.beeper.fancyBeep("HF", 100, volume, volume)
+        if getConfig("noNextTextMessage"):
+            ui.message(message)
+
