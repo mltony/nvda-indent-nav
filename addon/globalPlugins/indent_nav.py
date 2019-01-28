@@ -48,10 +48,6 @@ def initConfiguration():
         "crackleVolume" : "integer( default=25, min=0, max=100)",
         "noNextTextChimeVolume" : "integer( default=50, min=0, max=100)",
         "noNextTextMessage" : "boolean( default=False)",
-        "browserMode" : "integer( default=0, min=0, max=2)",
-        "useFontFamily" : "boolean( default=True)",
-        "useColor" : "boolean( default=True)",
-        "useBackgroundColor" : "boolean( default=True)",
     }
     config.conf.spec["indentnav"] = confspec
 
@@ -105,28 +101,11 @@ class SettingsDialog(gui.SettingsDialog):
         self.noNextTextMessageCheckbox = sHelper.addItem(wx.CheckBox(self, label=label))
         self.noNextTextMessageCheckbox.Value = getConfig("noNextTextMessage")
 
-        # Translators: Checkbox that controls whether font family should be used for style
-        label = _("Use font family for style")
-        self.useFontFamilyCheckBox = sHelper.addItem(wx.CheckBox(self, label=label))
-        self.useFontFamilyCheckBox.Value = getConfig("useFontFamily")
-
-        # Translators: Checkbox that controls whether font color should be used for style
-        label = _("Use font color for style")
-        self.useColorCheckBox = sHelper.addItem(wx.CheckBox(self, label=label))
-        self.useColorCheckBox.Value = getConfig("useColor")
-
-        # Translators: Checkbox that controls whether background color should be used for style
-        label = _("Use background color for style")
-        self.useBackgroundColorCheckBox = sHelper.addItem(wx.CheckBox(self, label=label))
-        self.useBackgroundColorCheckBox.Value = getConfig("useBackgroundColor")
 
     def onOk(self, evt):
         config.conf["indentnav"]["crackleVolume"] = self.crackleVolumeSlider.Value
         config.conf["indentnav"]["noNextTextChimeVolume"] = self.noNextTextChimeVolumeSlider.Value
         config.conf["indentnav"]["noNextTextMessage"] = self.noNextTextMessageCheckbox.Value
-        config.conf["indentnav"]["useFontFamily"] = self.useFontFamilyCheckBox.Value
-        config.conf["indentnav"]["useColor"] = self.useColorCheckBox.Value
-        config.conf["indentnav"]["useBackgroundColor"] = self.useBackgroundColorCheckBox.Value
         super(SettingsDialog, self).onOk(evt)
 
 # Browse mode constants:
