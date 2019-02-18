@@ -5,7 +5,7 @@ It also provides similar keystrokes in tree views.
 
 Please note that as of version v1.5 (January 2019) IndentNav no longer works in browsers. Browser navigation functionality has been released as another [BrowserNav add-on](https://github.com/mltony/nvda-browser-nav), that must be installed separately.
 ## Download
-Current stable release: [IndentNav v1.5](https://github.com/mltony/nvda-indent-nav/releases/download/v1.5/IndentNav-1.5.nvda-addon).
+Current stable release: [IndentNav v1.6](https://github.com/mltony/nvda-indent-nav/releases/download/v1.6/IndentNav-1.6.nvda-addon).
 
 ## Usage 
 IndentNav can  be useful for editing source code in many programming languages. 
