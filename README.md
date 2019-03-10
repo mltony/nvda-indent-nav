@@ -27,7 +27,7 @@ Keystrokes:
 * NVDA+Alt+Shift+UpArrow or DownArrow: Jump to first or last line with the same indentation level within the current indentation block.
 * NVDA+alt+LeftArrow: Jump to parent - that is previous line with lesser indentation level.
 * NVDA+Alt+RightArrow: Jump to first child - that is next line with greater indentation level within the same indentation block.
-* NVDA+I: Announce parent line wihtout moving the cursor there. Press twice or multiple times to query second level or further level parent.
+* NVDA+I: Announce parent line without moving the cursor there. Press twice or multiple times to query second level or further level parent.
 
 ## Known issues
 * IndentNav doesn't  support VSCode at this time. Due to its internal optimizations, VSCode doesn't load the entire document in the editable control, which makes it impossible to find lines far from current line.  
