@@ -6,7 +6,7 @@ It also provides similar keystrokes in tree views.
 Please note that as of version v1.5 (January 2019) IndentNav no longer works in browsers. Browser navigation functionality has been released as another [BrowserNav add-on](https://github.com/mltony/nvda-browser-nav), that must be installed separately.
 
 ## Download
-* Current stable version (Python 3 only, requires NVDA 2019.3 or later): [IndentNav](https://github.com/mltony/nvda-indent-nav/releases/latest/download/indentnav.nvda-addon)
+* Current stable version (Python 3 only, requires NVDA 2019.3 or later): [IndentNav](https://github.com/mltony/nvda-indent-nav/releases/latest/download/IndentNav.nvda-addon)
 * Last Python 2 version (compatible with NVDA 2019.2 and prior): [IndentNav v1.6](https://github.com/mltony/nvda-indent-nav/releases/download/v1.6/IndentNav-1.6.nvda-addon).
 
 ## Usage 
