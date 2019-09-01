@@ -137,7 +137,7 @@ class Beeper:
     BEEP_LEN = 10 # millis
     PAUSE_LEN = 5 # millis
     MAX_CRACKLE_LEN = 400 # millis
-    MAX_BEEP_COUNT = MAX_CRACKLE_LEN / (BEEP_LEN + PAUSE_LEN)
+    MAX_BEEP_COUNT = MAX_CRACKLE_LEN // (BEEP_LEN + PAUSE_LEN)
 
 
     def fancyCrackle(self, levels, volume):
@@ -187,16 +187,16 @@ class Beeper:
             bufSize -= (bufSize % intSize)
         tones.player.stop()
         bbs = []
-        result = [0] * (bufSize/intSize)
+        result = [0] * (bufSize//intSize)
         for freq in freqs:
             buf = ctypes.create_string_buffer(bufSize)
             NVDAHelper.generateBeep(buf, freq, beepLen, right, left)
             bytes = bytearray(buf)
-            unpacked = struct.unpack("<%dQ" % (bufSize / intSize), bytes)
+            unpacked = struct.unpack("<%dQ" % (bufSize // intSize), bytes)
             result = map(operator.add, result, unpacked)
         maxInt = 1 << (8 * intSize)
         result = map(lambda x : x %maxInt, result)
-        packed = struct.pack("<%dQ" % (bufSize / intSize), *result)
+        packed = struct.pack("<%dQ" % (bufSize // intSize), *result)
         tones.player.feed(packed)
 
     def uniformSample(self, a, m):
@@ -205,8 +205,8 @@ class Beeper:
             return a
         # Here assume n > m
         result = []
-        for i in xrange(0, m*n, n):
-            result.append(a[i  / m])
+        for i in range(0, m*n, n):
+            result.append(a[i // m])
         return result
 
 
