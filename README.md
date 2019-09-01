@@ -4,8 +4,10 @@ While editing source code in many programming languages, it allows to jump betwe
 It also provides similar keystrokes in tree views.
 
 Please note that as of version v1.5 (January 2019) IndentNav no longer works in browsers. Browser navigation functionality has been released as another [BrowserNav add-on](https://github.com/mltony/nvda-browser-nav), that must be installed separately.
+
 ## Download
-Current stable release: [IndentNav v1.6](https://github.com/mltony/nvda-indent-nav/releases/download/v1.6/IndentNav-1.6.nvda-addon).
+* Current stable version (Python 3 only, requires NVDA 2019.3 or later): [IndentNav](https://github.com/mltony/nvda-indent-nav/releases/latest/download/indentnav.nvda-addon)
+* Last Python 2 version (compatible with NVDA 2019.2 and prior): [IndentNav v1.6](https://github.com/mltony/nvda-indent-nav/releases/download/v1.6/IndentNav-1.6.nvda-addon).
 
 ## Usage 
 IndentNav can  be useful for editing source code in many programming languages. 
