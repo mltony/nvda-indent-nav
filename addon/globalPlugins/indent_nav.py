@@ -122,6 +122,9 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if obj.windowClassName == u'Scintilla' and obj.windowControlID == 0:
             clsList.append(EditableIndentNav)
             return
+        if obj.windowClassName == u"AkelEditW":
+            clsList.append(EditableIndentNav)
+            return
         if obj.role == controlTypes.ROLE_EDITABLETEXT:
             clsList.append(EditableIndentNav)
             return
