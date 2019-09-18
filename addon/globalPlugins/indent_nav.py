@@ -213,6 +213,33 @@ class Beeper:
         return result
 
 
+class TraditionalLineManager:
+    def __init__(self):
+        pass
+
+    def __enter__(self):
+        focus = api.getFocusObject()
+        self.textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
+        return self
+
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+    def move(self, increment):
+        result = self.textInfo.move(textInfos.UNIT_LINE, increment)
+        return result
+
+    def getText(self):
+        self.textInfo.expand(textInfos.UNIT_LINE)
+        return self.textInfo.text
+
+    def getLine(self):
+        return self.textInfo.copy()
+
+    def updateCaret(self, line):
+        line.updateCaret()
+
 class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
     beeper = Beeper()
@@ -296,48 +323,48 @@ class EditableIndentNav(NVDAObject):
         self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount)
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
-        focus = api.getFocusObject()
-        # Get the current indentation level
-        textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
-        textInfo.expand(textInfos.UNIT_LINE)
-        indentationLevel = self.getIndentLevel(textInfo.text)
-        onEmptyLine = speech.isBlank(textInfo.text)
+        with TraditionalLineManager() as lm:
+            # Get the current indentation level
+            text = lm.getText()
+            indentationLevel = self.getIndentLevel(text)
+            onEmptyLine = speech.isBlank(text)
 
-        # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with the same indentation level
-        found = False
-        indentLevels = []
-        while True:
-            result = textInfo.move(textInfos.UNIT_LINE, increment)
-            if result == 0:
-                break
-            textInfo.expand(textInfos.UNIT_LINE)
-            newIndentation = self.getIndentLevel(textInfo.text)
-
-            # Skip over empty lines if we didn't start on one.
-            if not onEmptyLine and speech.isBlank(textInfo.text):
-                continue
-
-            if op(newIndentation, indentationLevel):
-                # Found it
-                found = True
-                indentationLevel = newIndentation
-                resultTextInfo = textInfo.copy()
-                moveCount -= 1
-                if moveCount == 0:
+            # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with the same indentation level
+            found = False
+            indentLevels = []
+            while True:
+                result = lm.move(increment)
+                if result == 0:
                     break
-            elif newIndentation < indentationLevel:
-                # Not found in this indentation block
-                if not unbounded:
-                    break
-            indentLevels.append(newIndentation )
+                text = lm.getText()
+                newIndentation = self.getIndentLevel(text)
 
-        if found:
-            if not speakOnly:
-                resultTextInfo.updateCaret()
-            self.crackle(indentLevels)
-            speech.speakTextInfo(resultTextInfo, unit=textInfos.UNIT_LINE)
-        else:
-            self.endOfDocument(errorMessage)
+                # Skip over empty lines if we didn't start on one.
+                if not onEmptyLine and speech.isBlank(text):
+                    continue
+
+                if op(newIndentation, indentationLevel):
+                    # Found it
+                    found = True
+                    indentationLevel = newIndentation
+                    resultLine = lm.getLine()
+                    resultText = lm.getText()
+                    moveCount -= 1
+                    if moveCount == 0:
+                        break
+                elif newIndentation < indentationLevel:
+                    # Not found in this indentation block
+                    if not unbounded:
+                        break
+                indentLevels.append(newIndentation )
+
+            if found:
+                if not speakOnly:
+                    lm.updateCaret(resultLine)
+                self.crackle(indentLevels)
+                speech.speakText(resultText)
+            else:
+                self.endOfDocument(errorMessage)
 
     @script(description="Moves to the next line with a greater indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+alt+RightArrow'])
     def script_moveToChild(self, gesture):
