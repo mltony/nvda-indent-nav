@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 #A part of the IndentNav addon for NVDA
 #Copyright (C) 2017-2019 Tony Malykh
 #This file is covered by the GNU General Public License.
@@ -18,6 +19,7 @@ import config
 import ctypes
 import globalPluginHandler
 import gui
+import keyboardHandler 
 import NVDAHelper
 from NVDAObjects.IAccessible import IAccessible
 from NVDAObjects import NVDAObject
@@ -28,8 +30,10 @@ from scriptHandler import script
 import speech
 import struct
 import textInfos
+import time
 import tones
 import ui
+import winUser
 import wx
 
 def myAssert(condition):
@@ -239,6 +243,109 @@ class TraditionalLineManager:
 
     def updateCaret(self, line):
         line.updateCaret()
+        
+controlCharacter = "➉" # U+2789, Dingbat circled sans-serif digit ten
+kbdControlC = keyboardHandler.KeyboardInputGesture.fromName("Control+c")
+kbdControlA = keyboardHandler.KeyboardInputGesture.fromName("Control+a")
+kbdControlShiftHome = keyboardHandler.KeyboardInputGesture.fromName("Control+Shift+Home")
+kbdLeft = keyboardHandler.KeyboardInputGesture.fromName("LeftArrow")
+kbdRight = keyboardHandler.KeyboardInputGesture.fromName("RightArrow")
+kbdControlG = keyboardHandler.KeyboardInputGesture.fromName("Control+g")
+kbdEnter = keyboardHandler.KeyboardInputGesture.fromName("Enter")
+kbdDigit = [
+    keyboardHandler.KeyboardInputGesture.fromName(str(i))
+    for i in range(10)
+]
+class VSCodeLineManager:        
+    def __init__(self):
+        pass
+
+    def __enter__(self):
+        self.restoreKeyboardState()
+        self.clipboardBackup = api.getClipData()
+        # We need to make sure we're not at the very beginning of the document, so go left and then right
+        kbdLeft.send()
+        kbdRight.send()
+        # Copy from cursor all the way up to the beginning
+        kbdControlShiftHome.send()
+        text = self.getSelection()
+        self.lineIndex = len(text.split("\n")) - 1
+        self.originalLineIndex = self.lineIndex
+        self.caretUpdated = False
+        kbdControlA.send()
+        self.lines = self.getSelection()
+        self.lines = self.lines.split("\n")
+        self.nLines = len(self.lines)
+        return self
+
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.copyToClip(self.clipboardBackup)
+        if not self.caretUpdated:
+            self.updateCaret(self.originalLineIndex)
+
+    def move(self, increment):
+        newIndex = self.lineIndex + increment
+        if (newIndex < 0) or (newIndex >= self.nLines):
+            return 0
+        self.lineIndex = newIndex
+        return increment
+        
+
+    def getText(self):
+        return self.lines[self.lineIndex]
+
+    def getLine(self):
+        return self.lineIndex
+
+    def updateCaret(self, line):
+        self.caretUpdated = True
+        kbdControlG.send()
+        for digitStr in str(line + 1):
+            digit = int(digitStr)
+            kbdDigit[digit].send()
+        kbdEnter.send()
+        
+    def restoreKeyboardState(self):
+        """
+        Most likely this class is called from within a gesture. This means that Some of the modifiers, like
+        Shift, Control, Alt are pressed at the moment.
+        We need to virtually release them in order to send other keystrokes to VSCode.
+        """
+        modifiers = [winUser.VK_LCONTROL, winUser.VK_RCONTROL,
+            winUser.VK_LSHIFT, winUser.VK_RSHIFT, winUser.VK_LMENU,
+            winUser.VK_RMENU, winUser.VK_LWIN, winUser.VK_RWIN, ]
+        for k in modifiers:
+            if winUser.getKeyState(k) & 32768:
+                winUser.keybd_event(k, 0, 2, 0)            
+                
+    def copyToClip(self, text):
+        lastException = None
+        for i in range(10):
+            try:
+                api.copyToClip(text)
+                return
+            except PermissionError as e:
+                lastException = e
+                wx.Yield()
+                continue
+        raise Exception(lastException)
+        
+    def getSelection(self):
+        self.copyToClip(controlCharacter)
+        kbdControlC.send()
+        t0 = time.time()
+        while True:
+            try:
+                data = api.getClipData()
+                if data != controlCharacter:
+                    return data
+            except PermissionError:
+                pass
+            wx.Yield()
+            if time.time() - t0 > 1.0:
+                raise Exception("Time out while trying to copy data out of VSCode.")
+        
 
 class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
@@ -323,7 +430,14 @@ class EditableIndentNav(NVDAObject):
         self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount)
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
-        with TraditionalLineManager() as lm:
+        focus = api.getFocusObject()
+        appName = focus.appModule.appName
+        if appName == "code": # VSCode
+            lm = VSCodeLineManager()
+        else:
+            lm = TraditionalLineManager()
+
+        with lm:
             # Get the current indentation level
             text = lm.getText()
             indentationLevel = self.getIndentLevel(text)
@@ -338,6 +452,7 @@ class EditableIndentNav(NVDAObject):
                     break
                 text = lm.getText()
                 newIndentation = self.getIndentLevel(text)
+                line = lm.getLine()
 
                 # Skip over empty lines if we didn't start on one.
                 if not onEmptyLine and speech.isBlank(text):
