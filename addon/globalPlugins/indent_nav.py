@@ -428,6 +428,18 @@ class EditableIndentNav(NVDAObject):
         # Translators: error message if parent couldn't be found (in editable control or in browser)
         msgEditable = _("No parent of indentation block")
         self.move(-1, [msgEditable], unbounded=True, op=operator.lt)
+        
+    @script(description="Moves to the previous line with a greater indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+control+alt+RightArrow'])
+    def script_moveToPreviousChild(self, gesture):
+        # Translators: error message if a previous child couldn't be found (in editable control)
+        msgEditable = _("No previous child block within indentation block")
+        self.move(-1, [msgEditable], unbounded=False, op=operator.gt)
+
+    @script(description="Moves to the next line with a lesser indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+control+alt+LeftArrow'])
+    def script_moveToNextParent(self, gesture):
+        # Translators: error message if previous parent couldn't be found (in editable control)
+        msgEditable = _("No next parent of indentation block")
+        self.move(1, [msgEditable], unbounded=True, op=operator.lt)
 
     def endOfDocument(self, message):
         volume = getConfig("noNextTextChimeVolume")
@@ -501,6 +513,7 @@ class TreeIndentNav(NVDAObject):
             return None
         except KeyError:
             return None
+            
 
     def moveInTree(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
         obj = api.getFocusObject()
@@ -542,4 +555,3 @@ class TreeIndentNav(NVDAObject):
         self.beeper.fancyBeep("HF", 100, volume, volume)
         if getConfig("noNextTextMessage"):
             ui.message(message)
-

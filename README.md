@@ -28,7 +28,9 @@ Keystrokes:
 * NVDA+Alt+Control+UpArrow or DownArrow: Force-jump to previous or next line with the same indentation level. This command will jump to other indentation blocks (such as other Python functions) if necessary.
 * NVDA+Alt+Shift+UpArrow or DownArrow: Jump to first or last line with the same indentation level within the current indentation block.
 * NVDA+alt+LeftArrow: Jump to parent - that is previous line with lesser indentation level.
+* NVDA+control+alt+LeftArrow: Jump to next parent - that is next line with lesser indentation level.
 * NVDA+Alt+RightArrow: Jump to first child - that is next line with greater indentation level within the same indentation block.
+* NVDA+control+Alt+RightArrow: Jump to previous  child - that is previous line with greater indentation level within the same indentation block.
 * NVDA+I: Announce parent line without moving the cursor there. Press twice or multiple times to query second level or further level parent.
 
 ## Known issues
