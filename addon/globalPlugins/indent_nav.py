@@ -214,6 +214,9 @@ class Beeper:
 
 
 class TraditionalLineManager:
+    """
+    This class is no longer used - please use FastLineManager instead.
+    """
     def __init__(self):
         pass
 
@@ -239,6 +242,50 @@ class TraditionalLineManager:
 
     def updateCaret(self, line):
         line.updateCaret()
+        
+class FastLineManager:
+    def __init__(self):
+        pass
+
+    def __enter__(self):
+        focus = api.getFocusObject()
+        document = focus.makeTextInfo(textInfos.POSITION_ALL)
+        pretext = focus.makeTextInfo(textInfos.POSITION_CARET)
+        pretext.setEndPoint(document, "startToStart")
+        self.lineIndex = len(pretext.text.split("\n")) - 1
+        self.originalLineIndex = self.lineIndex
+        text = document.text
+        self.lines = text.split("\n")
+        self.nLines = len(self.lines)
+        self.originalCaret = focus.makeTextInfo(textInfos.POSITION_CARET)
+        self.originalCaret.expand(textInfos.UNIT_LINE)
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+    def move(self, increment):
+        newIndex = self.lineIndex + increment
+        if (newIndex < 0) or (newIndex >= self.nLines):
+            return 0
+        self.lineIndex = newIndex
+        return increment
+
+    def getText(self):
+        return self.lines[self.lineIndex]
+
+    def getLine(self):
+        return self.lineIndex
+
+    def updateCaret(self, line):
+        delta = line - self.originalLineIndex
+        caret = self.originalCaret.copy()
+        result = caret.move(textInfos.UNIT_LINE, delta)
+        if result != delta:
+            raise Exception(f"Failed to move by {delta} lines")
+        caret.updateCaret()
+        caret.expand(textInfos.UNIT_LINE)
+        return caret
 
 class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
@@ -323,7 +370,7 @@ class EditableIndentNav(NVDAObject):
         self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount)
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
-        with TraditionalLineManager() as lm:
+        with FastLineManager() as lm:
             # Get the current indentation level
             text = lm.getText()
             indentationLevel = self.getIndentLevel(text)
@@ -359,10 +406,14 @@ class EditableIndentNav(NVDAObject):
                 indentLevels.append(newIndentation )
 
             if found:
+                textInfo = None
                 if not speakOnly:
-                    lm.updateCaret(resultLine)
+                    textInfo = lm.updateCaret(resultLine)
                 self.crackle(indentLevels)
-                speech.speakText(resultText)
+                if textInfo is not None:
+                    speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
+                else:
+                    speech.speakText(resultText)
             else:
                 self.endOfDocument(errorMessage)
 
