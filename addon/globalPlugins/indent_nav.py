@@ -260,9 +260,9 @@ class FastLineManager:
         document = focus.makeTextInfo(textInfos.POSITION_ALL)
         pretext = focus.makeTextInfo(textInfos.POSITION_CARET)
         pretext.setEndPoint(document, "startToStart")
-        self.lineIndex = len(pretext.text.split("\n")) - 1
+        self.lineIndex = len(self.normalizeString(pretext.text).split("\n")) - 1
         self.originalLineIndex = self.lineIndex
-        text = document.text
+        text = self.normalizeString(document.text)
         self.lines = text.split("\n")
         self.nLines = len(self.lines)
         self.originalCaret = focus.makeTextInfo(textInfos.POSITION_CARET)
@@ -300,6 +300,11 @@ class FastLineManager:
             raise Exception(f"Failed to move by {delta} lines")
         textInfo.expand(textInfos.UNIT_LINE)
         return textInfo
+
+    def normalizeString(self, s):
+        s = s.replace("\r\n", "\n")
+        s = s.replace("\r", "\n")
+        return s
 
 class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
