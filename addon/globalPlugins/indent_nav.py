@@ -36,13 +36,6 @@ def myAssert(condition):
     if not condition:
         raise RuntimeError("Assertion failed")
 
-
-def createMenu():
-    def _popupMenu(evt):
-        gui.mainFrame._popupSettingsDialog(SettingsDialog)
-    prefsMenuItem  = gui.mainFrame.sysTrayIcon.preferencesMenu.Append(wx.ID_ANY, _("IndentNav..."))
-    gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, _popupMenu, prefsMenuItem)
-
 def initConfiguration():
     confspec = {
         "crackleVolume" : "integer( default=25, min=0, max=100)",
@@ -61,7 +54,6 @@ def setConfig(key, value):
 
 addonHandler.initTranslation()
 initConfiguration()
-createMenu()
 
 
 class SettingsDialog(gui.SettingsDialog):
@@ -117,6 +109,22 @@ BROWSE_MODES = [
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     scriptCategory = _("IndentNav")
+    def __init__(self, *args, **kwargs):
+        super(GlobalPlugin, self).__init__(*args, **kwargs)
+        self.createMenu()
+
+    def terminate(self):
+        prefMenu = gui.mainFrame.sysTrayIcon.preferencesMenu
+        try:
+            prefMenu.Remove(self.prefsMenuItem)
+        except:
+            pass
+
+    def createMenu(self):
+        def _popupMenu(evt):
+            gui.mainFrame._popupSettingsDialog(SettingsDialog)
+        self.prefsMenuItem  = gui.mainFrame.sysTrayIcon.preferencesMenu.Append(wx.ID_ANY, _("IndentNav..."))
+        gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, _popupMenu, self.prefsMenuItem)
 
     def chooseNVDAObjectOverlayClasses (self, obj, clsList):
         if obj.windowClassName == u'Scintilla' and obj.windowControlID == 0:
