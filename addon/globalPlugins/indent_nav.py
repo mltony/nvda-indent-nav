@@ -242,7 +242,7 @@ class TraditionalLineManager:
 
     def updateCaret(self, line):
         line.updateCaret()
-        
+
 class FastLineManager:
     def __init__(self):
         pass
@@ -278,14 +278,20 @@ class FastLineManager:
         return self.lineIndex
 
     def updateCaret(self, line):
+        caret = self.getTextInfo(line)
+        caret.updateCaret()
+        return caret
+
+    def getTextInfo(self, line=None):
+        if line is None:
+            line = self.lineIndex
         delta = line - self.originalLineIndex
-        caret = self.originalCaret.copy()
-        result = caret.move(textInfos.UNIT_LINE, delta)
+        textInfo = self.originalCaret.copy()
+        result = textInfo.move(textInfos.UNIT_LINE, delta)
         if result != delta:
             raise Exception(f"Failed to move by {delta} lines")
-        caret.updateCaret()
-        caret.expand(textInfos.UNIT_LINE)
-        return caret
+        textInfo.expand(textInfos.UNIT_LINE)
+        return textInfo
 
 class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
@@ -370,7 +376,7 @@ class EditableIndentNav(NVDAObject):
         self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount)
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
-        with FastLineManager() as lm:
+        with self.getLineManager() as lm:
             # Get the current indentation level
             text = lm.getText()
             indentationLevel = self.getIndentLevel(text)
@@ -417,6 +423,9 @@ class EditableIndentNav(NVDAObject):
             else:
                 self.endOfDocument(errorMessage)
 
+    def getLineManager(self):
+        return FastLineManager()
+
     @script(description="Moves to the next line with a greater indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+alt+RightArrow'])
     def script_moveToChild(self, gesture):
         # Translators: error message if a child couldn't be found (in editable control or in browser)
@@ -428,7 +437,7 @@ class EditableIndentNav(NVDAObject):
         # Translators: error message if parent couldn't be found (in editable control or in browser)
         msgEditable = _("No parent of indentation block")
         self.move(-1, [msgEditable], unbounded=True, op=operator.lt)
-        
+
     @script(description="Moves to the previous line with a greater indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+control+alt+RightArrow'])
     def script_moveToPreviousChild(self, gesture):
         # Translators: error message if a previous child couldn't be found (in editable control)
@@ -440,6 +449,63 @@ class EditableIndentNav(NVDAObject):
         # Translators: error message if previous parent couldn't be found (in editable control)
         msgEditable = _("No next parent of indentation block")
         self.move(1, [msgEditable], unbounded=True, op=operator.lt)
+
+    @script(description="Select current indentation block. Press twice to copy to clipboard.", gestures=['kb:NVDA+control+i'])
+    def script_selectSingleIndentationBlock(self, gesture):
+        msg = _("Indent block copied to clipboard. ")
+        self.selectIndentationBlock(selectMultiple=False, successMessage=msg)
+
+    @script(description="Select current indentation block, as well as follwoing blocks of the same level. Press twice to copy to clipboard.", gestures=['kb:NVDA+alt+i'])
+    def script_selectMultipleIndentationBlocks(self, gesture):
+        msg = _("Indent blocks copied to clipboard. ")
+        self.selectIndentationBlock(selectMultiple=True, successMessage=msg)
+
+    def selectIndentationBlock(self, selectMultiple=False, successMessage=""):
+        count=scriptHandler.getLastScriptRepeatCount()
+        if count >= 1:
+            # Just copy selection to the clipboard
+            focus = api.getFocusObject()
+            textInfo = focus.makeTextInfo(textInfos.POSITION_SELECTION)
+            api.copyToClip(textInfo.text)
+            ui.message(successMessage)
+        with self.getLineManager() as lm:
+            # Get the current indentation level
+            text = lm.getText()
+            originalTextInfo = lm.getTextInfo()
+            indentationLevel = self.getIndentLevel(text)
+            onEmptyLine = speech.isBlank(text)
+            if onEmptyLine:
+                return self.endOfDocument(_("Nothing to select"))
+            # Scan each line forward as long as indentation level is greater than current
+            withinHeading = True
+            line = None
+            indentLevels = []
+            while True:
+                result = lm.move(1)
+                if result == 0:
+                    break
+                text = lm.getText()
+                newIndentation = self.getIndentLevel(text)
+
+                if  speech.isBlank(text):
+                    continue
+
+                if newIndentation < indentationLevel:
+                    break
+                elif newIndentation == indentationLevel:
+                    if not withinHeading and not selectMultiple:
+                        break
+                else: # newIndentation > indentationLevel
+                    withinHeading = False
+                line = lm.getLine()
+                indentLevels.append(newIndentation )
+            selection = originalTextInfo.copy()
+            if line is not None:
+                textInfo = lm.getTextInfo(line)
+                selection.setEndPoint(textInfo, "endToEnd")
+            selection.updateSelection()
+            self.crackle(indentLevels)
+            speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
 
     def endOfDocument(self, message):
         volume = getConfig("noNextTextChimeVolume")
@@ -513,7 +579,7 @@ class TreeIndentNav(NVDAObject):
             return None
         except KeyError:
             return None
-            
+
 
     def moveInTree(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
         obj = api.getFocusObject()
