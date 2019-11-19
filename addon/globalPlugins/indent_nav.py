@@ -127,7 +127,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, _popupMenu, self.prefsMenuItem)
 
     def chooseNVDAObjectOverlayClasses (self, obj, clsList):
-        if obj.windowClassName == u'Scintilla' and obj.windowControlID == 0:
+        if obj.windowClassName == u'Scintilla':
             clsList.append(EditableIndentNav)
             return
         if obj.windowClassName == u"AkelEditW":
