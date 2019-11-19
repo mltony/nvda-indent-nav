@@ -37,9 +37,9 @@ Keystrokes:
 
 ## Known issues
 * IndentNav doesn't  support VSCode at this time. Due to its internal optimizations, VSCode doesn't load the entire document in the editable control, which makes it impossible to find lines far from current line.  
-  Please consider using [Indentation Level Movement](https://marketplace.visualstudio.com/items?itemName=kaiwood.indentation-level-movement) VSCode extension instead.
+  Please use [IndentNav VSCode extension](https://github.com/mltony/vscode-indent-nav/) instead.
+  Or alternatively, please consider using [Indentation Level Movement](https://marketplace.visualstudio.com/items?itemName=kaiwood.indentation-level-movement) VSCode extension instead.
 * Experimental VSCode support has been added in vscode branch, but at this time it doesn't work well enough.
 
 ## Source code
 Source code is available at <http://github.com/mltony/nvda-indent-nav>.
-
