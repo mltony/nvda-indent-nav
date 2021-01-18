@@ -286,9 +286,11 @@ class FastLineManager:
         return self.lineIndex
 
     def updateCaret(self, line):
-        caret = self.getTextInfo(line)
+        line = self.getTextInfo(line)
+        caret = line.copy()
+        caret.collapse()
         caret.updateCaret()
-        return caret
+        return line
 
     def getTextInfo(self, line=None):
         if line is None:
