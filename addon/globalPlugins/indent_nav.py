@@ -15,6 +15,7 @@ import addonHandler
 import api
 import controlTypes
 import config
+import core
 import ctypes
 import globalPluginHandler
 import gui
@@ -258,14 +259,16 @@ class FastLineManager:
     def __enter__(self):
         focus = api.getFocusObject()
         document = focus.makeTextInfo(textInfos.POSITION_ALL)
-        pretext = focus.makeTextInfo(textInfos.POSITION_CARET)
+        pretext = focus.makeTextInfo(textInfos.POSITION_SELECTION)
+        pretext.collapse()
         pretext.setEndPoint(document, "startToStart")
         self.lineIndex = len(self.normalizeString(pretext.text).split("\n")) - 1
         self.originalLineIndex = self.lineIndex
         text = self.normalizeString(document.text)
         self.lines = text.split("\n")
         self.nLines = len(self.lines)
-        self.originalCaret = focus.makeTextInfo(textInfos.POSITION_CARET)
+        self.originalCaret = focus.makeTextInfo(textInfos.POSITION_SELECTION)
+        self.originalCaret.collapse()
         self.originalCaret.expand(textInfos.UNIT_LINE)
         return self
 
@@ -477,13 +480,17 @@ class EditableIndentNav(NVDAObject):
 
     def selectIndentationBlock(self, selectMultiple=False, successMessage=""):
         count=scriptHandler.getLastScriptRepeatCount()
-        if count >= 1:
+        if selectMultiple and count >= 1:
             # Just copy selection to the clipboard
             focus = api.getFocusObject()
             textInfo = focus.makeTextInfo(textInfos.POSITION_SELECTION)
             api.copyToClip(textInfo.text)
             ui.message(successMessage)
         with self.getLineManager() as lm:
+            if count >= 1:
+                textInfo = lm.getTextInfo()
+                textInfo.collapse()
+                textInfo.updateCaret()
             # Get the current indentation level
             text = lm.getText()
             originalTextInfo = lm.getTextInfo()
@@ -492,12 +499,13 @@ class EditableIndentNav(NVDAObject):
             if onEmptyLine:
                 return self.endOfDocument(_("Nothing to select"))
             # Scan each line forward as long as indentation level is greater than current
-            withinHeading = True
-            line = None
+            line = lm.getLine()
             indentLevels = []
             while True:
                 result = lm.move(1)
                 if result == 0:
+                    if not selectMultiple and count >= 1:
+                        core.callLater(100, self.endOfDocument, _("No more indentation blocks!"))
                     break
                 text = lm.getText()
                 newIndentation = self.getIndentLevel(text)
@@ -506,12 +514,19 @@ class EditableIndentNav(NVDAObject):
                     continue
 
                 if newIndentation < indentationLevel:
+                    if not selectMultiple and count >= 1:
+                        core.callLater(100, self.endOfDocument, _("No more indentation blocks!"))
+                        #self.endOfDocument(_("No more indentation blocks!"))
                     break
                 elif newIndentation == indentationLevel:
-                    if not withinHeading and not selectMultiple:
+                    if   selectMultiple:
+                        pass
+                    elif count > 0:
+                        count -= 1
+                    else:
                         break
                 else: # newIndentation > indentationLevel
-                    withinHeading = False
+                    pass
                 line = lm.getLine()
                 indentLevels.append(newIndentation )
             selection = originalTextInfo.copy()
