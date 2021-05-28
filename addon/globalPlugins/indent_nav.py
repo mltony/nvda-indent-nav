@@ -19,6 +19,7 @@ import core
 import ctypes
 import globalPluginHandler
 import gui
+import keyboardHandler
 import NVDAHelper
 from NVDAObjects.IAccessible import IAccessible
 from NVDAObjects import NVDAObject
@@ -29,6 +30,7 @@ from scriptHandler import script
 import speech
 import struct
 import textInfos
+import time
 import tones
 import ui
 import wx
@@ -536,6 +538,53 @@ class EditableIndentNav(NVDAObject):
             selection.updateSelection()
             self.crackle(indentLevels)
             speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
+            
+    @script(description="Indent-paste. This will figure out indentation level in the current line and paste text from clipboard adjusting indentation level correspondingly.", gestures=['kb:NVDA+V'])
+    def script_indentPaste(self, gesture):
+        clipboardBackup = api.getClipData()
+        try:
+            focus = api.getFocusObject()
+            selection = focus.makeTextInfo(textInfos.POSITION_SELECTION)            
+            if len(selection.text) != 0:
+                ui.message(_("Some text selected! Cannot indent-paste."))
+                return
+            line = focus.makeTextInfo(textInfos.POSITION_CARET)            
+            line.collapse()
+            line.expand(textInfos.UNIT_LINE)
+            # Make sure line doesn't include newline characters
+            while len(line.text) > 0 and line.text[-1] in "\r\n":
+                line.move(textInfos.UNIT_CHARACTER, -1, "end")
+            lineLevel = self.getIndentLevel(line.text + "a")
+            #ui.message(f"Level {level}")
+            text = clipboardBackup
+            textLevel = min([
+                self.getIndentLevel(s)
+                for s in text.splitlines()
+                if not speech.isBlank(s)
+            ])
+            useTabs = '\t' in text or '\t' in line.text
+            delta = lineLevel - textLevel
+            text = text.replace("\t", " "*4)
+            if delta > 0:
+                text = "\n".join([
+                    " "*delta + s
+                    for s in text.splitlines()
+                ])
+            elif delta < 0:
+                text = "\n".join([
+                    s[min(-delta, len(s)):] 
+                    for s in text.splitlines()
+                ])
+            if useTabs:
+                text = text.replace(" "*4, "\t")
+            
+            api.copyToClip(text)
+            line.updateSelection()
+            time.sleep(0.1)
+            keyboardHandler.KeyboardInputGesture.fromName("Control+v").send()
+        finally:
+            core.callLater(100, api.copyToClip, clipboardBackup)
+            core.callLater(100, ui.message, _("Pasted"))
 
     def endOfDocument(self, message):
         volume = getConfig("noNextTextChimeVolume")
