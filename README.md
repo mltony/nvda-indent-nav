@@ -32,8 +32,9 @@ Keystrokes:
 * NVDA+Alt+RightArrow: Jump to first child - that is next line with greater indentation level within the same indentation block.
 * NVDA+control+Alt+RightArrow: Jump to previous  child - that is previous line with greater indentation level within the same indentation block.
 * NVDA+I: Announce parent line without moving the cursor there. Press twice or multiple times to query second level or further level parent.
-* NVDA+control+I: Select current indentation block. Press twice to copy to clipboard.
+* NVDA+control+I: Select current indentation block. Press repeatedly to select multiple indentation blocks.
 * NVDA+Alt+I: Select current indentation block and all the following indentation blocks on the same level. Press twice to copy to clipboard.
+* NVDA+V: Indent paste, that is first reindent current clipboard text to match indentation level of current file and then paste.
 
 ## Known issues
 * IndentNav doesn't  support VSCode at this time. Due to its internal optimizations, VSCode doesn't load the entire document in the editable control, which makes it impossible to find lines far from current line.  
