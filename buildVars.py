@@ -22,7 +22,7 @@ It allows NVDA users to navigate by indentation level or offset of lines or para
 In browsers it allows to quickly find paragraphs with the same offset from the left edge of the screen, such as first level comments in a hierarchical tree of comments.
 Also while editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level."""),
 	# version
-	"addon_version" : "1.11",
+	"addon_version" : "1.12",
 	# Author(s)
 	"addon_author" : u"Tony Malykh <anton.malykh@gmail.com>",
 	# URL for the add-on documentation support
@@ -32,7 +32,7 @@ Also while editing source code in many programming languages, it allows to jump 
 	# Minimum NVDA version supported (e.g. "2018.3")
 	"addon_minimumNVDAVersion" : "2019.2.0",
 	# Last NVDA version supported/tested (e.g. "2018.4", ideally more recent than minimum version)
-	"addon_lastTestedNVDAVersion" : "2019.3.0",
+	"addon_lastTestedNVDAVersion" : "2021.1.0",
 	# Add-on update channel (default is stable or None)
 	"addon_updateChannel" : None,
 }
