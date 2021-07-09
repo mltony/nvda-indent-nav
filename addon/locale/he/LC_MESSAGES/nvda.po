@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: IndentNav 1.1\n"
-"Report-Msgid-Bugs-To: nvda-translations@freelists.org\n"
+"Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2018-11-23 09:05+1000\n"
 "PO-Revision-Date: 2018-12-07 01:59+0200\n"
 "Last-Translator: shmuel naaman <shmuel_naaman@yahoo.com>\n"

@@ -1,0 +1,49 @@
+# Brazilian Portuguese translation of IndentNav add-on.
+# Copyright (C) 2021 NVDA Contributors.
+# This file is distributed under the same license as the NVDA package.
+# Ângelo Abrantes <ampa4374@gmail.com>, 2018.
+# Tiago Melo Casal <tcasal@intervox.nce.ufrj.br>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: IndentNav\n"
+"Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
+"POT-Creation-Date: 2018-11-23 09:05+1000\n"
+"PO-Revision-Date: 2021-07-03 15:58-0300\n"
+"Last-Translator: Tiago Melo Casal <tcasal@intervox.nce.ufrj.br>\n"
+"Language-Team: NVDA Brazilian Portuguese translation team (Equipe de "
+"tradução do NVDA para Português Brasileiro) <clever97@gmail.com>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.11\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on to be shown on installation and add-on information.
+msgid "IndentNav"
+msgstr "IndentNav — Navegação por Recuo"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+msgid ""
+"Indentation Navigation addon.\n"
+"It allows NVDA users to navigate by indentation level or offset of lines or "
+"paragraphs.\n"
+"In browsers it allows to quickly find paragraphs with the same offset from "
+"the left edge of the screen, such as first level comments in a hierarchical "
+"tree of comments.\n"
+"Also while editing source code in many programming languages, it allows to "
+"jump between the lines of the same indentation level, as well as quickly "
+"find lines with greater or lesser indentation level."
+msgstr ""
+"Complemento de Navegação por Recuo (indentação).\n"
+"Permite aos usuários do NVDA navegar por nível de recuo — endentação — ou "
+"deslocamento de linhas ou parágrafos.\n"
+"Em navegadores, permite localizar rapidamente os parágrafos com o mesmo "
+"deslocamento da borda esquerda da tela, como comentários de primeiro nível "
+"em uma árvore hierárquica de comentários.\n"
+"Além disso, ao editar o código fonte em muitas linguagens de programação, "
+"permite saltar entre as linhas do mesmo nível de recuo, bem como encontrar "
+"rapidamente linhas com maior ou menor nível de recuo."
