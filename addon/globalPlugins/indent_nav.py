@@ -1,5 +1,5 @@
 #A part of the IndentNav addon for NVDA
-#Copyright (C) 2017-2019 Tony Malykh
+#Copyright (C) 2017-2021 Tony Malykh
 #This file is covered by the GNU General Public License.
 #See the file LICENSE  for more details.
 
@@ -22,6 +22,8 @@ import gui
 import keyboardHandler
 import NVDAHelper
 from NVDAObjects.IAccessible import IAccessible
+from NVDAObjects.IAccessible import IA2TextTextInfo
+from NVDAObjects.IAccessible.ia2TextMozilla import MozillaCompoundTextInfo
 from NVDAObjects import NVDAObject
 import operator
 import re
@@ -272,6 +274,14 @@ class FastLineManager:
         self.originalCaret = focus.makeTextInfo(textInfos.POSITION_SELECTION)
         self.originalCaret.collapse()
         self.originalCaret.expand(textInfos.UNIT_LINE)
+        self.numNewLineCharacters = 2 if "\r\n" in document.text else 1
+        self.isOffsetMode = isinstance(document, textInfos.offsets.OffsetsTextInfo)
+        self.isCompoundMode = False
+        if isinstance(document, MozillaCompoundTextInfo):
+            if isinstance(document._start, IA2TextTextInfo) and isinstance(document._end, IA2TextTextInfo):
+                if document._start._obj == document._end._obj:
+                    self.isCompoundMode = True
+        self.document = document
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -300,6 +310,22 @@ class FastLineManager:
     def getTextInfo(self, line=None):
         if line is None:
             line = self.lineIndex
+        if self.isOffsetMode or self.isCompoundMode:
+            textInfo = self.document.copy()
+            startOffset = sum([self.numNewLineCharacters + len(s) for s in self.lines[:line]])
+            endOffset = startOffset + len(self.lines[line])
+            if self.isOffsetMode:
+                textInfo._startOffset = startOffset
+                textInfo._endOffset = endOffset
+            elif self.isCompoundMode:
+                textInfo._start._startOffset = startOffset
+                textInfo._end._startOffset = startOffset
+                textInfo._start._endOffset = endOffset
+                textInfo._end._endOffset = endOffset
+            else:
+                raise Exception("impossible")
+            return textInfo
+            
         delta = line - self.originalLineIndex
         textInfo = self.originalCaret.copy()
         result = textInfo.move(textInfos.UNIT_LINE, delta)
