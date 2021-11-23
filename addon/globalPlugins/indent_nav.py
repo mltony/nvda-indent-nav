@@ -316,7 +316,7 @@ class FastLineManager:
             def speakMode():
                 speech.cancelSpeech()
                 ui.message(f"{self.offsetMode} {self.decoding}")
-            core.callLater(1000, speakMode)
+            #core.callLater(1000, speakMode)
         self.document = document
         #self.offsetMode = OffsetMode.GENERIC
         return self
