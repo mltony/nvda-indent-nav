@@ -17,6 +17,7 @@ import controlTypes
 import config
 import core
 import ctypes
+from enum import Enum, auto
 import globalPluginHandler
 import gui
 import keyboardHandler
@@ -255,6 +256,15 @@ class TraditionalLineManager:
 
     def updateCaret(self, line):
         line.updateCaret()
+class OffsetMode(Enum):
+    GENERIC = auto()
+    OFFSET = auto()
+    COMPOUND = auto()
+
+class OffsetDecodeMode(Enum):
+    NONE = auto()
+    PLAIN = auto()
+    UTF8 = auto()
 
 class FastLineManager:
     def __init__(self):
@@ -268,20 +278,47 @@ class FastLineManager:
         pretext.setEndPoint(document, "startToStart")
         self.lineIndex = len(self.normalizeString(pretext.text).split("\n")) - 1
         self.originalLineIndex = self.lineIndex
-        text = self.normalizeString(document.text)
+        documentText = document.text
+        text = self.normalizeString(documentText)
         self.lines = text.split("\n")
         self.nLines = len(self.lines)
         self.originalCaret = focus.makeTextInfo(textInfos.POSITION_SELECTION)
         self.originalCaret.collapse()
         self.originalCaret.expand(textInfos.UNIT_LINE)
         self.numNewLineCharacters = 2 if "\r\n" in document.text else 1
-        self.isOffsetMode = isinstance(document, textInfos.offsets.OffsetsTextInfo)
-        self.isCompoundMode = False
+        self.offsetMode = OffsetMode.GENERIC
+        if isinstance(document, textInfos.offsets.OffsetsTextInfo):
+            self.offsetMode = OffsetMode.OFFSET
+            # In some apps, like notepad, end offset is computed incorrectly. The last characters appear to be empty.
+            #Working around this here
+            lastChar = document.copy()
+            while lastChar._endOffset >= 1:
+                lastChar._startOffset = lastChar._endOffset - 1
+                if len(lastChar.text) == 0:
+                    lastChar._endOffset -= 1
+                else:
+                    break
+            endOffset = lastChar._endOffset
         if isinstance(document, MozillaCompoundTextInfo):
             if isinstance(document._start, IA2TextTextInfo) and isinstance(document._end, IA2TextTextInfo):
                 if document._start._obj == document._end._obj:
-                    self.isCompoundMode = True
+                    self.offsetMode = OffsetMode.COMPOUND
+                    endOffset = document._end._endOffset
+        if self.offsetMode in {OffsetMode.OFFSET, OffsetMode.COMPOUND}:
+            if len(document.text) == endOffset:
+                self.decoding = OffsetDecodeMode.PLAIN
+            elif len(document.text.encode('utf-8')) == endOffset:
+                self.decoding = OffsetDecodeMode.UTF8
+            else:
+                # We don't know how to decode text into offsets. Fall back to more reliable version.
+                self.offsetMode = OffsetMode.GENERIC
+                self.decoding = OffsetDecodeMode.NONE
+            def speakMode():
+                speech.cancelSpeech()
+                ui.message(f"{self.offsetMode} {self.decoding}")
+            core.callLater(1000, speakMode)
         self.document = document
+        #self.offsetMode = OffsetMode.GENERIC
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -310,14 +347,20 @@ class FastLineManager:
     def getTextInfo(self, line=None):
         if line is None:
             line = self.lineIndex
-        if self.isOffsetMode or self.isCompoundMode:
+        if self.offsetMode in {OffsetMode.OFFSET, OffsetMode.COMPOUND}:
             textInfo = self.document.copy()
-            startOffset = sum([self.numNewLineCharacters + len(s) for s in self.lines[:line]])
+            decoding = self.decoding
+            numNewLineCharacters = self.numNewLineCharacters
+            def l(s):
+                if decoding == OffsetDecodeMode.UTF8:
+                    s = s.encode('utf-8')
+                return numNewLineCharacters + len(s)
+            startOffset = sum([ l(s) for s in self.lines[:line]])
             endOffset = startOffset + len(self.lines[line])
-            if self.isOffsetMode:
+            if self.offsetMode == OffsetMode.OFFSET:
                 textInfo._startOffset = startOffset
                 textInfo._endOffset = endOffset
-            elif self.isCompoundMode:
+            elif self.offsetMode == OffsetMode.COMPOUND:
                 textInfo._start._startOffset = startOffset
                 textInfo._end._startOffset = startOffset
                 textInfo._start._endOffset = endOffset
