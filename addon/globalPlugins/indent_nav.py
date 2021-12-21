@@ -38,6 +38,26 @@ import tones
 import ui
 import wx
 
+debug = True
+if debug:
+    import threading
+    LOG_FILE_NAME = "C:\\Users\\tony\\Dropbox\\1.txt"
+    f = open(LOG_FILE_NAME, "w", encoding='utf=8')
+    f.close()
+    LOG_MUTEX = threading.Lock()
+    def mylog(s):
+        with LOG_MUTEX:
+            f = open(LOG_FILE_NAME, "a", encoding='utf-8')
+            print(s, file=f)
+            #f.write(s.encode('UTF-8'))
+            #f.write('\n')
+            f.close()
+else:
+    def mylog(*arg, **kwarg):
+        pass
+
+
+
 def myAssert(condition):
     if not condition:
         raise RuntimeError("Assertion failed")
@@ -356,7 +376,7 @@ class FastLineManager:
                     s = s.encode('utf-8')
                 return numNewLineCharacters + len(s)
             startOffset = sum([ l(s) for s in self.lines[:line]])
-            endOffset = startOffset + len(self.lines[line])
+            endOffset = startOffset + l(self.lines[line])
             if self.offsetMode == OffsetMode.OFFSET:
                 textInfo._startOffset = startOffset
                 textInfo._endOffset = endOffset
