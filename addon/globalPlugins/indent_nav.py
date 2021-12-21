@@ -649,6 +649,9 @@ class EditableIndentNav(NVDAObject):
                     break
             mylog("m3")
             lineLevel = self.getIndentLevel(line.text.rstrip("\r\n") + "a")
+            if not speech.isBlank(line.text):
+                ui.message(_("Cannot indent-paste: current line is not empty!"))
+                return
             #ui.message(f"Level {level}")
             text = clipboardBackup
             mylog("m4")
@@ -680,9 +683,10 @@ class EditableIndentNav(NVDAObject):
             time.sleep(0.1)
             keyboardHandler.KeyboardInputGesture.fromName("Control+v").send()
             mylog("m8")
+            core.callLater(100, ui.message, _("Pasted"))
         finally:
             core.callLater(100, api.copyToClip, clipboardBackup)
-            core.callLater(100, ui.message, _("Pasted"))
+            
 
     def endOfDocument(self, message):
         volume = getConfig("noNextTextChimeVolume")
