@@ -38,6 +38,13 @@ import tones
 import ui
 import wx
 
+try:
+    ROLE_EDITABLETEXT = controlTypes.ROLE_EDITABLETEXT
+    ROLE_TREEVIEWITEM = controlTypes.ROLE_TREEVIEWITEM
+except AttributeError:
+    ROLE_EDITABLETEXT = controlTypes.Role.EDITABLETEXT
+    ROLE_TREEVIEWITEM = controlTypes.Role.TREEVIEWITEM
+
 debug = False
 if debug:
     import threading
@@ -159,10 +166,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if obj.windowClassName == u"AkelEditW":
             clsList.append(EditableIndentNav)
             return
-        if obj.role == controlTypes.ROLE_EDITABLETEXT:
+        if obj.role == ROLE_EDITABLETEXT:
             clsList.append(EditableIndentNav)
             return
-        if obj.role == controlTypes.ROLE_TREEVIEWITEM:
+        if obj.role == ROLE_TREEVIEWITEM:
             clsList.append(TreeIndentNav)
             return
 
