@@ -38,7 +38,7 @@ import tones
 import ui
 import wx
 
-debug = True
+debug = False
 if debug:
     import threading
     LOG_FILE_NAME = "C:\\Users\\tony\\Dropbox\\3.txt"
@@ -632,29 +632,23 @@ class EditableIndentNav(NVDAObject):
     def script_indentPaste(self, gesture):
         clipboardBackup = api.getClipData()
         try:
-            mylog("m0")
             focus = api.getFocusObject()
             selection = focus.makeTextInfo(textInfos.POSITION_SELECTION)            
             if len(selection.text) != 0:
                 ui.message(_("Some text selected! Cannot indent-paste."))
                 return
-            mylog("m1")
             line = focus.makeTextInfo(textInfos.POSITION_CARET)            
             line.collapse()
             line.expand(textInfos.UNIT_LINE)
-            mylog("m2")
             # Make sure line doesn't include newline characters
             while len(line.text) > 0 and line.text[-1] in "\r\n":
                 if 0 == line.move(textInfos.UNIT_CHARACTER, -1, "end"):
                     break
-            mylog("m3")
             lineLevel = self.getIndentLevel(line.text.rstrip("\r\n") + "a")
             if not speech.isBlank(line.text):
                 ui.message(_("Cannot indent-paste: current line is not empty!"))
                 return
-            #ui.message(f"Level {level}")
             text = clipboardBackup
-            mylog("m4")
             textLevel = min([
                 self.getIndentLevel(s)
                 for s in text.splitlines()
@@ -663,7 +657,6 @@ class EditableIndentNav(NVDAObject):
             useTabs = '\t' in text or '\t' in line.text
             delta = lineLevel - textLevel
             text = text.replace("\t", " "*4)
-            mylog("m5")
             if delta > 0:
                 text = "\n".join([
                     " "*delta + s
@@ -676,13 +669,10 @@ class EditableIndentNav(NVDAObject):
                 ])
             if useTabs:
                 text = text.replace(" "*4, "\t")
-            mylog("m6")
             api.copyToClip(text)
             line.updateSelection()
-            mylog("m7")
             time.sleep(0.1)
             keyboardHandler.KeyboardInputGesture.fromName("Control+v").send()
-            mylog("m8")
             core.callLater(100, ui.message, _("Pasted"))
         finally:
             core.callLater(100, api.copyToClip, clipboardBackup)
