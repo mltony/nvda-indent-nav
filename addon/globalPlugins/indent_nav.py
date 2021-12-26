@@ -386,12 +386,12 @@ class FastLineManager:
             endOffset = startOffset + l(self.lines[line])
             if self.offsetMode == OffsetMode.OFFSET:
                 textInfo._startOffset = startOffset
-                textInfo._endOffset = endOffset
+                textInfo._endOffset = min(textInfo._endOffset, endOffset)
             elif self.offsetMode == OffsetMode.COMPOUND:
                 textInfo._start._startOffset = startOffset
                 textInfo._end._startOffset = startOffset
-                textInfo._start._endOffset = endOffset
-                textInfo._end._endOffset = endOffset
+                textInfo._start._endOffset = min(textInfo._start._endOffset, endOffset)
+                textInfo._end._endOffset = min(textInfo._end._endOffset, endOffset)
             else:
                 raise Exception("impossible")
             return textInfo
