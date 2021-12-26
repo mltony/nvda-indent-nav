@@ -20,6 +20,7 @@ import ctypes
 from enum import Enum, auto
 import globalPluginHandler
 import gui
+from gui.settingsDialogs import SettingsPanel
 import keyboardHandler
 import NVDAHelper
 from NVDAObjects.IAccessible import IAccessible
@@ -89,7 +90,7 @@ addonHandler.initTranslation()
 initConfiguration()
 
 
-class SettingsDialog(gui.SettingsDialog):
+class SettingsDialog(SettingsPanel):
     # Translators: Title for the settings dialog
     title = _("IndentNav settings")
 
@@ -127,11 +128,10 @@ class SettingsDialog(gui.SettingsDialog):
         self.noNextTextMessageCheckbox.Value = getConfig("noNextTextMessage")
 
 
-    def onOk(self, evt):
+    def onSave(self):
         config.conf["indentnav"]["crackleVolume"] = self.crackleVolumeSlider.Value
         config.conf["indentnav"]["noNextTextChimeVolume"] = self.noNextTextChimeVolumeSlider.Value
         config.conf["indentnav"]["noNextTextMessage"] = self.noNextTextMessageCheckbox.Value
-        super(SettingsDialog, self).onOk(evt)
 
 # Browse mode constants:
 BROWSE_MODES = [
@@ -147,17 +147,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.createMenu()
 
     def terminate(self):
-        prefMenu = gui.mainFrame.sysTrayIcon.preferencesMenu
-        try:
-            prefMenu.Remove(self.prefsMenuItem)
-        except:
-            pass
+        gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(SettingsDialog)
 
     def createMenu(self):
-        def _popupMenu(evt):
-            gui.mainFrame._popupSettingsDialog(SettingsDialog)
-        self.prefsMenuItem  = gui.mainFrame.sysTrayIcon.preferencesMenu.Append(wx.ID_ANY, _("IndentNav..."))
-        gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, _popupMenu, self.prefsMenuItem)
+        gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(SettingsDialog)
 
     def chooseNVDAObjectOverlayClasses (self, obj, clsList):
         if obj.windowClassName == u'Scintilla':
