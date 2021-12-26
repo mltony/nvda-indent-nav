@@ -1,5 +1,5 @@
 #A part of the IndentNav addon for NVDA
-#Copyright (C) 2017-2019 Tony Malykh
+#Copyright (C) 2017-2021 Tony Malykh
 #This file is covered by the GNU General Public License.
 #See the file LICENSE  for more details.
 
@@ -17,11 +17,15 @@ import controlTypes
 import config
 import core
 import ctypes
+from enum import Enum, auto
 import globalPluginHandler
 import gui
+from gui.settingsDialogs import SettingsPanel
 import keyboardHandler
 import NVDAHelper
 from NVDAObjects.IAccessible import IAccessible
+from NVDAObjects.IAccessible import IA2TextTextInfo
+from NVDAObjects.IAccessible.ia2TextMozilla import MozillaCompoundTextInfo
 from NVDAObjects import NVDAObject
 import operator
 import re
@@ -34,6 +38,33 @@ import time
 import tones
 import ui
 import wx
+
+try:
+    ROLE_EDITABLETEXT = controlTypes.ROLE_EDITABLETEXT
+    ROLE_TREEVIEWITEM = controlTypes.ROLE_TREEVIEWITEM
+except AttributeError:
+    ROLE_EDITABLETEXT = controlTypes.Role.EDITABLETEXT
+    ROLE_TREEVIEWITEM = controlTypes.Role.TREEVIEWITEM
+
+debug = False
+if debug:
+    import threading
+    LOG_FILE_NAME = "C:\\Users\\tony\\Dropbox\\3.txt"
+    f = open(LOG_FILE_NAME, "w", encoding='utf=8')
+    f.close()
+    LOG_MUTEX = threading.Lock()
+    def mylog(s):
+        with LOG_MUTEX:
+            f = open(LOG_FILE_NAME, "a", encoding='utf-8')
+            print(s, file=f)
+            #f.write(s.encode('UTF-8'))
+            #f.write('\n')
+            f.close()
+else:
+    def mylog(*arg, **kwarg):
+        pass
+
+
 
 def myAssert(condition):
     if not condition:
@@ -59,7 +90,7 @@ addonHandler.initTranslation()
 initConfiguration()
 
 
-class SettingsDialog(gui.SettingsDialog):
+class SettingsDialog(SettingsPanel):
     # Translators: Title for the settings dialog
     title = _("IndentNav settings")
 
@@ -97,11 +128,10 @@ class SettingsDialog(gui.SettingsDialog):
         self.noNextTextMessageCheckbox.Value = getConfig("noNextTextMessage")
 
 
-    def onOk(self, evt):
+    def onSave(self):
         config.conf["indentnav"]["crackleVolume"] = self.crackleVolumeSlider.Value
         config.conf["indentnav"]["noNextTextChimeVolume"] = self.noNextTextChimeVolumeSlider.Value
         config.conf["indentnav"]["noNextTextMessage"] = self.noNextTextMessageCheckbox.Value
-        super(SettingsDialog, self).onOk(evt)
 
 # Browse mode constants:
 BROWSE_MODES = [
@@ -117,17 +147,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         self.createMenu()
 
     def terminate(self):
-        prefMenu = gui.mainFrame.sysTrayIcon.preferencesMenu
-        try:
-            prefMenu.Remove(self.prefsMenuItem)
-        except:
-            pass
+        gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(SettingsDialog)
 
     def createMenu(self):
-        def _popupMenu(evt):
-            gui.mainFrame._popupSettingsDialog(SettingsDialog)
-        self.prefsMenuItem  = gui.mainFrame.sysTrayIcon.preferencesMenu.Append(wx.ID_ANY, _("IndentNav..."))
-        gui.mainFrame.sysTrayIcon.Bind(wx.EVT_MENU, _popupMenu, self.prefsMenuItem)
+        gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(SettingsDialog)
 
     def chooseNVDAObjectOverlayClasses (self, obj, clsList):
         if obj.windowClassName == u'Scintilla':
@@ -136,10 +159,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if obj.windowClassName == u"AkelEditW":
             clsList.append(EditableIndentNav)
             return
-        if obj.role == controlTypes.ROLE_EDITABLETEXT:
+        if obj.role == ROLE_EDITABLETEXT:
             clsList.append(EditableIndentNav)
             return
-        if obj.role == controlTypes.ROLE_TREEVIEWITEM:
+        if obj.role == ROLE_TREEVIEWITEM:
             clsList.append(TreeIndentNav)
             return
 
@@ -253,6 +276,15 @@ class TraditionalLineManager:
 
     def updateCaret(self, line):
         line.updateCaret()
+class OffsetMode(Enum):
+    GENERIC = auto()
+    OFFSET = auto()
+    COMPOUND = auto()
+
+class OffsetDecodeMode(Enum):
+    NONE = auto()
+    PLAIN = auto()
+    UTF8 = auto()
 
 class FastLineManager:
     def __init__(self):
@@ -266,12 +298,47 @@ class FastLineManager:
         pretext.setEndPoint(document, "startToStart")
         self.lineIndex = len(self.normalizeString(pretext.text).split("\n")) - 1
         self.originalLineIndex = self.lineIndex
-        text = self.normalizeString(document.text)
+        documentText = document.text
+        text = self.normalizeString(documentText)
         self.lines = text.split("\n")
         self.nLines = len(self.lines)
         self.originalCaret = focus.makeTextInfo(textInfos.POSITION_SELECTION)
         self.originalCaret.collapse()
         self.originalCaret.expand(textInfos.UNIT_LINE)
+        self.numNewLineCharacters = 2 if "\r\n" in document.text else 1
+        self.offsetMode = OffsetMode.GENERIC
+        if isinstance(document, textInfos.offsets.OffsetsTextInfo):
+            self.offsetMode = OffsetMode.OFFSET
+            # In some apps, like notepad, end offset is computed incorrectly. The last characters appear to be empty.
+            #Working around this here
+            lastChar = document.copy()
+            while lastChar._endOffset >= 1:
+                lastChar._startOffset = lastChar._endOffset - 1
+                if len(lastChar.text) == 0:
+                    lastChar._endOffset -= 1
+                else:
+                    break
+            endOffset = lastChar._endOffset
+        if isinstance(document, MozillaCompoundTextInfo):
+            if isinstance(document._start, IA2TextTextInfo) and isinstance(document._end, IA2TextTextInfo):
+                if document._start._obj == document._end._obj:
+                    self.offsetMode = OffsetMode.COMPOUND
+                    endOffset = document._end._endOffset
+        if self.offsetMode in {OffsetMode.OFFSET, OffsetMode.COMPOUND}:
+            if len(document.text) == endOffset:
+                self.decoding = OffsetDecodeMode.PLAIN
+            elif len(document.text.encode('utf-8')) == endOffset:
+                self.decoding = OffsetDecodeMode.UTF8
+            else:
+                # We don't know how to decode text into offsets. Fall back to more reliable version.
+                self.offsetMode = OffsetMode.GENERIC
+                self.decoding = OffsetDecodeMode.NONE
+            def speakMode():
+                speech.cancelSpeech()
+                ui.message(f"{self.offsetMode} {self.decoding}")
+            #core.callLater(1000, speakMode)
+        self.document = document
+        #self.offsetMode = OffsetMode.GENERIC
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -300,6 +367,28 @@ class FastLineManager:
     def getTextInfo(self, line=None):
         if line is None:
             line = self.lineIndex
+        if self.offsetMode in {OffsetMode.OFFSET, OffsetMode.COMPOUND}:
+            textInfo = self.document.copy()
+            decoding = self.decoding
+            numNewLineCharacters = self.numNewLineCharacters
+            def l(s):
+                if decoding == OffsetDecodeMode.UTF8:
+                    s = s.encode('utf-8')
+                return numNewLineCharacters + len(s)
+            startOffset = sum([ l(s) for s in self.lines[:line]])
+            endOffset = startOffset + l(self.lines[line])
+            if self.offsetMode == OffsetMode.OFFSET:
+                textInfo._startOffset = startOffset
+                textInfo._endOffset = min(textInfo._endOffset, endOffset)
+            elif self.offsetMode == OffsetMode.COMPOUND:
+                textInfo._start._startOffset = startOffset
+                textInfo._end._startOffset = startOffset
+                textInfo._start._endOffset = min(textInfo._start._endOffset, endOffset)
+                textInfo._end._endOffset = min(textInfo._end._endOffset, endOffset)
+            else:
+                raise Exception("impossible")
+            return textInfo
+            
         delta = line - self.originalLineIndex
         textInfo = self.originalCaret.copy()
         result = textInfo.move(textInfos.UNIT_LINE, delta)
@@ -553,9 +642,12 @@ class EditableIndentNav(NVDAObject):
             line.expand(textInfos.UNIT_LINE)
             # Make sure line doesn't include newline characters
             while len(line.text) > 0 and line.text[-1] in "\r\n":
-                line.move(textInfos.UNIT_CHARACTER, -1, "end")
-            lineLevel = self.getIndentLevel(line.text + "a")
-            #ui.message(f"Level {level}")
+                if 0 == line.move(textInfos.UNIT_CHARACTER, -1, "end"):
+                    break
+            lineLevel = self.getIndentLevel(line.text.rstrip("\r\n") + "a")
+            if not speech.isBlank(line.text):
+                ui.message(_("Cannot indent-paste: current line is not empty!"))
+                return
             text = clipboardBackup
             textLevel = min([
                 self.getIndentLevel(s)
@@ -577,14 +669,14 @@ class EditableIndentNav(NVDAObject):
                 ])
             if useTabs:
                 text = text.replace(" "*4, "\t")
-            
             api.copyToClip(text)
             line.updateSelection()
             time.sleep(0.1)
             keyboardHandler.KeyboardInputGesture.fromName("Control+v").send()
+            core.callLater(100, ui.message, _("Pasted"))
         finally:
             core.callLater(100, api.copyToClip, clipboardBackup)
-            core.callLater(100, ui.message, _("Pasted"))
+            
 
     def endOfDocument(self, message):
         volume = getConfig("noNextTextChimeVolume")
