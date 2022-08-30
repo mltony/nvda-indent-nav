@@ -41,11 +41,9 @@ import wx
 
 try:
     ROLE_EDITABLETEXT = controlTypes.ROLE_EDITABLETEXT
-    ROLE_DOCUMENT = controlTypes.ROLE_DOCUMENT
     ROLE_TREEVIEWITEM = controlTypes.ROLE_TREEVIEWITEM
 except AttributeError:
     ROLE_EDITABLETEXT = controlTypes.Role.EDITABLETEXT
-    ROLE_DOCUMENT = controlTypes.Role.DOCUMENT
     ROLE_TREEVIEWITEM = controlTypes.Role.TREEVIEWITEM
 
 debug = False
@@ -161,10 +159,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if obj.windowClassName == u"AkelEditW":
             clsList.append(EditableIndentNav)
             return
-        if obj.role == ROLE_EDITABLETEXT:
+        if obj.windowClassName == u"RichEditD2DPT":
             clsList.append(EditableIndentNav)
             return
-        if obj.role == ROLE_DOCUMENT:
+        if obj.role == ROLE_EDITABLETEXT:
             clsList.append(EditableIndentNav)
             return
         if obj.role == ROLE_TREEVIEWITEM:
