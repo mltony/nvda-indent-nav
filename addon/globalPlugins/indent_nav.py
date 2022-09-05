@@ -65,6 +65,11 @@ else:
         pass
 
 
+# Adapted from NVDA's speech module to count tabs as blank characters.
+BLANK_CHUNK_CHARS = frozenset((" ", "\n", "\r", "\t", "\0", u"\xa0"))
+def isBlank(text):
+    return not text or set(text) <= BLANK_CHUNK_CHARS
+
 
 def myAssert(condition):
     if not condition:
@@ -409,7 +414,7 @@ class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
     beeper = Beeper()
     def getIndentLevel(self, s):
-        if speech.isBlank(s):
+        if isBlank(s):
             return 0
         indent = speech.splitTextIndentation(s)[0]
         return len(indent.replace("\t", " " * 4))
@@ -492,7 +497,7 @@ class EditableIndentNav(NVDAObject):
             # Get the current indentation level
             text = lm.getText()
             indentationLevel = self.getIndentLevel(text)
-            onEmptyLine = speech.isBlank(text)
+            onEmptyLine = isBlank(text)
 
             # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with the same indentation level
             found = False
@@ -505,7 +510,7 @@ class EditableIndentNav(NVDAObject):
                 newIndentation = self.getIndentLevel(text)
 
                 # Skip over empty lines if we didn't start on one.
-                if not onEmptyLine and speech.isBlank(text):
+                if not onEmptyLine and isBlank(text):
                     continue
 
                 if op(newIndentation, indentationLevel):
@@ -589,7 +594,7 @@ class EditableIndentNav(NVDAObject):
             text = lm.getText()
             originalTextInfo = lm.getTextInfo()
             indentationLevel = self.getIndentLevel(text)
-            onEmptyLine = speech.isBlank(text)
+            onEmptyLine = isBlank(text)
             if onEmptyLine:
                 return self.endOfDocument(_("Nothing to select"))
             # Scan each line forward as long as indentation level is greater than current
@@ -604,7 +609,7 @@ class EditableIndentNav(NVDAObject):
                 text = lm.getText()
                 newIndentation = self.getIndentLevel(text)
 
-                if  speech.isBlank(text):
+                if  isBlank(text):
                     continue
 
                 if newIndentation < indentationLevel:
@@ -648,14 +653,14 @@ class EditableIndentNav(NVDAObject):
                 if 0 == line.move(textInfos.UNIT_CHARACTER, -1, "end"):
                     break
             lineLevel = self.getIndentLevel(line.text.rstrip("\r\n") + "a")
-            if not speech.isBlank(line.text):
+            if not isBlank(line.text):
                 ui.message(_("Cannot indent-paste: current line is not empty!"))
                 return
             text = clipboardBackup
             textLevel = min([
                 self.getIndentLevel(s)
                 for s in text.splitlines()
-                if not speech.isBlank(s)
+                if not isBlank(s)
             ])
             useTabs = '\t' in text or '\t' in line.text
             delta = lineLevel - textLevel
