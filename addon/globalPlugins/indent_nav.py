@@ -15,6 +15,7 @@ import addonHandler
 import api
 import controlTypes
 import config
+from config.configFlags import ReportLineIndentation
 import core
 import ctypes
 from enum import Enum, auto
@@ -420,7 +421,7 @@ class EditableIndentNav(NVDAObject):
         return len(indent.replace("\t", " " * 4))
 
     def isReportIndentWithTones(self):
-        return config.conf["documentFormatting"]["reportLineIndentationWithTones"]
+        return config.conf["documentFormatting"]["reportLineIndentation"] >= ReportLineIndentation.TONES
 
     def crackle(self, levels):
         if self.isReportIndentWithTones():
