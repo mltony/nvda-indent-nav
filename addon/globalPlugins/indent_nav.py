@@ -15,6 +15,10 @@ import addonHandler
 import api
 import controlTypes
 import config
+try:
+    from config.configFlags import ReportLineIndentation
+except (ImportError, ModuleNotFoundError):
+    pass
 import core
 import ctypes
 from enum import Enum, auto
@@ -37,6 +41,7 @@ import textInfos
 import time
 import tones
 import ui
+import versionInfo
 import wx
 
 try:
@@ -45,6 +50,8 @@ try:
 except AttributeError:
     ROLE_EDITABLETEXT = controlTypes.Role.EDITABLETEXT
     ROLE_TREEVIEWITEM = controlTypes.Role.TREEVIEWITEM
+
+BUILD_YEAR = getattr(versionInfo, "version_year", 2023)
 
 debug = False
 if debug:
@@ -420,6 +427,8 @@ class EditableIndentNav(NVDAObject):
         return len(indent.replace("\t", " " * 4))
 
     def isReportIndentWithTones(self):
+        if BUILD_YEAR >= 2023:
+            return config.conf["documentFormatting"]["reportLineIndentation"] >= ReportLineIndentation.TONES
         return config.conf["documentFormatting"]["reportLineIndentationWithTones"]
 
     def crackle(self, levels):
