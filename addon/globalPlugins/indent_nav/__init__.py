@@ -1,10 +1,9 @@
 #A part of the IndentNav addon for NVDA
-#Copyright (C) 2017-2021 Tony Malykh
+#Copyright (C) 2017-2024 Tony Malykh
 #This file is covered by the GNU General Public License.
 #See the file LICENSE  for more details.
 
 # This addon allows to navigate documents by indentation or offset level.
-# In browsers you can navigate by object location on the screen.
 # In editable text fields you can navigate by the indentation level.
 # This is useful for editing source code.
 # Author: Tony Malykh <anton.malykh@gmail.com>
@@ -13,6 +12,7 @@
 
 import addonHandler
 import api
+from compoundDocuments import CompoundTextInfo
 import controlTypes
 import config
 from NVDAObjects.IAccessible.chromium import ChromeVBufTextInfo
@@ -44,7 +44,7 @@ from scriptHandler import script
 import speech
 import struct
 import textInfos
-import textUtils
+from textInfos.offsets import OffsetsTextInfo
 import threading
 import time
 import tones
@@ -53,6 +53,7 @@ import ui
 import versionInfo
 import wx
 from dataclasses import dataclass
+from . import textUtils
 
 try:
     ROLE_EDITABLETEXT = controlTypes.ROLE_EDITABLETEXT
@@ -63,9 +64,9 @@ except AttributeError:
 
 BUILD_YEAR = getattr(versionInfo, "version_year", 2023)
 
-debug = False
+debug = True
 if debug:
-    LOG_FILE_NAME = "C:\\Users\\tony\\Dropbox\\3.txt"
+    LOG_FILE_NAME = r"H:\\2.txt"
     f = open(LOG_FILE_NAME, "w", encoding='utf=8')
     f.close()
     LOG_MUTEX = threading.Lock()
@@ -426,6 +427,101 @@ class FastLineManager:
         s = s.replace("\r", "\n")
         return s
 
+class TextInfoUnavailableException(Exception):
+    pass
+
+class FastLineManagerV2:
+    def __init__(self, obj):
+        self.obj = obj
+
+    def __enter__(self):
+        document = self.obj.makeEnhancedTextInfo(textInfos.POSITION_ALL)
+        self.originalCaret = self.obj.makeEnhancedTextInfo(textInfos.POSITION_CARET)
+        if document is None or  self.originalCaret is None:
+            raise TextInfoUnavailableException
+        pretext = self.originalCaret.copy()
+        pretext.collapse()
+        pretext.setEndPoint(document, "startToStart")
+        #mylog(f"__enter__ document=({document._startOffset, document._endOffset}) caret({self.originalCaret._startOffset, self.originalCaret._endOffset}), pretext({pretext._startOffset, pretext._endOffset})")
+        self.lineIndex = len(self.splitlines(pretext.text)[0]) - 1
+        mylog(f"self.lineIndex={self.lineIndex}")
+        self.originalLineIndex = self.lineIndex
+        self.lines, self.offsets = self.splitlines(document.text)
+        self.nLines = len(self.lines)
+        self.originalCaret.expand(textInfos.UNIT_LINE)
+        self.document = document
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        pass
+
+    def move(self, increment):
+        newIndex = self.lineIndex + increment
+        if (newIndex < 0) or (newIndex >= self.nLines):
+            return 0
+        self.lineIndex = newIndex
+        return increment
+
+    def getText(self):
+        return self.lines[self.lineIndex]
+
+    def getLine(self):
+        return self.lineIndex
+
+    def updateCaret(self, line):
+        line = self.getTextInfo(line)
+        line.expand(textInfos.UNIT_LINE)
+        caret = line.copy()
+        caret.collapse()
+        caret.updateCaret()
+        return line
+
+    def getTextInfo(self, line=None):
+        if line is None:
+            line = self.lineIndex
+        mylog(f"getTextInfo({line})")
+        textInfo = self.document.copy()
+        compoundMode = False
+        if isinstance(textInfo, CompoundTextInfo):
+            if textInfo._start == textInfo._end and  isinstance(textInfo._start, OffsetsTextInfo):
+                compoundMode = True
+                OutertextInfo = textInfo
+                textInfo = outertextInfo._start
+        if isinstance(textInfo, OffsetsTextInfo):
+            encoding = textInfo.encoding
+            converter = textUtils.getOffsetConverter(encoding)(self.document.text)
+            nativeOffset = converter.strToEncodedOffsets(self.offsets[line])
+            mylog(f"self.lines={self.lines}")
+            mylog(f"self.offsets={self.offsets}")
+            mylog(f"self.offsets[line]={self.offsets[line]}")
+            mylog(f"nativeOffset={nativeOffset}")
+            textInfo._startOffset = textInfo._endOffset = nativeOffset
+        else:
+            delta = line - self.originalLineIndex
+            textInfo = self.originalCaret.copy()
+            result = textInfo.move(textInfos.UNIT_LINE, delta)
+            if result != delta:
+                raise Exception(f"Failed to move by {delta} lines")
+            textInfo.expand(textInfos.UNIT_LINE)
+            return textInfo
+        if compoundMode:
+            OutertextInfo = OutertextInfo.copy()
+            OutertextInfo._start = OutertextInfo._end = textInfo
+            return OutertextInfo
+        return textInfo
+    
+    NEWLINE_REGEX = re.compile(r"\r?\n|\r", )
+    def splitlines(self, s):
+        lines = []
+        offsets = [0]
+        for m in  self.NEWLINE_REGEX.finditer(s):
+            lines.append(s[offsets[-1]:m.start(0)])
+            offsets.append(m.end(0))
+        lines.append(s[offsets[-1]:])
+        return lines, offsets
+
+
+
 namedPipesCache = {}
 HWND_TO_PID = {}
 @dataclass
@@ -677,6 +773,8 @@ class VSCodeTextInfo(NVDAObjectTextInfo):
 
     def __init__(self,obj,position):
         self.piper = obj.piper if obj is not None else position.piper
+        self.strongObj = obj # to prevent obj from being gc'd
+        mylog(f"calling OffsetTextInfo.__init__({obj}, {position})")
         super().__init__(obj, position)
 
     def _getStoryLength(self):
@@ -796,55 +894,64 @@ class EditableIndentNav(NVDAObject):
         self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount)
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
-        with self.getLineManager() as lm:
-            # Get the current indentation level
-            text = lm.getText()
-            indentationLevel = self.getIndentLevel(text)
-            onEmptyLine = isBlank(text)
-
-            # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with the same indentation level
-            found = False
-            indentLevels = []
-            while True:
-                result = lm.move(increment)
-                if result == 0:
-                    break
+        mylog(f"moveInEditable(increment={increment},  unbounded={unbounded}, op={op}, speakOnly={speakOnly}, moveCount={moveCount})")
+        try:
+            with self.getLineManager() as lm:
+                # Get the current indentation level
                 text = lm.getText()
-                newIndentation = self.getIndentLevel(text)
+                indentationLevel = self.getIndentLevel(text)
+                mylog(f"Current line il={indentationLevel} text='{text}'")
+                onEmptyLine = isBlank(text)
 
-                # Skip over empty lines if we didn't start on one.
-                if not onEmptyLine and isBlank(text):
-                    continue
-
-                if op(newIndentation, indentationLevel):
-                    # Found it
-                    found = True
-                    indentationLevel = newIndentation
-                    resultLine = lm.getLine()
-                    resultText = lm.getText()
-                    moveCount -= 1
-                    if moveCount == 0:
+                # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with the same indentation level
+                found = False
+                indentLevels = []
+                while True:
+                    result = lm.move(increment)
+                    if result == 0:
                         break
-                elif newIndentation < indentationLevel:
-                    # Not found in this indentation block
-                    if not unbounded:
-                        break
-                indentLevels.append(newIndentation )
+                    text = lm.getText()
+                    newIndentation = self.getIndentLevel(text)
 
-            if found:
-                textInfo = None
-                if not speakOnly:
-                    textInfo = lm.updateCaret(resultLine)
-                self.crackle(indentLevels)
-                if textInfo is not None:
-                    speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
+                    # Skip over empty lines if we didn't start on one.
+                    if not onEmptyLine and isBlank(text):
+                        continue
+
+                    if op(newIndentation, indentationLevel):
+                        # Found it
+                        found = True
+                        indentationLevel = newIndentation
+                        resultLine = lm.getLine()
+                        resultText = lm.getText()
+                        moveCount -= 1
+                        if moveCount == 0:
+                            break
+                    elif newIndentation < indentationLevel:
+                        # Not found in this indentation block
+                        if not unbounded:
+                            break
+                    indentLevels.append(newIndentation )
+                mylog(f"found={found}")
+                if found:
+                    textInfo = None
+                    if not speakOnly:
+                        textInfo = lm.updateCaret(resultLine)
+                        #mylog(f"resultLine={resultLine} textInfo({textInfo._startOffset, textInfo._endOffset})")
+                    self.crackle(indentLevels)
+                    if textInfo is not None:
+                        speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
+                    else:
+                        speech.speakText(resultText)
                 else:
-                    speech.speakText(resultText)
-            else:
-                self.endOfDocument(errorMessage)
+                    self.endOfDocument(errorMessage)
+        except TextInfoUnavailableException:
+            msg = _("No textInfo available for this application")
+            ui.message(msg)
+            self.endOfDocument()
 
     def getLineManager(self):
-        return FastLineManager()
+        #return FastLineManager()
+        return FastLineManagerV2(self)
 
     @script(description="Moves to the next line with a greater indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+alt+RightArrow'])
     def script_moveToChild(self, gesture):
@@ -989,10 +1096,10 @@ class EditableIndentNav(NVDAObject):
             core.callLater(100, api.copyToClip, clipboardBackup)
 
 
-    def endOfDocument(self, message):
+    def endOfDocument(self, message=None):
         volume = getConfig("noNextTextChimeVolume")
         self.beeper.fancyBeep("HF", 100, volume, volume)
-        if getConfig("noNextTextMessage"):
+        if getConfig("noNextTextMessage") and message is not None:
             ui.message(message)
 
     def isVscodeApp(self):
@@ -1159,8 +1266,8 @@ class TreeIndentNav(NVDAObject):
         else:
             self.endOfDocument(errorMessage)
 
-    def endOfDocument(self, message):
+    def endOfDocument(self, message=None):
         volume = getConfig("noNextTextChimeVolume")
         self.beeper.fancyBeep("HF", 100, volume, volume)
-        if getConfig("noNextTextMessage"):
+        if getConfig("noNextTextMessage") and message is not None:
             ui.message(message)
