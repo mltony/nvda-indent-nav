@@ -15,6 +15,8 @@ import addonHandler
 import api
 import controlTypes
 import config
+from NVDAObjects.IAccessible.chromium import ChromeVBufTextInfo
+
 try:
     from config.configFlags import ReportLineIndentation
 except (ImportError, ModuleNotFoundError):
@@ -25,24 +27,32 @@ from enum import Enum, auto
 import globalPluginHandler
 import gui
 from gui.settingsDialogs import SettingsPanel
+import json
 import keyboardHandler
+from logHandler import log
 import NVDAHelper
 from NVDAObjects.IAccessible import IAccessible
 from NVDAObjects.IAccessible import IA2TextTextInfo
 from NVDAObjects.IAccessible.ia2TextMozilla import MozillaCompoundTextInfo
-from NVDAObjects import NVDAObject
+from NVDAObjects import NVDAObject, NVDAObjectTextInfo
 import operator
+import os
+import queue
 import re
 import scriptHandler
 from scriptHandler import script
 import speech
 import struct
 import textInfos
+import textUtils
+import threading
 import time
 import tones
+from typing import Tuple
 import ui
 import versionInfo
 import wx
+from dataclasses import dataclass
 
 try:
     ROLE_EDITABLETEXT = controlTypes.ROLE_EDITABLETEXT
@@ -55,7 +65,6 @@ BUILD_YEAR = getattr(versionInfo, "version_year", 2023)
 
 debug = False
 if debug:
-    import threading
     LOG_FILE_NAME = "C:\\Users\\tony\\Dropbox\\3.txt"
     f = open(LOG_FILE_NAME, "w", encoding='utf=8')
     f.close()
@@ -403,7 +412,7 @@ class FastLineManager:
             else:
                 raise Exception("impossible")
             return textInfo
-            
+
         delta = line - self.originalLineIndex
         textInfo = self.originalCaret.copy()
         result = textInfo.move(textInfos.UNIT_LINE, delta)
@@ -416,6 +425,291 @@ class FastLineManager:
         s = s.replace("\r\n", "\n")
         s = s.replace("\r", "\n")
         return s
+
+namedPipesCache = {}
+HWND_TO_PID = {}
+@dataclass
+class PiperRequest:
+    request: dict = None
+    shutdownRequested: bool = False
+    outputQueue: queue.Queue = None
+
+@dataclass
+class PiperResponse:
+    pid: int
+    response: dict
+
+
+class VSCodePiper(threading.Thread):
+    def __init__(self, pid):
+        super().__init__(name=f"IndentNav Piper thread for pid={pid}")
+        self.pid = pid
+        pipeName = r"\\.\pipe\VSCodeIndentNavBridge" + str(pid)
+        #log.error(f"asdf {pipeName}")
+        self.f = open(pipeName, 'rb+', buffering=0)
+        api.f = self.f
+        self.inputQueue  = queue.Queue()
+        self.closed = False
+        self.start()
+
+
+    def run(self):
+        buffer = b''
+        CHUNK = 2**20
+        messageLength = -1
+        while not self.closed:
+            request = self.inputQueue.get(True)
+            if request.shutdownRequested:
+                self.closed = True
+                return
+            while True:
+                messageBytes = self.f.read(CHUNK)
+                if not messageBytes:
+                    self.closed = True
+                    request.outputQueue.put(PiperResponse(
+                        pid=self.pid,
+                        response={
+                            "error": f"Named pipe for pid={pid} closed unexpectedly",
+                        },
+                    ))
+                    return
+                #log.error(f"asdf received {len(messageBytes)} bytes")
+                buffer += messageBytes
+                if messageLength == -1 and len(buffer) >= 4:
+                    messageLength = struct.unpack('I', buffer[:4])[0]
+                    buffer = buffer[4:]
+                    #log.error(f"asdf len={messageLength}")
+                if messageLength != -1 and len(buffer) >= messageLength:
+                    s = buffer[:messageLength].decode('utf-8')
+                    buffer = buffer[messageLength:]
+                    messageLength = -1
+                    try:
+                        response = json.loads(s)
+                    except json.decoder.JSONDecodeError as e:
+                        response = {
+                            'error': str(e)
+                        }
+                    request.outputQueue.put(PiperResponse(
+                        pid=self.pid,
+                        response=response,
+                    ))
+                    break
+
+    def get(self):
+        TIMEOUT = 1 #second
+        q = queue.Queue()
+        self.inputQueue.put(PiperRequest(
+            outputQueue=q,
+        ))
+        try:
+            response = q.get(timeout=TIMEOUT)
+        except queue.Empty as e:
+            self.closed = True
+            raise RuntimeError("Named pipe communication timeout", e)
+        message = response.response
+        return message
+
+    def send(self, j):
+        s = json.dumps(j)
+        b = s.encode('utf-8')
+        message = struct.pack('I', len(b)) + b
+        self.f.write(message)
+
+    def callImpl(self, request):
+        if self.closed:
+            raise RuntimeError("This piper is closed")
+        self.send(request)
+        return self.get()
+
+    def call(self, command, **kwargs):
+        result = self.callImpl({
+            **{"command": command},
+            **kwargs,
+        })
+        try:
+            return result["result"]
+        except KeyError:
+            raise RuntimeError(f"VSCode accessibility extension raised error: {result['error']}")
+
+    def callImplSpecial(self, request, queue):
+        if self.closed:
+            raise RuntimeError("This piper is closed")
+        self.send(request)
+        self.inputQueue.put(PiperRequest(
+            outputQueue=queue,
+        ))
+
+
+    def join(self):
+        """
+            Your head is humming, and it won't go, in case you don't know
+            The piper's calling you to join him!
+        """
+        self.inputQueue.put(PiperRequest(
+            shutdownRequested=True,
+        ))
+        if not self.closed:
+            super().join()
+
+    def getStoryLength(self):
+        return self.call("getStoryLength")
+
+    def getStoryText(self):
+        return self.call("getStoryText")
+
+    def getCaretOffset(self):
+        return self.call("getCaretOffset")
+
+    def setCaretOffset(self, offset):
+        return self.call("setCaretOffset", offset=offset)
+        
+    def getSelectionOffsets(self):
+        result = self.call("getSelectionOffsets")
+        return [min(result), max(result)]
+    
+    def setSelectionOffsets(self, anchorOffset, caretOffset):
+        return self.call("setSelectionOffsets", anchorOffset=anchorOffset, offset=caretOffset)
+
+    def getStatus(self):
+        return self.call("getStatus")
+
+def getPiperOld(self):
+    global namedPipesCache
+    pid = self.appModule.processID
+    try:
+        result = namedPipesCache[pid]
+        #log.error(f"asdf piper cache hit {pid}")
+        return result
+    except KeyError:
+        pass
+
+    try:
+        piper = VSCodePiper(pid)
+    except FileNotFoundError:
+        return None
+    #log.error(f"asdf created and cached piper for {pid}")
+    namedPipesCache[pid] = piper
+    return piper
+
+def updatePipers():
+    global namedPipesCache
+    PIPE_DIR = r"\\.\pipe"
+    PIPE_PREFIX = "VSCodeIndentNavBridge"
+    piperPids = []
+    for s in os.listdir(PIPE_DIR):
+        if s.startswith(PIPE_PREFIX):
+            try:
+                pid = int(s[len(PIPE_PREFIX):])
+            except ValueError:
+                continue
+            piperPids.append(pid)
+    #log.error(f"asdf piperPids={piperPids}")
+    pidsToRemove = []
+    for pid, piper in namedPipesCache.items():
+        if pid not in piperPids or piper.closed:
+            piper.join()
+            pidsToRemove.append(pid)
+            #log.error(f"asdf Killing piper for pid={pid}")
+    namedPipesCache = {k: v for k, v in namedPipesCache.items() if k in pidsToRemove}
+    #log.error(f"asdf namedPipesCache={list(namedPipesCache.keys())}")
+    for pid in [pid for pid in piperPids if pid not in namedPipesCache]:
+        #log.error(f"asdf opening piper for pid={pid}")
+        try:
+            namedPipesCache[pid] = VSCodePiper(pid)
+        except FileNotFoundError:
+            continue
+
+def findActivePiper():
+    q = queue.Queue()
+    request = {
+        "command": "getStatus",
+    }
+    n = 0
+    for pid, piper in namedPipesCache.items():
+        if piper.closed:
+            continue
+        try:
+            piper.callImplSpecial(request, q)
+            n += 1
+        except Exception:
+            log.exception(f"Piper callImplSpecial exception for pid={pid}")
+    t0 = time.time()
+    TIMEOUT = 1 #second
+    t1 = t0 + TIMEOUT
+    while n > 0:
+        waitTime = t1 - time.time()
+        if waitTime <= 0:
+            break
+        try:
+            response = q.get(True, waitTime)
+            n -= 1
+            #log.error(f"asdf {response.response}")
+            if response.response["result"]["focused"]:
+                return response.pid
+        except queue.Empty:
+            break
+        except KeyError:
+            log.warning(f"getStatus called failed with error: {response.response}")
+    return None
+
+def getPiperForFocus():
+    global HWND_TO_PID
+    focus = api.getFocusObject()
+    hwnd = focus.windowHandle
+    try:
+        piperPid =HWND_TO_PID[hwnd]
+        piper = namedPipesCache[piperPid]
+        return piper
+    except KeyError:
+        pass
+    updatePipers()
+    piperPid = findActivePiper()
+    if piperPid is not None:
+        HWND_TO_PID[hwnd] = piperPid
+        piper = namedPipesCache[piperPid]
+        return piper
+    return None
+
+
+
+class VSCodeTextInfo(NVDAObjectTextInfo):
+    encoding = "utf_32_le"
+
+    def __init__(self,obj,position):
+        self.piper = obj.piper if obj is not None else position.piper
+        super().__init__(obj, position)
+
+    def _getStoryLength(self):
+        return self.piper.getStoryLength()
+
+    def _getStoryText(self):
+        return self.piper.getStoryText()
+    
+    def _getCaretOffset(self):
+        return self.piper.getCaretOffset()
+    
+    def updateCaret(self):
+        self.piper.setCaretOffset(self._startOffset)
+        
+    def _getSelectionOffsets(self):
+        return self.piper.getSelectionOffsets()
+    def updateSelection(self):
+        self.piper.setSelectionOffsets(self._startOffset, self._endOffset)
+
+class VSCodeTextProvider:
+    TextInfo = VSCodeTextInfo
+    selectionOffsets: Tuple[int, int]
+
+    def __init__(
+            self,
+            piper,
+    ):
+        super().__init__()
+        self.piper = piper
+
+    def makeTextInfo(self, position):
+        return VSCodeTextInfo(self, position)
+
 
 class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
@@ -644,17 +938,17 @@ class EditableIndentNav(NVDAObject):
             selection.updateSelection()
             self.crackle(indentLevels)
             speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
-            
+
     @script(description="Indent-paste. This will figure out indentation level in the current line and paste text from clipboard adjusting indentation level correspondingly.", gestures=['kb:NVDA+V'])
     def script_indentPaste(self, gesture):
         clipboardBackup = api.getClipData()
         try:
             focus = api.getFocusObject()
-            selection = focus.makeTextInfo(textInfos.POSITION_SELECTION)            
+            selection = focus.makeTextInfo(textInfos.POSITION_SELECTION)
             if len(selection.text) != 0:
                 ui.message(_("Some text selected! Cannot indent-paste."))
                 return
-            line = focus.makeTextInfo(textInfos.POSITION_CARET)            
+            line = focus.makeTextInfo(textInfos.POSITION_CARET)
             line.collapse()
             line.expand(textInfos.UNIT_LINE)
             # Make sure line doesn't include newline characters
@@ -681,7 +975,7 @@ class EditableIndentNav(NVDAObject):
                 ])
             elif delta < 0:
                 text = "\n".join([
-                    s[min(-delta, len(s)):] 
+                    s[min(-delta, len(s)):]
                     for s in text.splitlines()
                 ])
             if useTabs:
@@ -693,13 +987,74 @@ class EditableIndentNav(NVDAObject):
             core.callLater(100, ui.message, _("Pasted"))
         finally:
             core.callLater(100, api.copyToClip, clipboardBackup)
-            
+
 
     def endOfDocument(self, message):
         volume = getConfig("noNextTextChimeVolume")
         self.beeper.fancyBeep("HF", 100, volume, volume)
         if getConfig("noNextTextMessage"):
             ui.message(message)
+
+    def isVscodeApp(self):
+        if False:
+            try:
+                if self.treeInterceptor is None:
+                    return False
+                if not isinstance(self.treeInterceptor, ChromeVBufTextInfo):
+                    return False
+            except NameError:
+                return False
+        try:
+            if self.treeInterceptor is not None:
+                return False
+        except NameError:
+            return False
+        return self.appModule.productName.startswith("Visual Studio Code")
+
+    def makeEnhancedTextInfo(
+        self,
+        position,
+        allowPlainTextInfoInVSCode=False,
+        promptInstallVSCodeExtension=False,
+    ):
+        if not self.isVscodeApp():
+            return self.makeTextInfo(position)
+        focus = api.getFocusObject()
+        if self != focus:
+            raise RuntimeError("Can only retrieve enhanced text info for focused object")
+        piper = getPiperForFocus()
+        if piper is not None:
+            obj = VSCodeTextProvider(piper=piper)
+            textInfo = obj.makeTextInfo(position)
+            return textInfo
+        if allowPlainTextInfoInVSCode:
+            return self.makeTextInfo(position)
+        if promptInstallVSCodeExtension:
+            ui.message("Please install extension")
+        return None
+
+    @script(description="Test IndentNav", gestures=['kb:Windows+z'])
+    def script_indentNavTest(self, gesture):
+        #piper = getPiper(self)
+        #l = piper.getStoryLength()
+        #text = piper.getStoryText()
+        #c = piper.getCaretOffset()
+        #ui.message(f"{c} {l} {ll}")
+        #ui.message(text)
+        piper = getPiperForFocus()
+        if piper is None:
+            ui.message("No piper")
+            return
+        st = piper.getStatus()
+        #ui.message(str(st))
+        api.p = piper
+        obj = VSCodeTextProvider(piper=piper)
+        t = obj.makeTextInfo('selection')
+        api.t = t
+        ui.message("Successfully created textInfo")
+
+
+
 
 class TreeIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
