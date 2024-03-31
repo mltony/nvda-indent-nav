@@ -12,6 +12,7 @@
 
 import addonHandler
 import api
+from appModules.devenv import VsWpfTextViewTextInfo
 from compoundDocuments import CompoundTextInfo
 import controlTypes
 import config
@@ -43,6 +44,7 @@ import scriptHandler
 from scriptHandler import script
 import speech
 import struct
+import subprocess
 import textInfos
 from textInfos.offsets import OffsetsTextInfo
 import threading
@@ -97,6 +99,7 @@ def initConfiguration():
         "crackleVolume" : "integer( default=25, min=0, max=100)",
         "noNextTextChimeVolume" : "integer( default=50, min=0, max=100)",
         "noNextTextMessage" : "boolean( default=False)",
+        "legacyVSCode" : "boolean( default=False)",
     }
     config.conf.spec["indentnav"] = confspec
 
@@ -143,24 +146,25 @@ class SettingsDialog(SettingsPanel):
         settingsSizer.Add(sizer)
         self.noNextTextChimeVolumeSlider = slider
 
-      # Checkboxes
+      # Checkboxes noNextTextMessageCheckbox
         # Translators: Checkbox that controls spoken message when no next or previous text paragraph is available in the document
         label = _("Speak message when no next paragraph containing text available in the document")
         self.noNextTextMessageCheckbox = sHelper.addItem(wx.CheckBox(self, label=label))
         self.noNextTextMessageCheckbox.Value = getConfig("noNextTextMessage")
+        
+      # Checkboxes legacy VSCode
+        label = _("Use legacy mode in VSCode (not recommended)")
+        self.legacyVSCodeCheckbox = sHelper.addItem(wx.CheckBox(self, label=label))
+        self.legacyVSCodeCheckbox.Value = getConfig("legacyVSCode")
+
 
 
     def onSave(self):
         config.conf["indentnav"]["crackleVolume"] = self.crackleVolumeSlider.Value
         config.conf["indentnav"]["noNextTextChimeVolume"] = self.noNextTextChimeVolumeSlider.Value
         config.conf["indentnav"]["noNextTextMessage"] = self.noNextTextMessageCheckbox.Value
+        config.conf["indentnav"]["legacyVSCode"] = self.legacyVSCodeCheckbox.Value
 
-# Browse mode constants:
-BROWSE_MODES = [
-    _("horizontal offset"),
-    _("font size"),
-    _("font size and same style"),
-]
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     scriptCategory = _("IndentNav")
@@ -435,16 +439,15 @@ class FastLineManagerV2:
         self.obj = obj
 
     def __enter__(self):
-        document = self.obj.makeEnhancedTextInfo(textInfos.POSITION_ALL)
-        self.originalCaret = self.obj.makeEnhancedTextInfo(textInfos.POSITION_CARET)
+        legacyVSCode = getConfig("legacyVSCode")
+        document = self.obj.makeEnhancedTextInfo(textInfos.POSITION_ALL, allowPlainTextInfoInVSCode=legacyVSCode)
+        self.originalCaret = self.obj.makeEnhancedTextInfo(textInfos.POSITION_CARET, allowPlainTextInfoInVSCode=legacyVSCode)
         if document is None or  self.originalCaret is None:
             raise TextInfoUnavailableException
         pretext = self.originalCaret.copy()
         pretext.collapse()
         pretext.setEndPoint(document, "startToStart")
-        #mylog(f"__enter__ document=({document._startOffset, document._endOffset}) caret({self.originalCaret._startOffset, self.originalCaret._endOffset}), pretext({pretext._startOffset, pretext._endOffset})")
         self.lineIndex = len(self.splitlines(pretext.text)[0]) - 1
-        mylog(f"self.lineIndex={self.lineIndex}")
         self.originalLineIndex = self.lineIndex
         self.lines, self.offsets = self.splitlines(document.text)
         self.nLines = len(self.lines)
@@ -470,44 +473,50 @@ class FastLineManagerV2:
 
     def updateCaret(self, line):
         line = self.getTextInfo(line)
-        line.expand(textInfos.UNIT_LINE)
         caret = line.copy()
         caret.collapse()
         caret.updateCaret()
         return line
+        
+    def getLineUnit(self):
+        if isinstance(self.originalCaret, VsWpfTextViewTextInfo):
+            # TextInfo in Visual Studio doesn't understand UNIT_PARAGRAPH
+            return textInfos.UNIT_LINE
+        # In Windows 11 Notepad, we should use UNIT_PARAGRAPH instead of UNIT_LINE in order to handle wrapped lines correctly
+        return textInfos.UNIT_PARAGRAPH
 
     def getTextInfo(self, line=None):
         if line is None:
             line = self.lineIndex
-        mylog(f"getTextInfo({line})")
         textInfo = self.document.copy()
         compoundMode = False
         if isinstance(textInfo, CompoundTextInfo):
             if textInfo._start == textInfo._end and  isinstance(textInfo._start, OffsetsTextInfo):
                 compoundMode = True
-                OutertextInfo = textInfo
-                textInfo = outertextInfo._start
+                outerTextInfo = textInfo
+                textInfo = outerTextInfo._start
         if isinstance(textInfo, OffsetsTextInfo):
             encoding = textInfo.encoding
             converter = textUtils.getOffsetConverter(encoding)(self.document.text)
             nativeOffset = converter.strToEncodedOffsets(self.offsets[line])
-            mylog(f"self.lines={self.lines}")
-            mylog(f"self.offsets={self.offsets}")
-            mylog(f"self.offsets[line]={self.offsets[line]}")
-            mylog(f"nativeOffset={nativeOffset}")
             textInfo._startOffset = textInfo._endOffset = nativeOffset
+            textInfo.expand(textInfos.UNIT_LINE)
         else:
+            unit = self.getLineUnit()
             delta = line - self.originalLineIndex
+            #mylog(f"line {line} self.originalLineIndex={self.originalLineIndex} delta={delta}")
             textInfo = self.originalCaret.copy()
-            result = textInfo.move(textInfos.UNIT_LINE, delta)
+            textInfo.expand(unit)
+            textInfo.collapse()
+            result = textInfo.move(unit, delta)
             if result != delta:
                 raise Exception(f"Failed to move by {delta} lines")
             textInfo.expand(textInfos.UNIT_LINE)
             return textInfo
         if compoundMode:
-            OutertextInfo = OutertextInfo.copy()
-            OutertextInfo._start = OutertextInfo._end = textInfo
-            return OutertextInfo
+            outerTextInfo = outerTextInfo.copy()
+            outerTextInfo._start = outerTextInfo._end = textInfo
+            return outerTextInfo
         return textInfo
     
     NEWLINE_REGEX = re.compile(r"\r?\n|\r", )
@@ -774,7 +783,6 @@ class VSCodeTextInfo(NVDAObjectTextInfo):
     def __init__(self,obj,position):
         self.piper = obj.piper if obj is not None else position.piper
         self.strongObj = obj # to prevent obj from being gc'd
-        mylog(f"calling OffsetTextInfo.__init__({obj}, {position})")
         super().__init__(obj, position)
 
     def _getStoryLength(self):
@@ -807,6 +815,83 @@ class VSCodeTextProvider:
 
     def makeTextInfo(self, position):
         return VSCodeTextInfo(self, position)
+
+
+
+class VSCodeRequestDialog(wx.Dialog):
+    MESSAGE = _(
+        "IndentNav requires VSCode accessibility extension to be installed in order to work correctly in VSCode."
+    )
+
+    def __init__(self, parent, appModule):
+        super().__init__(parent, title=_("Please install VSCode extension"))
+        self.appModule = appModule
+        mainSizer=wx.BoxSizer(wx.VERTICAL)
+        item = wx.StaticText(self, label=self.MESSAGE)
+        mainSizer.Add(item, border=20, flag=wx.LEFT | wx.RIGHT | wx.TOP)
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        item = self.installButton = wx.Button(self, label=_("&Install VSCode extension (recommended)"))
+        item.Bind(wx.EVT_BUTTON, self.onInstall)
+        sizer.Add(item)
+        item = self.learnButton = wx.Button(self, label=_("&Learn more about VSCode accessibility extension"))
+        item.Bind(wx.EVT_BUTTON, self.onLearn)
+        sizer.Add(item)
+        item = self.legacyButton = wx.Button(self, label=_("&Use VSCode in legacy mode without extension (not recommended)"))
+        item.Bind(wx.EVT_BUTTON, self.onLegacy)
+        sizer.Add(item)
+        item = wx.Button(self, wx.ID_CLOSE, label=_("&Cancel"))
+        item.Bind(wx.EVT_BUTTON, lambda evt: self.Close())
+        sizer.Add(item)
+        self.Bind(wx.EVT_CLOSE, self.onClose)
+        self.EscapeId = wx.ID_CLOSE
+        mainSizer.Add(sizer, flag=wx.TOP | wx.BOTTOM | wx.ALIGN_CENTER_HORIZONTAL, border=20)
+
+        self.Sizer = mainSizer
+        mainSizer.Fit(self)
+        self.CentreOnScreen()
+        self.Show()
+        self.Raise()
+        self.SetFocus()
+
+    def onInstall(self, evt):
+        msg = _(
+            "We will install accessibility extension in default VSCode instance on your system - the one found in %PATH% environment variable.\n"
+            "If you have multiple instances or a custom version of VSCode, such as VSCode Insiders, you would need to install accessibility extension manually.\n"
+            "Please review output of command to make sure installation is successful.\n"
+            "If successful, the extension would be launched right away and there is no need to restart VSCode.\n"
+            "Are you sure you want to proceed?"
+        )
+        dlg = wx.MessageDialog(None, msg, _("Confirmation"), wx.YES_NO | wx.ICON_QUESTION)
+        result = dlg.ShowModal()
+        if result == wx.ID_YES:
+            self.onClose(None)
+            cmd = f'cmd /k code --install-extension TonyMalykh.nvda-indent-nav-accessibility'
+            def doInstall():
+                os.system(cmd)
+        
+            threading.Thread(
+                name="IndentNav VSCode extension installer thread",
+                target=doInstall,
+            ).start()
+        
+    def onLearn(self, evt):
+        url = "https://marketplace.visualstudio.com/items?itemName=TonyMalykh.nvda-indent-nav-accessibility"
+        os.startfile(url)
+        self.onClose(None)
+        
+    def onLegacy(self, evt):
+        msg = _(
+            "Please enable legacy support of VSCode in IndentNav settings.\n"
+            "Please note that builtin VSCode accessibility provides access to only 500 lines of code.\n"
+            "As a result, in larger files IndentNav will not work correctly.\n"
+            "Please use it at your own risk."
+        )
+        wx.MessageBox(msg, _('Information'), wx.OK | wx.ICON_INFORMATION)
+        self.onClose(None)
+        
+
+    def onClose(self, evt):
+        self.Hide()
 
 
 class EditableIndentNav(NVDAObject):
@@ -894,13 +979,11 @@ class EditableIndentNav(NVDAObject):
         self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount)
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
-        mylog(f"moveInEditable(increment={increment},  unbounded={unbounded}, op={op}, speakOnly={speakOnly}, moveCount={moveCount})")
         try:
             with self.getLineManager() as lm:
                 # Get the current indentation level
                 text = lm.getText()
                 indentationLevel = self.getIndentLevel(text)
-                mylog(f"Current line il={indentationLevel} text='{text}'")
                 onEmptyLine = isBlank(text)
 
                 # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with the same indentation level
@@ -931,12 +1014,10 @@ class EditableIndentNav(NVDAObject):
                         if not unbounded:
                             break
                     indentLevels.append(newIndentation )
-                mylog(f"found={found}")
                 if found:
                     textInfo = None
                     if not speakOnly:
                         textInfo = lm.updateCaret(resultLine)
-                        #mylog(f"resultLine={resultLine} textInfo({textInfo._startOffset, textInfo._endOffset})")
                     self.crackle(indentLevels)
                     if textInfo is not None:
                         speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
@@ -945,9 +1026,7 @@ class EditableIndentNav(NVDAObject):
                 else:
                     self.endOfDocument(errorMessage)
         except TextInfoUnavailableException:
-            msg = _("No textInfo available for this application")
-            ui.message(msg)
-            self.endOfDocument()
+            VSCodeRequestDialog(gui.mainFrame, self.appModule).Show()
 
     def getLineManager(self):
         #return FastLineManager()
@@ -1122,7 +1201,6 @@ class EditableIndentNav(NVDAObject):
         self,
         position,
         allowPlainTextInfoInVSCode=False,
-        promptInstallVSCodeExtension=False,
     ):
         if not self.isVscodeApp():
             return self.makeTextInfo(position)
@@ -1136,8 +1214,6 @@ class EditableIndentNav(NVDAObject):
             return textInfo
         if allowPlainTextInfoInVSCode:
             return self.makeTextInfo(position)
-        if promptInstallVSCodeExtension:
-            ui.message("Please install extension")
         return None
 
     @script(description="Test IndentNav", gestures=['kb:Windows+z'])
