@@ -151,13 +151,38 @@ class SettingsDialog(SettingsPanel):
         label = _("Speak message when no next paragraph containing text available in the document")
         self.noNextTextMessageCheckbox = sHelper.addItem(wx.CheckBox(self, label=label))
         self.noNextTextMessageCheckbox.Value = getConfig("noNextTextMessage")
-        
+
       # Checkboxes legacy VSCode
         label = _("Use legacy mode in VSCode (not recommended)")
         self.legacyVSCodeCheckbox = sHelper.addItem(wx.CheckBox(self, label=label))
         self.legacyVSCodeCheckbox.Value = getConfig("legacyVSCode")
+      # Install VSCode extension button
+        sizer=wx.BoxSizer(wx.HORIZONTAL)
+        item = self.installButton = wx.Button(self, label=_("&Install VSCode extension (recommended)"))
+        item.Bind(wx.EVT_BUTTON, self.onInstall)
+        sizer.Add(item)
+      # Learn about VSCode Extension
+        item = self.learnButton = wx.Button(self, label=_("&Learn more about VSCode accessibility extension"))
+        item.Bind(wx.EVT_BUTTON, self.onLearn)
+        sizer.Add(item)
+        settingsSizer.Add(sizer)
 
+    def onInstall(self, evt):
+        msg = _(
+            "We will install accessibility extension in default VSCode instance on your system - the one found in %PATH% environment variable.\n"
+            "If you have multiple instances or a custom version of VSCode, such as VSCode Insiders, you would need to install accessibility extension manually.\n"
+            "Please review output of command to make sure installation is successful.\n"
+            "If successful, the extension would be launched right away and there is no need to restart VSCode.\n"
+            "Are you sure you want to proceed?"
+        )
+        dlg = wx.MessageDialog(None, msg, _("Confirmation"), wx.YES_NO | wx.ICON_QUESTION)
+        result = dlg.ShowModal()
+        if result == wx.ID_YES:
+            installVSCodeExtension()
 
+    def onLearn(self, evt):
+        url = "https://marketplace.visualstudio.com/items?itemName=TonyMalykh.nvda-indent-nav-accessibility"
+        os.startfile(url)
 
     def onSave(self):
         config.conf["indentnav"]["crackleVolume"] = self.crackleVolumeSlider.Value
@@ -477,7 +502,7 @@ class FastLineManagerV2:
         caret.collapse()
         caret.updateCaret()
         return line
-        
+
     def getLineUnit(self):
         if isinstance(self.originalCaret, VsWpfTextViewTextInfo):
             # TextInfo in Visual Studio doesn't understand UNIT_PARAGRAPH
@@ -518,7 +543,7 @@ class FastLineManagerV2:
             outerTextInfo._start = outerTextInfo._end = textInfo
             return outerTextInfo
         return textInfo
-    
+
     NEWLINE_REGEX = re.compile(r"\r?\n|\r", )
     def splitlines(self, s):
         lines = []
@@ -529,6 +554,15 @@ class FastLineManagerV2:
         lines.append(s[offsets[-1]:])
         return lines, offsets
 
+def installVSCodeExtension():
+    cmd = f'cmd /k code --install-extension TonyMalykh.nvda-indent-nav-accessibility'
+    def doInstall():
+        os.system(cmd)
+
+    threading.Thread(
+        name="IndentNav VSCode extension installer thread",
+        target=doInstall,
+    ).start()
 
 
 namedPipesCache = {}
@@ -667,11 +701,11 @@ class VSCodePiper(threading.Thread):
 
     def setCaretOffset(self, offset):
         return self.call("setCaretOffset", offset=offset)
-        
+
     def getSelectionOffsets(self):
         result = self.call("getSelectionOffsets")
         return [min(result), max(result)]
-    
+
     def setSelectionOffsets(self, anchorOffset, caretOffset):
         return self.call("setSelectionOffsets", anchorOffset=anchorOffset, offset=caretOffset)
 
@@ -774,18 +808,18 @@ class VSCodeTextInfo(NVDAObjectTextInfo):
 
     def _getStoryText(self):
         return self.piper.getStoryText()
-    
+
     def _getCaretOffset(self):
         return self.piper.getCaretOffset()
-    
+
     def updateCaret(self):
         self.piper.setCaretOffset(self._startOffset)
-        
+
     def _getSelectionOffsets(self):
         return self.piper.getSelectionOffsets()
     def updateSelection(self):
         self.piper.setSelectionOffsets(self._startOffset, self._endOffset)
-        
+
     def copy(self):
         return VSCodeTextInfo(None, self)
 
@@ -837,20 +871,13 @@ class VSCodeRequestDialog(wx.Dialog):
         result = dlg.ShowModal()
         if result == wx.ID_YES:
             self.onClose(None)
-            cmd = f'cmd /k code --install-extension TonyMalykh.nvda-indent-nav-accessibility'
-            def doInstall():
-                os.system(cmd)
-        
-            threading.Thread(
-                name="IndentNav VSCode extension installer thread",
-                target=doInstall,
-            ).start()
-        
+            installVSCodeExtension()
+
     def onLearn(self, evt):
         url = "https://marketplace.visualstudio.com/items?itemName=TonyMalykh.nvda-indent-nav-accessibility"
         os.startfile(url)
         self.onClose(None)
-        
+
     def onLegacy(self, evt):
         msg = _(
             "Please enable legacy support of VSCode in IndentNav settings.\n"
@@ -860,7 +887,7 @@ class VSCodeRequestDialog(wx.Dialog):
         )
         wx.MessageBox(msg, _('Information'), wx.OK | wx.ICON_INFORMATION)
         self.onClose(None)
-        
+
 
     def onClose(self, evt):
         self.Hide()
@@ -869,11 +896,11 @@ class VSCodeRequestDialog(wx.Dialog):
 class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
     beeper = Beeper()
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.vscodeTextProvider = None
-    
+
     def getIndentLevel(self, s):
         if isBlank(s):
             return 0
@@ -1176,7 +1203,7 @@ class EditableIndentNav(NVDAObject):
         except NameError:
             return False
         return self.appModule.productName.startswith("Visual Studio Code")
-        
+
     def getPiper(self):
         try:
             if self.piper is not None:
