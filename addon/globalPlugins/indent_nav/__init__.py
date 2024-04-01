@@ -678,23 +678,6 @@ class VSCodePiper(threading.Thread):
     def getStatus(self):
         return self.call("getStatus")
 
-def getPiperOld(self):
-    global namedPipesCache
-    pid = self.appModule.processID
-    try:
-        result = namedPipesCache[pid]
-        #log.error(f"asdf piper cache hit {pid}")
-        return result
-    except KeyError:
-        pass
-
-    try:
-        piper = VSCodePiper(pid)
-    except FileNotFoundError:
-        return None
-    #log.error(f"asdf created and cached piper for {pid}")
-    namedPipesCache[pid] = piper
-    return piper
 
 def updatePipers():
     global namedPipesCache
