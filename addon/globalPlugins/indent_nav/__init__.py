@@ -790,6 +790,81 @@ class VSCodeTextInfo(NVDAObjectTextInfo):
         return VSCodeTextInfo(None, self)
 
 
+class VSCodeRequestDialog(wx.Dialog):
+    MESSAGE = _(
+        "IndentNav requires VSCode accessibility extension to be installed in order to work correctly in VSCode."
+    )
+
+    def __init__(self, parent, appModule):
+        super().__init__(parent, title=_("Please install VSCode extension"))
+        self.appModule = appModule
+        mainSizer=wx.BoxSizer(wx.VERTICAL)
+        item = wx.StaticText(self, label=self.MESSAGE)
+        mainSizer.Add(item, border=20, flag=wx.LEFT | wx.RIGHT | wx.TOP)
+        sizer = wx.BoxSizer(wx.HORIZONTAL)
+        item = self.installButton = wx.Button(self, label=_("&Install VSCode extension (recommended)"))
+        item.Bind(wx.EVT_BUTTON, self.onInstall)
+        sizer.Add(item)
+        item = self.learnButton = wx.Button(self, label=_("&Learn more about VSCode accessibility extension"))
+        item.Bind(wx.EVT_BUTTON, self.onLearn)
+        sizer.Add(item)
+        item = self.legacyButton = wx.Button(self, label=_("&Use VSCode in legacy mode without extension (not recommended)"))
+        item.Bind(wx.EVT_BUTTON, self.onLegacy)
+        sizer.Add(item)
+        item = wx.Button(self, wx.ID_CLOSE, label=_("&Cancel"))
+        item.Bind(wx.EVT_BUTTON, lambda evt: self.Close())
+        sizer.Add(item)
+        self.Bind(wx.EVT_CLOSE, self.onClose)
+        self.EscapeId = wx.ID_CLOSE
+        mainSizer.Add(sizer, flag=wx.TOP | wx.BOTTOM | wx.ALIGN_CENTER_HORIZONTAL, border=20)
+
+        self.Sizer = mainSizer
+        mainSizer.Fit(self)
+        self.CentreOnScreen()
+        self.Show()
+        self.Raise()
+        self.SetFocus()
+
+    def onInstall(self, evt):
+        msg = _(
+            "We will install accessibility extension in default VSCode instance on your system - the one found in %PATH% environment variable.\n"
+            "If you have multiple instances or a custom version of VSCode, such as VSCode Insiders, you would need to install accessibility extension manually.\n"
+            "Please review output of command to make sure installation is successful.\n"
+            "If successful, the extension would be launched right away and there is no need to restart VSCode.\n"
+            "Are you sure you want to proceed?"
+        )
+        dlg = wx.MessageDialog(None, msg, _("Confirmation"), wx.YES_NO | wx.ICON_QUESTION)
+        result = dlg.ShowModal()
+        if result == wx.ID_YES:
+            self.onClose(None)
+            cmd = f'cmd /k code --install-extension TonyMalykh.nvda-indent-nav-accessibility'
+            def doInstall():
+                os.system(cmd)
+        
+            threading.Thread(
+                name="IndentNav VSCode extension installer thread",
+                target=doInstall,
+            ).start()
+        
+    def onLearn(self, evt):
+        url = "https://marketplace.visualstudio.com/items?itemName=TonyMalykh.nvda-indent-nav-accessibility"
+        os.startfile(url)
+        self.onClose(None)
+        
+    def onLegacy(self, evt):
+        msg = _(
+            "Please enable legacy support of VSCode in IndentNav settings.\n"
+            "Please note that builtin VSCode accessibility provides access to only 500 lines of code.\n"
+            "As a result, in larger files IndentNav will not work correctly.\n"
+            "Please use it at your own risk."
+        )
+        wx.MessageBox(msg, _('Information'), wx.OK | wx.ICON_INFORMATION)
+        self.onClose(None)
+        
+
+    def onClose(self, evt):
+        self.Hide()
+
 
 class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
