@@ -115,6 +115,10 @@ IN_KEY_MAPS_SOURCE = {
         'NVDA+alt+DownArrow',
         'numpad2',
     ],
+    'moveToNextSiblingSkipClutter': [
+        'NVDA+alt+windows+DownArrow',
+        'control+numpad2',
+    ],
     'moveToNextSiblingForce': [
         'NVDA+alt+control+DownArrow',
         'control+numpad6',
@@ -123,6 +127,11 @@ IN_KEY_MAPS_SOURCE = {
         'NVDA+alt+UpArrow',
         'numpad8',
     ],
+    'moveToPreviousSiblingSkipClutter': [
+        'NVDA+windows+alt+UpArrow',
+        'control+numpad8',
+    ],
+
     'moveToPreviousSiblingForce': [
         'NVDA+alt+control+UpArrow',
         'control+numpad4',
@@ -276,7 +285,7 @@ def updateKeyMaps():
     updateKeyMap(EditableIndentNav, IN_KEY_MAPS[mode])
     indentNav = next(gp for gp in globalPluginHandler.runningPlugins if gp.__module__ == 'globalPlugins.indent_nav')
     updateKeyMapInObject(indentNav, IN_KEY_MAPS[mode])
-    updateKeyMap(globalCommands.GlobalCommands, GC_KEY_MAPS[mode])
+    #updateKeyMap(globalCommands.GlobalCommands, GC_KEY_MAPS[mode])
     updateKeyMapInObject(globalCommands.commands, GC_KEY_MAPS[mode])
     try:
         ci = next(gp for gp in globalPluginHandler.runningPlugins if gp.__module__ == 'globalPlugins.charinfo')
@@ -290,12 +299,40 @@ config.post_configProfileSwitch .register(updateKeyMaps)
 
 
 def initConfiguration():
+    clutterRegex = (
+        r"^\s*(" + 
+        "|".join([
+          # Python 
+            # ) : #comment
+                r"\)\s*:?\s*(#.*)?",
+            # ) -> type :
+                r"\)\s*->[\s\w.,\[\]|]*:",
+            # ), # comment
+                r"\)\s*,?\s*(#.*)?",
+            # # comment
+                r"#.*",
+            # from? import
+                r"(^from\s+[\w\s.]+\s+|^)import\s+.*",
+          # C++ 
+            # ) { // comment
+            # ); //comment
+                r"\)\s*[{;]?\s*(//.*)?",
+            # }, //comment - - also for json
+                r"\}\s*,?(//.*)?",
+            # // comment
+                r"//.*",
+            # #include
+                r"^#include.*",
+        ])
+        + r")\s*$"
+    )
     confspec = {
         "crackleVolume" : "integer( default=25, min=0, max=100)",
         "noNextTextChimeVolume" : "integer( default=50, min=0, max=100)",
         "noNextTextMessage" : "boolean( default=False)",
         "legacyVSCode" : "boolean( default=False)",
         "indentNavKeyMap" : "integer( default=1, min=0, max=2)",
+        "clutterRegex" : f"string( default='{clutterRegex}')",
     }
     config.conf.spec["indentnav"] = confspec
 
@@ -987,6 +1024,13 @@ class EditableIndentNav(NVDAObject):
         msgEditable = _("No next line within indentation block")
         self.move(1, [msgEditable])
 
+
+    @script(description="Moves to the next line with the same indentation level as the current line within the current indentation block and skipping over clutter.", gestures=['kb:NVDA+alt+windows+DownArrow'])
+    def script_moveToNextSiblingSkipClutter(self, gesture):
+        # Translators: error message if next sibling couldn't be found (in editable control or in browser)
+        msgEditable = _("No next line within indentation block")
+        self.move(1, [msgEditable], excludeFilterRegex=re.compile(getConfig("clutterRegex")))
+
     @script(description="Moves to the next line with the same indentation level as the current line potentially in the following indentation block.", gestures=['kb:NVDA+alt+control+DownArrow'])
     def script_moveToNextSiblingForce(self, gesture):
         # Translators: error message if next sibling couldn't be found in editable control (forced command)
@@ -1005,6 +1049,13 @@ class EditableIndentNav(NVDAObject):
         # Translators: error message if previous sibling couldn't be found (in editable control or in browser)
         msgEditable = _("No previous line within indentation block")
         self.move(-1, [msgEditable])
+
+    @script(description="Moves to the previous line with the same indentation level as the current line within the current indentation block and skipping over clutter.", gestures=['kb:NVDA+windows+alt+UpArrow'])
+    def script_moveToPreviousSiblingSkipClutter(self, gesture):
+        # Translators: error message if previous sibling couldn't be found (in editable control or in browser)
+        msgEditable = _("No previous line within indentation block")
+        self.move(-1, [msgEditable], excludeFilterRegex=re.compile(getConfig("clutterRegex")))
+
 
     @script(description="Moves to the previous line with the same indentation level as the current line within the current indentation block.", gestures=['kb:NVDA+alt+control+UpArrow'])
     def script_moveToPreviousSiblingForce(self, gesture):
@@ -1026,7 +1077,7 @@ class EditableIndentNav(NVDAObject):
         msgEditable = _("No parent of indentation block")
         self.move(-1, [msgEditable], unbounded=True, op=operator.lt, speakOnly=True, moveCount=count+1)
 
-    def move(self, increment, errorMessages, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1,):
+    def move(self, increment, errorMessages, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1, excludeFilterRegex=None):
         """Moves to another line in current document.
         This function will call one of its implementations dependingon whether the focus is in an editable text or in a browser.
         @paramincrement: Direction to move, should be either 1 or -1.
@@ -1042,9 +1093,9 @@ class EditableIndentNav(NVDAObject):
         @param moveCount: perform move operation this many times.
         """
         focus = api.getFocusObject()
-        self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount)
+        self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount, excludeFilterRegex=excludeFilterRegex)
 
-    def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
+    def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1, excludeFilterRegex=None):
         try:
             with self.getLineManager() as lm:
                 self.addHistory(lm.lineIndex)
@@ -1068,14 +1119,15 @@ class EditableIndentNav(NVDAObject):
                         continue
 
                     if op(newIndentation, indentationLevel):
-                        # Found it
-                        found = True
-                        indentationLevel = newIndentation
-                        resultLine = lm.getLine()
-                        resultText = lm.getText()
-                        moveCount -= 1
-                        if moveCount == 0:
-                            break
+                        if excludeFilterRegex is  None or not excludeFilterRegex.match(text):
+                            # Found it
+                            found = True
+                            indentationLevel = newIndentation
+                            resultLine = lm.getLine()
+                            resultText = lm.getText()
+                            moveCount -= 1
+                            if moveCount == 0:
+                                break
                     elif newIndentation < indentationLevel:
                         # Not found in this indentation block
                         if not unbounded:
