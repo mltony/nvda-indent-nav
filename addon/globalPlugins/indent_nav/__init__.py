@@ -100,7 +100,7 @@ class IndentNavKeyMap(DisplayStringIntEnum):
     LAPTOP = 0
     ALT_NUMPAD = 1
     NUMPAD = 2
-    
+
     @property
     def _displayStringLabels(self):
         return {
@@ -166,6 +166,14 @@ IN_KEY_MAPS_SOURCE = {
         'NVDA+Control+l',
         'numpad5',
     ],
+    'goBack': [
+        'NVDA+control+u',
+        'control+numpad1',
+    ],
+    'goForward': [
+        'NVDA+alt+u',
+        'control+numpad3',
+    ],
 }
 
 GC_KEY_MAPS_SOURCE = [
@@ -211,7 +219,7 @@ def makeIndentNavKeyMaps():
         result[IndentNavKeyMap.ALT_NUMPAD][command] = normalizeKb(altNumpadKeystroke)
         result[IndentNavKeyMap.NUMPAD][command] = normalizeKb(numpadKeystroke)
     return result
-    
+
 
 
 def makeGlobalCommandsKeyMaps():
@@ -221,9 +229,9 @@ def makeGlobalCommandsKeyMaps():
     }
     for command in GC_KEY_MAPS_SOURCE:
         gestures = [
-            g 
-            for g,c in globalCommands.commands._gestureMap.items() 
-            if 
+            g
+            for g,c in globalCommands.commands._gestureMap.items()
+            if
                 "script_" + command == c.__name__
                 and g.startswith('kb:')
         ]
@@ -238,7 +246,7 @@ def makeGlobalCommandsKeyMaps():
     return result
 
 
-    
+
 def updateKeyMap(cls, keyMap):
     gestures = getattr(cls, f"_{cls.__name__}__gestures")
     gestures = {
@@ -256,8 +264,8 @@ def updateKeyMapInObject(ci, keyMap):
     }
     ci._gestureMap = gestures
 
-    
-    
+
+
 IN_KEY_MAPS = makeIndentNavKeyMaps()
 GC_KEY_MAPS = makeGlobalCommandsKeyMaps()
 
@@ -278,6 +286,8 @@ def updateKeyMaps():
 
 # Wait 1 second until all add-ons are loaded before updating keymap
 core.callLater(1000, updateKeyMaps)
+config.post_configProfileSwitch .register(updateKeyMaps)
+
 
 def initConfiguration():
     confspec = {
@@ -417,7 +427,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if obj.role == ROLE_TREEVIEWITEM:
             clsList.append(TreeIndentNav)
             return
-            
+
     @script(description="Speak current line", gestures=['kb:NVDA+Control+l'])
     def script_speakCurrentLine(self, gesture):
         return globalCommands.commands.script_review_currentLine(gesture)
@@ -1037,6 +1047,7 @@ class EditableIndentNav(NVDAObject):
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
         try:
             with self.getLineManager() as lm:
+                self.addHistory(lm.lineIndex)
                 # Get the current indentation level
                 text = lm.getText()
                 indentationLevel = self.getIndentLevel(text)
@@ -1074,6 +1085,7 @@ class EditableIndentNav(NVDAObject):
                     textInfo = None
                     if not speakOnly:
                         textInfo = lm.updateCaret(resultLine)
+                        self.addHistory(resultLine)
                     self.crackle(indentLevels)
                     if textInfo is not None:
                         #mylog(f"speakTextInfo({textInfo.text})")
@@ -1228,7 +1240,53 @@ class EditableIndentNav(NVDAObject):
         finally:
             core.callLater(100, api.copyToClip, clipboardBackup)
             
+    def getHistory(self):
+        try:
+            return self.linesHistory, self.historyIndex
+        except AttributeError:
+            self.linesHistory = []
+            self.historyIndex = -1
+            return self.linesHistory, self.historyIndex
+            
+    def addHistory(self, lineNumber):
+        history, index = self.getHistory()
+        try:
+            if history[index] == lineNumber:
+                return
+        except IndexError:
+            pass
+        self.historyIndex += 1
+        self.linesHistory.insert(self.historyIndex, lineNumber)
+        if len(self.linesHistory) > self.historyIndex + 1:
+            self.linesHistory = self.linesHistory[:self.historyIndex + 1]
+        
 
+    @script(description="Go back in history.", gestures=['kb:NVDA+control+u'])
+    def script_goBack(self, gesture):
+        lines, index = self.getHistory()
+        if index > 0:
+            index -= 1
+            self.historyIndex = index
+            lineNumber = lines[index]
+            with self.getLineManager() as lm:
+                textInfo = lm.updateCaret(lineNumber)
+                speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
+        else:
+            self.endOfDocument(_(")No previous line in history"))
+            
+    @script(description="Go forward in history.", gestures=['kb:NVDA+alt+u'])
+    def script_goForward(self, gesture):
+        lines, index = self.getHistory()
+        index += 1
+        try:
+            lineNumber = lines[index]
+        except IndexError:
+            self.endOfDocument(_(")No next line in history"))
+            return
+        self.historyIndex = index
+        with self.getLineManager() as lm:
+                textInfo = lm.updateCaret(lineNumber)
+                speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
 
     def endOfDocument(self, message=None):
         volume = getConfig("noNextTextChimeVolume")
