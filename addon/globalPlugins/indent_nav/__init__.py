@@ -493,13 +493,19 @@ class TextInfoUnavailableException(Exception):
     pass
 
 class FastLineManagerV2:
-    def __init__(self, obj):
+    def __init__(self, obj, selectionMode=False):
         self.obj = obj
+        self.selectionMode = selectionMode
 
     def __enter__(self):
         legacyVSCode = getConfig("legacyVSCode")
         document = self.obj.makeEnhancedTextInfo(textInfos.POSITION_ALL, allowPlainTextInfoInVSCode=legacyVSCode)
-        self.originalCaret = self.obj.makeEnhancedTextInfo(textInfos.POSITION_CARET, allowPlainTextInfoInVSCode=legacyVSCode)
+        if not self.selectionMode:
+            self.originalCaret = self.obj.makeEnhancedTextInfo(textInfos.POSITION_CARET, allowPlainTextInfoInVSCode=legacyVSCode)
+        else:
+            self.originalSelection = self.obj.makeEnhancedTextInfo(textInfos.POSITION_SELECTION, allowPlainTextInfoInVSCode=legacyVSCode)
+            self.originalCaret = self.originalSelection.copy()
+            self.originalCaret.collapse()
         if document is None or  self.originalCaret is None:
             raise TextInfoUnavailableException
         pretext = self.originalCaret.copy()
@@ -1067,9 +1073,8 @@ class EditableIndentNav(NVDAObject):
         except TextInfoUnavailableException:
             VSCodeRequestDialog(gui.mainFrame, self.appModule).Show()
 
-    def getLineManager(self):
-        #return FastLineManager()
-        return FastLineManagerV2(self)
+    def getLineManager(self, selectionMode=False):
+        return FastLineManagerV2(self, selectionMode)
 
     @script(description="Moves to the next line with a greater indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+alt+RightArrow'])
     def script_moveToChild(self, gesture):
@@ -1113,11 +1118,7 @@ class EditableIndentNav(NVDAObject):
             textInfo = focus.makeTextInfo(textInfos.POSITION_SELECTION)
             api.copyToClip(textInfo.text)
             ui.message(successMessage)
-        with self.getLineManager() as lm:
-            if count >= 1:
-                textInfo = lm.getTextInfo()
-                textInfo.collapse()
-                textInfo.updateCaret()
+        with self.getLineManager(selectionMode=True) as lm:
             # Get the current indentation level
             text = lm.getText()
             originalTextInfo = lm.getTextInfo()
