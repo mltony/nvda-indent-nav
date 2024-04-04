@@ -156,11 +156,15 @@ IN_KEY_MAPS_SOURCE = {
     ],
     'selectSingleIndentationBlock': [
         'NVDA+control+i',
-        'numpad5',
+        'control+numpad7',
     ],
     'selectMultipleIndentationBlocks': [
         'NVDA+alt+i',
-        'control+numpad5',
+        'control+numpad9',
+    ],
+    'speakCurrentLine': [
+        'NVDA+Control+l',
+        'numpad5',
     ],
 }
 
@@ -183,6 +187,8 @@ GC_KEY_MAPS_SOURCE = [
 ]
 
 def normalizeKb(s):
+    if s is None:
+        return None
     SHIFT_SUFFIX = '+shift'
     if s.endswith(SHIFT_SUFFIX):
         s = s[:-len(SHIFT_SUFFIX)]
@@ -257,7 +263,11 @@ GC_KEY_MAPS = makeGlobalCommandsKeyMaps()
 
 def updateKeyMaps():
     mode = IndentNavKeyMap(getConfig("indentNavKeyMap"))
+    tones.beep(500, 50)
+    api.m = mode
     updateKeyMap(EditableIndentNav, IN_KEY_MAPS[mode])
+    indentNav = next(gp for gp in globalPluginHandler.runningPlugins if gp.__module__ == 'globalPlugins.indent_nav')
+    updateKeyMapInObject(indentNav, IN_KEY_MAPS[mode])
     updateKeyMap(globalCommands.GlobalCommands, GC_KEY_MAPS[mode])
     updateKeyMapInObject(globalCommands.commands, GC_KEY_MAPS[mode])
     try:
@@ -407,6 +417,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
         if obj.role == ROLE_TREEVIEWITEM:
             clsList.append(TreeIndentNav)
             return
+            
+    @script(description="Speak current line", gestures=['kb:NVDA+Control+l'])
+    def script_speakCurrentLine(self, gesture):
+        return globalCommands.commands.script_review_currentLine(gesture)
 
 class Beeper:
     BASE_FREQ = speech.IDT_BASE_FREQUENCY
@@ -1213,6 +1227,7 @@ class EditableIndentNav(NVDAObject):
             core.callLater(100, ui.message, _("Pasted"))
         finally:
             core.callLater(100, api.copyToClip, clipboardBackup)
+            
 
 
     def endOfDocument(self, message=None):
