@@ -25,6 +25,7 @@ except (ImportError, ModuleNotFoundError):
 import core
 import ctypes
 from enum import Enum, auto
+import globalCommands
 import globalPluginHandler
 import gui
 from gui.settingsDialogs import SettingsPanel
@@ -52,6 +53,7 @@ import time
 import tones
 from typing import Tuple
 import ui
+from utils.displayString import DisplayStringIntEnum
 import versionInfo
 import wx
 from dataclasses import dataclass
@@ -94,12 +96,186 @@ def myAssert(condition):
     if not condition:
         raise RuntimeError("Assertion failed")
 
+class IndentNavKeyMap(DisplayStringIntEnum):
+    LAPTOP = 0
+    ALT_NUMPAD = 1
+    NUMPAD = 2
+    
+    @property
+    def _displayStringLabels(self):
+        return {
+            IndentNavKeyMap.LAPTOP: _("Laptop or legacy key map: NVDA+alt+arrows"),
+            IndentNavKeyMap.ALT_NUMPAD: _("Modern key map: Alt+numPad"),
+            IndentNavKeyMap.NUMPAD: _("Advanced keymap: numpad; review cursor commands reassigned to alt+numPad"),
+        }
+
+
+IN_KEY_MAPS_SOURCE = {
+    'moveToNextSibling': [
+        'NVDA+alt+DownArrow',
+        'numpad2',
+    ],
+    'moveToNextSiblingForce': [
+        'NVDA+alt+control+DownArrow',
+        'control+numpad6',
+    ],
+    'moveToPreviousSibling': [
+        'NVDA+alt+UpArrow',
+        'numpad8',
+    ],
+    'moveToPreviousSiblingForce': [
+        'NVDA+alt+control+UpArrow',
+        'control+numpad4',
+    ],
+    'moveToLastSibling': [
+        'NVDA+alt+shift+DownArrow',
+        'numpad6',
+    ],
+    'moveToFirstSibling': [
+        'NVDA+alt+shift+UpArrow',
+        'numpad4',
+    ],
+    'moveToChild': [
+        'NVDA+alt+RightArrow',
+        'numpad3',
+    ],
+    'moveToParent': [
+        'NVDA+alt+LeftArrow',
+        'numpad7',
+    ],
+    'moveToPreviousChild': [
+        'NVDA+control+alt+RightArrow',
+        'numpad9',
+    ],
+    'moveToNextParent': [
+        'NVDA+control+alt+LeftArrow',
+        'numpad1',
+    ],
+    'speakParent': [
+        'NVDA+I',
+    ],
+    'selectSingleIndentationBlock': [
+        'NVDA+control+i',
+        'numpad5',
+    ],
+    'selectMultipleIndentationBlocks': [
+        'NVDA+alt+i',
+        'control+numpad5',
+    ],
+}
+
+GC_KEY_MAPS_SOURCE = [
+    "review_top",
+    "review_previousLine",
+    "review_currentLine",
+    "review_nextLine",
+    "review_bottom",
+    "review_previousWord",
+    "review_currentWord",
+    "review_previousWord",
+    "review_nextWord",
+    "review_startOfLine",
+    "review_previousCharacter",
+    "review_currentCharacter",
+    "review_nextCharacter",
+    "review_endOfLine",
+    "reportFocusObjectAccelerator",
+]
+
+def normalizeKb(s):
+    SHIFT_SUFFIX = '+shift'
+    if s.endswith(SHIFT_SUFFIX):
+        s = s[:-len(SHIFT_SUFFIX)]
+        s = "shift+" + s
+    return keyboardHandler.KeyboardInputGesture.fromName(s).normalizedIdentifiers[-1]
+
+def makeIndentNavKeyMaps():
+    result = {
+        k: {}
+        for k in IndentNavKeyMap
+    }
+    for command, keystrokes in IN_KEY_MAPS_SOURCE.items():
+        legacyKeystroke = keystrokes[0]
+        try:
+            numpadKeystroke = keystrokes[1]
+        except IndexError:
+            numpadKeystroke = keystrokes[0]
+        altNumpadKeystroke = 'alt+' + numpadKeystroke
+        result[IndentNavKeyMap.LAPTOP][command] = normalizeKb(legacyKeystroke)
+        result[IndentNavKeyMap.ALT_NUMPAD][command] = normalizeKb(altNumpadKeystroke)
+        result[IndentNavKeyMap.NUMPAD][command] = normalizeKb(numpadKeystroke)
+    return result
+    
+
+
+def makeGlobalCommandsKeyMaps():
+    result = {
+        k: {}
+        for k in IndentNavKeyMap
+    }
+    for command in GC_KEY_MAPS_SOURCE:
+        gestures = [
+            g 
+            for g,c in globalCommands.commands._gestureMap.items() 
+            if 
+                "script_" + command == c.__name__
+                and g.startswith('kb:')
+        ]
+
+        if len(gestures) != 1:
+            # weird
+            continue
+        keystroke = gestures[0].split(':')[1]
+        result[IndentNavKeyMap.LAPTOP][command] = normalizeKb(keystroke)
+        result[IndentNavKeyMap.ALT_NUMPAD][command] = normalizeKb(keystroke)
+        result[IndentNavKeyMap.NUMPAD][command] = normalizeKb('alt+' + keystroke)
+    return result
+
+
+    
+def updateKeyMap(cls, keyMap):
+    gestures = getattr(cls, f"_{cls.__name__}__gestures")
+    gestures = {
+        keyMap.get(script, keystroke): script
+        for keystroke, script in gestures.items()
+    }
+    setattr(cls, f"_{cls.__name__}__gestures", gestures)
+
+
+def updateKeyMapInObject(ci, keyMap):
+    gestures = ci._gestureMap
+    gestures = {
+        keyMap.get(script.__name__.replace('script_', ''), keystroke): script
+        for keystroke, script in gestures.items()
+    }
+    ci._gestureMap = gestures
+
+    
+    
+IN_KEY_MAPS = makeIndentNavKeyMaps()
+GC_KEY_MAPS = makeGlobalCommandsKeyMaps()
+
+def updateKeyMaps():
+    mode = IndentNavKeyMap(getConfig("indentNavKeyMap"))
+    updateKeyMap(EditableIndentNav, IN_KEY_MAPS[mode])
+    updateKeyMap(globalCommands.GlobalCommands, GC_KEY_MAPS[mode])
+    updateKeyMapInObject(globalCommands.commands, GC_KEY_MAPS[mode])
+    try:
+        ci = next(gp for gp in globalPluginHandler.runningPlugins if gp.__module__ == 'globalPlugins.charinfo')
+        updateKeyMapInObject(ci, GC_KEY_MAPS[mode])
+    except StopIteration:
+        return
+
+# Wait 1 second until all add-ons are loaded before updating keymap
+core.callLater(1000, updateKeyMaps)
+
 def initConfiguration():
     confspec = {
         "crackleVolume" : "integer( default=25, min=0, max=100)",
         "noNextTextChimeVolume" : "integer( default=50, min=0, max=100)",
         "noNextTextMessage" : "boolean( default=False)",
         "legacyVSCode" : "boolean( default=False)",
+        "indentNavKeyMap" : "integer( default=1, min=0, max=2)",
     }
     config.conf.spec["indentnav"] = confspec
 
@@ -124,6 +300,16 @@ class SettingsDialog(SettingsPanel):
 
     def makeSettings(self, settingsSizer):
         sHelper = gui.guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
+      # Key map combo box
+        label = _("Keyboard shortcuts")
+        self.keyMapComboBox = sHelper.addLabeledControl(
+            label,
+            wx.Choice,
+            choices=[mode.displayString for mode in IndentNavKeyMap]
+        )
+        index = getConfig("indentNavKeyMap")
+        self.keyMapComboBox.SetSelection(index)
+
       # crackleVolumeSlider
         sizer=wx.BoxSizer(wx.HORIZONTAL)
         # Translators: volume of crackling slider
@@ -185,10 +371,12 @@ class SettingsDialog(SettingsPanel):
         os.startfile(url)
 
     def onSave(self):
+        config.conf["indentnav"]["indentNavKeyMap"] = self.keyMapComboBox.GetSelection()
         config.conf["indentnav"]["crackleVolume"] = self.crackleVolumeSlider.Value
         config.conf["indentnav"]["noNextTextChimeVolume"] = self.noNextTextChimeVolumeSlider.Value
         config.conf["indentnav"]["noNextTextMessage"] = self.noNextTextMessageCheckbox.Value
         config.conf["indentnav"]["legacyVSCode"] = self.legacyVSCodeCheckbox.Value
+        updateKeyMaps()
 
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
@@ -300,161 +488,6 @@ class Beeper:
             result.append(a[i // m])
         return result
 
-
-class TraditionalLineManager:
-    """
-    This class is no longer used - please use FastLineManager instead.
-    """
-    def __init__(self):
-        pass
-
-    def __enter__(self):
-        focus = api.getFocusObject()
-        self.textInfo = focus.makeTextInfo(textInfos.POSITION_CARET)
-        return self
-
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
-
-    def move(self, increment):
-        result = self.textInfo.move(textInfos.UNIT_LINE, increment)
-        return result
-
-    def getText(self):
-        self.textInfo.expand(textInfos.UNIT_LINE)
-        return self.textInfo.text
-
-    def getLine(self):
-        return self.textInfo.copy()
-
-    def updateCaret(self, line):
-        line.updateCaret()
-class OffsetMode(Enum):
-    GENERIC = auto()
-    OFFSET = auto()
-    COMPOUND = auto()
-
-class OffsetDecodeMode(Enum):
-    NONE = auto()
-    PLAIN = auto()
-    UTF8 = auto()
-
-class FastLineManager:
-    def __init__(self):
-        pass
-
-    def __enter__(self):
-        focus = api.getFocusObject()
-        document = focus.makeTextInfo(textInfos.POSITION_ALL)
-        pretext = focus.makeTextInfo(textInfos.POSITION_SELECTION)
-        pretext.collapse()
-        pretext.setEndPoint(document, "startToStart")
-        self.lineIndex = len(self.normalizeString(pretext.text).split("\n")) - 1
-        self.originalLineIndex = self.lineIndex
-        documentText = document.text
-        text = self.normalizeString(documentText)
-        self.lines = text.split("\n")
-        self.nLines = len(self.lines)
-        self.originalCaret = focus.makeTextInfo(textInfos.POSITION_SELECTION)
-        self.originalCaret.collapse()
-        self.originalCaret.expand(textInfos.UNIT_LINE)
-        self.numNewLineCharacters = 2 if "\r\n" in document.text else 1
-        self.offsetMode = OffsetMode.GENERIC
-        if isinstance(document, textInfos.offsets.OffsetsTextInfo):
-            self.offsetMode = OffsetMode.OFFSET
-            # In some apps, like notepad, end offset is computed incorrectly. The last characters appear to be empty.
-            #Working around this here
-            lastChar = document.copy()
-            while lastChar._endOffset >= 1:
-                lastChar._startOffset = lastChar._endOffset - 1
-                if len(lastChar.text) == 0:
-                    lastChar._endOffset -= 1
-                else:
-                    break
-            endOffset = lastChar._endOffset
-        if isinstance(document, MozillaCompoundTextInfo):
-            if isinstance(document._start, IA2TextTextInfo) and isinstance(document._end, IA2TextTextInfo):
-                if document._start._obj == document._end._obj:
-                    self.offsetMode = OffsetMode.COMPOUND
-                    endOffset = document._end._endOffset
-        if self.offsetMode in {OffsetMode.OFFSET, OffsetMode.COMPOUND}:
-            if len(document.text) == endOffset:
-                self.decoding = OffsetDecodeMode.PLAIN
-            elif len(document.text.encode('utf-8')) == endOffset:
-                self.decoding = OffsetDecodeMode.UTF8
-            else:
-                # We don't know how to decode text into offsets. Fall back to more reliable version.
-                self.offsetMode = OffsetMode.GENERIC
-                self.decoding = OffsetDecodeMode.NONE
-            def speakMode():
-                speech.cancelSpeech()
-                ui.message(f"{self.offsetMode} {self.decoding}")
-            #core.callLater(1000, speakMode)
-        self.document = document
-        #self.offsetMode = OffsetMode.GENERIC
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
-
-    def move(self, increment):
-        newIndex = self.lineIndex + increment
-        if (newIndex < 0) or (newIndex >= self.nLines):
-            return 0
-        self.lineIndex = newIndex
-        return increment
-
-    def getText(self):
-        return self.lines[self.lineIndex]
-
-    def getLine(self):
-        return self.lineIndex
-
-    def updateCaret(self, line):
-        line = self.getTextInfo(line)
-        caret = line.copy()
-        caret.collapse()
-        caret.updateCaret()
-        return line
-
-    def getTextInfo(self, line=None):
-        if line is None:
-            line = self.lineIndex
-        if self.offsetMode in {OffsetMode.OFFSET, OffsetMode.COMPOUND}:
-            textInfo = self.document.copy()
-            decoding = self.decoding
-            numNewLineCharacters = self.numNewLineCharacters
-            def l(s):
-                if decoding == OffsetDecodeMode.UTF8:
-                    s = s.encode('utf-8')
-                return numNewLineCharacters + len(s)
-            startOffset = sum([ l(s) for s in self.lines[:line]])
-            endOffset = startOffset + l(self.lines[line])
-            if self.offsetMode == OffsetMode.OFFSET:
-                textInfo._startOffset = startOffset
-                textInfo._endOffset = min(textInfo._endOffset, endOffset)
-            elif self.offsetMode == OffsetMode.COMPOUND:
-                textInfo._start._startOffset = startOffset
-                textInfo._end._startOffset = startOffset
-                textInfo._start._endOffset = min(textInfo._start._endOffset, endOffset)
-                textInfo._end._endOffset = min(textInfo._end._endOffset, endOffset)
-            else:
-                raise Exception("impossible")
-            return textInfo
-
-        delta = line - self.originalLineIndex
-        textInfo = self.originalCaret.copy()
-        result = textInfo.move(textInfos.UNIT_LINE, delta)
-        if result != delta:
-            raise Exception(f"Failed to move by {delta} lines")
-        textInfo.expand(textInfos.UNIT_LINE)
-        return textInfo
-
-    def normalizeString(self, s):
-        s = s.replace("\r\n", "\n")
-        s = s.replace("\r", "\n")
-        return s
 
 class TextInfoUnavailableException(Exception):
     pass
@@ -586,7 +619,6 @@ class VSCodePiper(threading.Thread):
         pipeName = r"\\.\pipe\VSCodeIndentNavBridge" + str(pid)
         #log.error(f"asdf {pipeName}")
         self.f = open(pipeName, 'rb+', buffering=0)
-        api.f = self.f
         self.inputQueue  = queue.Queue()
         self.closed = False
         self.start()
@@ -1189,14 +1221,6 @@ class EditableIndentNav(NVDAObject):
             ui.message(message)
 
     def isVscodeApp(self):
-        if False:
-            try:
-                if self.treeInterceptor is None:
-                    return False
-                if not isinstance(self.treeInterceptor, ChromeVBufTextInfo):
-                    return False
-            except NameError:
-                return False
         try:
             if self.treeInterceptor is not None:
                 return False
