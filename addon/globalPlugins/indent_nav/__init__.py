@@ -49,6 +49,7 @@ import speech
 import struct
 import subprocess
 import textInfos
+from textInfos import UNIT_CHARACTER
 from textInfos.offsets import OffsetsTextInfo
 import threading
 import time
@@ -1903,6 +1904,7 @@ class EditableIndentNav(NVDAObject):
         info = self.makeEnhancedTextInfo(textInfos.POSITION_ALL)
         info.setEndPoint(caretInfo, 'startToStart' if direction > 0 else 'endToEnd')
         text = info.text
+        text = re.sub(r'\r(?!\n)', '\n', text)
         matches = list(re.finditer(bookmark.pattern, text, re.MULTILINE))
         if len(matches) == 0:
             self.endOfDocument(_("Bookmark not found"))
