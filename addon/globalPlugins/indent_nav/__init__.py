@@ -29,6 +29,8 @@ import globalCommands
 import globalPluginHandler
 import gui
 from gui.settingsDialogs import SettingsPanel
+from gui import guiHelper, nvdaControls
+import inputCore
 import json
 import keyboardHandler
 from logHandler import log
@@ -56,7 +58,7 @@ import ui
 from utils.displayString import DisplayStringIntEnum
 import versionInfo
 import wx
-from dataclasses import dataclass
+import dataclasses
 from . import textUtils
 
 try:
@@ -280,8 +282,6 @@ GC_KEY_MAPS = makeGlobalCommandsKeyMaps()
 
 def updateKeyMaps():
     mode = IndentNavKeyMap(getConfig("indentNavKeyMap"))
-    tones.beep(500, 50)
-    api.m = mode
     updateKeyMap(EditableIndentNav, IN_KEY_MAPS[mode])
     indentNav = next(gp for gp in globalPluginHandler.runningPlugins if gp.__module__ == 'globalPlugins.indent_nav')
     updateKeyMapInObject(indentNav, IN_KEY_MAPS[mode])
@@ -300,9 +300,9 @@ config.post_configProfileSwitch .register(updateKeyMaps)
 
 def initConfiguration():
     clutterRegex = (
-        r"^\s*(" + 
+        r"^\s*(" +
         "|".join([
-          # Python 
+          # Python
             # ) : #comment
                 r"\)\s*:?\s*(#.*)?",
             # ) -> type :
@@ -313,7 +313,7 @@ def initConfiguration():
                 r"#.*",
             # from? import
                 r"(^from\s+[\w\s.]+\s+|^)import\s+.*",
-          # C++ 
+          # C++
             # ) { // comment
             # ); //comment
                 r"\)\s*[{;]?\s*(//.*)?",
@@ -326,6 +326,9 @@ def initConfiguration():
         ])
         + r")\s*$"
     )
+    defaultQuickFind = json.dumps({
+        'bookmarks': []
+    }).replace("'", r"\'")
     confspec = {
         "crackleVolume" : "integer( default=25, min=0, max=100)",
         "noNextTextChimeVolume" : "integer( default=50, min=0, max=100)",
@@ -333,6 +336,7 @@ def initConfiguration():
         "legacyVSCode" : "boolean( default=False)",
         "indentNavKeyMap" : "integer( default=1, min=0, max=2)",
         "clutterRegex" : f"string( default='{clutterRegex}')",
+        "quickFind" : f"string( default='{defaultQuickFind}')",
     }
     config.conf.spec["indentnav"] = confspec
 
@@ -347,10 +351,68 @@ def setConfig(key, value):
 addonHandler.initTranslation()
 initConfiguration()
 
+@dataclasses.dataclass
+class QuickFindBookmark:
+    name: str
+    keystroke: str
+    pattern: str
+    enabled: bool = True
+
+    def getDisplayName(self):
+        return self.name or self.keystroke
+
+def loadBookmarks():
+    items = json.loads(getConfig("quickFind"))['bookmarks']
+    items = [QuickFindBookmark(**item) for item in items]
+    return items
+
+def saveBookmarks(bookmarks):
+   items = [dataclasses.asdict(item) for item in bookmarks]
+   setConfig("quickFind", json.dumps({
+        'bookmarks': items,
+    }))
+
+globalBookmarks = {}
+def reloadBookmarks():
+    global globalBookmarks
+    bookmarks = loadBookmarks()
+    globalBookmarks = {
+        bookmark.keystroke: bookmark
+        for bookmark in bookmarks
+    }
+    cls = EditableIndentNav
+    gestures = getattr(cls, f"_{cls.__name__}__gestures")
+    QF = "quickFind"
+    gestures = {
+        keystroke: script
+        for keystroke, script in gestures.items()
+        if script != QF
+    }
+    gestures = {
+        **gestures,
+        **{
+            keyboardHandler.KeyboardInputGesture.fromName(keystroke).normalizedIdentifiers[-1]: QF
+            for keystroke, bookmark in globalBookmarks.items()
+        },
+        **{
+            keyboardHandler.KeyboardInputGesture.fromName("shift+" + keystroke).normalizedIdentifiers[-1]: QF
+            for keystroke, bookmark in globalBookmarks.items()
+        },
+    }
+    setattr(cls, f"_{cls.__name__}__gestures", gestures)
+
+
+
+def getKeystrokeFromGesture(gesture):
+    #keystroke = gesture.normalizedIdentifiers[-1].split(':')[1]
+    keystroke = gesture.identifiers[-1].split(':')[1]
+    return keystroke
+
 
 class SettingsDialog(SettingsPanel):
     # Translators: Title for the settings dialog
     title = _("IndentNav settings")
+
 
     def __init__(self, *args, **kwargs):
         super(SettingsDialog, self).__init__(*args, **kwargs)
@@ -436,6 +498,248 @@ class SettingsDialog(SettingsPanel):
         updateKeyMaps()
 
 
+class EditBookmarkDialog(wx.Dialog):
+    def __init__(self, parent, bookmark=None):
+        title=_("Edit IndentNav QuickFind bookmark")
+        super(EditBookmarkDialog,self).__init__(parent,title=title)
+        mainSizer=wx.BoxSizer(wx.VERTICAL)
+        sHelper = guiHelper.BoxSizerHelper(self, orientation=wx.VERTICAL)
+        if bookmark is  not None:
+            self.bookmark = bookmark
+        else:
+            self.bookmark = QuickFindBookmark(
+                name="",
+                keystroke="",
+                pattern="",
+            )
+        self.keystroke = self.bookmark.keystroke
+      # Translators: label for name
+        commentLabelText = _("&Display name (optional)")
+        self.commentTextCtrl=sHelper.addLabeledControl(commentLabelText, wx.TextCtrl)
+        self.commentTextCtrl.SetValue(self.bookmark.name)
+      # Translators:  Custom keystroke button
+        self.customeKeystrokeButton = sHelper.addItem (wx.Button (self, label = _("&Keystroke")))
+        self.customeKeystrokeButton.Bind(wx.EVT_BUTTON, self.OnCustomKeystrokeClick)
+        self.updateCustomKeystrokeButtonLabel()
+
+      # Translators: pattern
+        patternLabelText = _("&Pattern")
+        self.patternTextCtrl=sHelper.addLabeledControl(patternLabelText, wx.TextCtrl)
+        self.patternTextCtrl.SetValue(self.bookmark.pattern)
+      # Translators: label for enabled checkbox
+        enabledText = _("Bookmark enabled")
+        self.enabledCheckBox=sHelper.addItem(wx.CheckBox(self,label=enabledText))
+        self.enabledCheckBox.SetValue(self.bookmark.enabled)
+      #  OK/cancel buttons
+        sHelper.addDialogDismissButtons(self.CreateButtonSizer(wx.OK|wx.CANCEL))
+
+        mainSizer.Add(sHelper.sizer,border=20,flag=wx.ALL)
+        mainSizer.Fit(self)
+        self.SetSizer(mainSizer)
+        self.commentTextCtrl.SetFocus()
+        self.Bind(wx.EVT_BUTTON,self.onOk,id=wx.ID_OK)
+
+    def make(self, snippet=None, quiet=False):
+        pattern = self.patternTextCtrl.Value
+        pattern = pattern.rstrip("\r\n")
+        errorMsg = None
+        if len(pattern) == 0:
+            errorMsg = _('Pattern cannot be empty!')
+        else:
+            try:
+                re.compile(pattern)
+            except re.error as e:
+                errorMsg = _('Failed to compile regular expression: %s') % str(e)
+
+        if errorMsg is not None:
+            # Translators: This is an error message to let the user know that the pattern field is not valid.
+            gui.messageBox(errorMsg, _("Bookmark entry error"), wx.OK|wx.ICON_WARNING, self)
+            self.patternTextCtrl.SetFocus()
+            return
+
+        if len(self.keystroke) == 0:
+            errorMsg = _("Please specify keystroke gesture.")
+            gui.messageBox(errorMsg, _("Bookmark entry error"), wx.OK|wx.ICON_WARNING, self)
+            self.customeKeystrokeButton.SetFocus()
+            return
+        bookmark = QuickFindBookmark(
+            enabled=self.enabledCheckBox.Value,
+            name=self.commentTextCtrl.Value,
+            pattern=pattern,
+            keystroke=self.keystroke,
+        )
+        return bookmark
+
+    def updateCustomKeystrokeButtonLabel(self):
+        keystroke = self.keystroke
+        if keystroke:
+            self.customeKeystrokeButton.SetLabel(_("&Keystroke: %s") % (keystroke))
+        else:
+            self.customeKeystrokeButton.SetLabel(_("Keystroke: None"))
+
+    def OnCustomKeystrokeClick(self,evt):
+        if inputCore.manager._captureFunc:
+            # don't add while already in process of adding.
+            return
+        def addGestureCaptor(gesture: inputCore.InputGesture):
+            if gesture.isModifier:
+                return False
+            inputCore.manager._captureFunc = None
+            wx.CallAfter(self._addCaptured, gesture)
+            return False
+        inputCore.manager._captureFunc = addGestureCaptor
+        core.callLater(50, ui.message, _("Press desired keystroke now"))
+
+    blackListedKeystrokes = "escape enter numpadenter space nvda+space nvda+n nvda+q nvda+j j tab uparrow downarrow leftarrow rightarrow home end control+home control+end delete".split()
+
+    def _addCaptured(self, gesture):
+        g = getKeystrokeFromGesture(gesture)
+        if g  in self.blackListedKeystrokes:
+            msg = _("Invalid keystroke %s: cannot overload essential  NVDA keystrokes!") % g
+        elif 'shift+' in g:
+            msg = _("Invalid keystroke %s: Cannot use keystrokes with shift modifier for quickFind bookmarks!") % g
+        else:
+            self.keystroke = g
+            msg = None
+        if msg:
+            core.callLater(50, ui.message, msg)
+        self.updateCustomKeystrokeButtonLabel()
+
+    def onOk(self,evt):
+        bookmark = self.make()
+        if bookmark is not None:
+                self.bookmark = bookmark
+                evt.Skip()
+
+
+class QuickFindSettingsDialog(SettingsPanel):
+    # Translators: Title for the settings dialog
+    title = _("IndentNav QuickFind bookmarks settings")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+    def makeSettings(self, settingsSizer):
+        self.bookmarks = loadBookmarks()
+        sHelper = gui.guiHelper.BoxSizerHelper(self, sizer=settingsSizer)
+      # bookmarks table
+        label = _("&QuickFind bookmarks")
+        self.bookmarksList = sHelper.addLabeledControl(
+            label,
+            nvdaControls.AutoWidthColumnListCtrl,
+            autoSizeColumn=2,
+            itemTextCallable=self.getItemTextForList,
+            style=wx.LC_REPORT | wx.LC_SINGLE_SEL | wx.LC_VIRTUAL
+        )
+
+        self.bookmarksList.InsertColumn(0, _("Name"), width=self.scaleSize(150))
+        self.bookmarksList.InsertColumn(1, _("Enabled"), width=self.scaleSize(150))
+        self.bookmarksList.InsertColumn(2, _("Gesture"))
+        self.bookmarksList.InsertColumn(3, _("Pattern"))
+        self.bookmarksList.Bind(wx.EVT_LIST_ITEM_FOCUSED, self.onListItemFocused)
+        self.bookmarksList.ItemCount = len(self.bookmarks)
+
+        bHelper = sHelper.addItem(guiHelper.ButtonHelper(orientation=wx.HORIZONTAL))
+      # Buttons
+        self.addButton = bHelper.addButton(self, label=_("&Add"))
+        self.addButton.Bind(wx.EVT_BUTTON, self.OnAddClick)
+        self.editButton = bHelper.addButton(self, label=_("&Edit"))
+        self.editButton.Bind(wx.EVT_BUTTON, self.OnEditClick)
+        self.removeButton = bHelper.addButton(self, label=_("&Remove"))
+        self.removeButton.Bind(wx.EVT_BUTTON, self.OnRemoveClick)
+        self.moveUpButton = bHelper.addButton(self, label=_("Move &up"))
+        self.moveUpButton.Bind(wx.EVT_BUTTON, lambda evt: self.OnMoveClick(evt, -1))
+        self.moveDownButton = bHelper.addButton(self, label=_("Move &down"))
+        self.moveDownButton.Bind(wx.EVT_BUTTON, lambda evt: self.OnMoveClick(evt, 1))
+        self.sortButton = bHelper.addButton(self, label=_("&Sort"))
+        self.sortButton.Bind(wx.EVT_BUTTON, self.OnSortClick)
+
+    def getItemTextForList(self, item, column):
+        bookmark = self.bookmarks[item]
+        if column == 0:
+            return bookmark.name or bookmark.keystroke
+        elif column == 1:
+            return _("Enabled") if bookmark.enabled else _("Disabled")
+        elif column == 2:
+            return bookmark.keystroke
+        elif column == 3:
+            return bookmark.pattern
+        else:
+            raise ValueError("Unknown column: %d" % column)
+
+    def onListItemFocused(self, evt):
+        if self.bookmarksList.GetSelectedItemCount()!=1:
+            return
+        index=self.bookmarksList.GetFirstSelected()
+        bookmark = self.bookmarks[index]
+
+    def OnAddClick(self,evt):
+        entryDialog=EditBookmarkDialog(self)
+        if entryDialog.ShowModal()==wx.ID_OK:
+            bookmarks = list(self.bookmarks) + [entryDialog.bookmark]
+            self.bookmarks = bookmarks
+            self.bookmarksList.ItemCount = len(self.bookmarks)
+            index = self.bookmarksList.ItemCount - 1
+            self.bookmarksList.Select(index)
+            self.bookmarksList.Focus(index)
+            # We don't get a new focus event with the new index.
+            self.bookmarksList.sendListItemFocusedEvent(index)
+            self.bookmarksList.SetFocus()
+            entryDialog.Destroy()
+
+    def OnEditClick(self,evt):
+        if self.bookmarksList.GetSelectedItemCount()!=1:
+            return
+        editIndex=self.bookmarksList.GetFirstSelected()
+        if editIndex<0:
+            return
+        entryDialog=EditBookmarkDialog(
+            self,
+            self.bookmarks[editIndex],
+        )
+        if entryDialog.ShowModal()==wx.ID_OK:
+            self.bookmarks[editIndex] = entryDialog.bookmark
+            self.bookmarksList.SetFocus()
+        entryDialog.Destroy()
+
+    def OnRemoveClick(self,evt):
+        bookmarks = list(self.bookmarks)
+        index=self.bookmarksList.GetFirstSelected()
+        while index>=0:
+            self.bookmarksList.DeleteItem(index)
+            del bookmarks[index]
+            index=self.bookmarksList.GetNextSelected(index)
+        self.bookmarksList.SetFocus()
+
+    def OnMoveClick(self,evt, increment):
+        if self.bookmarksList.GetSelectedItemCount()!=1:
+            return
+        index=self.bookmarksList.GetFirstSelected()
+        if index<0:
+            return
+        newIndex = index + increment
+        if 0 <= newIndex < len(self.bookmarks):
+            bookmarks = list(self.bookmarks)
+            # Swap
+            tmp = bookmarks[index]
+            bookmarks[index] = bookmarks[newIndex]
+            bookmarks[newIndex] = tmp
+            self.bookmarks = bookmarks
+            self.bookmarksList.Select(newIndex)
+            self.bookmarksList.Focus(newIndex)
+        else:
+            return
+
+    def OnSortClick(self,evt):
+        bookmarks = list(self.bookmarks)
+        bookmarks.sort(key=QuickFindBookmark.getDisplayName)
+        self.bookmarks = bookmarks
+
+    def onSave(self):
+        saveBookmarks(self.bookmarks)
+        reloadBookmarks()
+
+
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     scriptCategory = _("IndentNav")
     def __init__(self, *args, **kwargs):
@@ -444,9 +748,12 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
     def terminate(self):
         gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(SettingsDialog)
+        gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(QuickFindSettingsDialog)
 
     def createMenu(self):
         gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(SettingsDialog)
+        gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(QuickFindSettingsDialog)
+
 
     def chooseNVDAObjectOverlayClasses (self, obj, clsList):
         if obj.windowClassName == u'Scintilla':
@@ -629,7 +936,6 @@ class FastLineManagerV2:
         else:
             unit = self.getLineUnit()
             delta = line - self.originalLineIndex
-            #mylog(f"line {line} self.originalLineIndex={self.originalLineIndex} delta={delta}")
             textInfo = self.originalCaret.copy()
             textInfo.expand(unit)
             textInfo.collapse()
@@ -667,13 +973,13 @@ def installVSCodeExtension():
 
 namedPipesCache = {}
 HWND_TO_PID = {}
-@dataclass
+@dataclasses.dataclass
 class PiperRequest:
     request: dict = None
     shutdownRequested: bool = False
     outputQueue: queue.Queue = None
 
-@dataclass
+@dataclasses.dataclass
 class PiperResponse:
     pid: int
     response: dict
@@ -992,6 +1298,198 @@ class VSCodeRequestDialog(wx.Dialog):
         self.Hide()
 
 
+
+def moveToCodepointOffset(
+		self,
+		codepointOffset: int,
+):
+	"""
+		This function moves textInfos by codepoint characters. A codepoint character represents exactly 1 character
+		in a Pythonic string.
+
+		Illustration:
+			Suppose we have TextInfo that represents a paragraph of text:
+			```
+			> s = paragraphInfo.text
+			> s
+			'Hello, world!\r'
+			```
+			Suppose that we would like to put the cursor at the first letter of the word 'world'.
+			That means jumping to index 7:
+			```
+			> s[7:]
+			'world!\r'
+			```
+			Here is how this can be done:
+			```
+			> info = paragraphInfo.moveToCodepointOffset(7)
+			> info.setEndPoint(paragraphInfo, "endToEnd")
+			> info.text
+			'world!\r'
+			```
+
+		Background:
+			In many applications there is no one-to-one mapping of codepoint characters and TextInfo characters,
+			e.g. when calling TextInfo.move(UNIT_CHARACTER, n).
+			There are a couple of reasons for this discrepancy:
+			1. In Wide character encoding, some 4-byte unicode characters are represented as two surrogate characters,
+			whereas in Pythonic string they would be represented by a single character.
+			2. In non-offset TextInfos (e.g. UIATextInfo)
+			there is no guarantee on the fact that TextInfos.move(UNIT_CHARACTER, 1)would actually move by
+			exactly 1 character.
+			A good illustration of this is in Microsoft Word with UIA enabled always,
+			the first character of a bullet list item would be represented by three pythonic codepoint characters:
+			* Bullet character "•"
+			* Tab character \t
+			* And the first character of of list item per se.
+
+			In many use cases (e.g., sentence navigation, style navigation),
+			we identify pythonic codepoint character that we would like to move our TextInfo to.
+			TextInfos.move(UNIT_CHARACTER, n) would cause many side effects.
+			This function provides a clean and reliable way to jump to a given codepoint offset.
+
+		Assumptions:
+			1. This function operates on a non-collapsed TextInfo only. In a typical scenario, we might want
+			to jump to a certain offset within a paragraph or a line. In this case this function
+			should be called on TextInfo representing said paragraph or line.
+			The reason for that is that for some implementations we might
+			need to access text of paragraph/line in order to accurately compute result offset.
+			2. It assumes that 1 character of application-specific TextInfo representation
+			maps to 1 or more characters of codepoint representation.
+			3. This function is also written with an assumption that a character
+			in application-specific TextInfo representation might not map to any pythonic characters,
+			although this scenario has never been observed in any applications.
+			4. Also this function assumes that most characters have 1:1 mapping between codepoint
+			and application-specific representations.
+			This assumption is not required, however if this assumption is True, the function will converge faster.
+			If this assumption is false, then it might take many iterations to find the right TextInfo.
+
+		Algorithm:
+			This generic implementation essentially a biased binary search.
+			On every iteration we operate on a pythonic string and its TextInfo counterpart stored in info variable.
+			We would like to reach a certain offset within that pythonic string,
+			that is stored in codepointOffsetLeft variable.
+			In every iteration of the loop:
+			1. We try to either move from the left end of info by codepointOffsetLeft  characters
+			or from the right end by -codepointOffsetRight characters - depending which move is shorter.
+			We store destination point as collapsed TextInfo tmpInfo.
+			2. We compute number of pythonic characters from the beginning of info until tmpInfo
+			and store it in actualCodepointOffset variable.
+			3. We will compare actualCodepointOffset with codepointOffsetLeft  : if they are equal,
+			then we just found desired TextInfo.
+			Otherwise we use tmpInfo as the middle point of binary search and we recurse either to the left
+			or to the right, depending where desired offset lies.
+
+			One extra part of the algorithm serves to prevent certain conditions:
+			if we happen to move on the step 1 from the same point twice
+			in two consecutive iterations of the loop, then on the second time we will move tmpInfo
+			exactly to the opposite end of info,
+			and the algorithm will fail on sanity check condition in the for loop.
+			To avoid this situation we track last move and the direction of last divide
+			in variables lastMove and lastRecursed.
+			If we detect that we are about to move from the same endpoint for the second time,
+			we reduce the count of characters in order to make sure
+			the algorithm makes some progress on each iteration.
+	"""
+	text = self.text
+	if codepointOffset < 0 or codepointOffset > len(text):
+		raise ValueError
+	if codepointOffset == 0 or codepointOffset == len(text):
+		result = self.copy()
+		result.collapse(end=codepointOffset > 0)
+		return result
+	
+	info = self.copy()
+	# Total codepoint Length represents length in python characters of Current TextInfo we're workoing with.
+	# We start with self, and then gradually divide and conquer in order to find desired offset.
+	totalCodepointOffset = len(text)
+
+	# codepointOffsetLeft and codepointOffsetRight represent distance in pythonic characters
+	# from left and right ends of info correspondingly to the desired location.
+	codepointOffsetLeft = codepointOffset
+	codepointOffsetRight = totalCodepointOffset - codepointOffsetLeft
+
+	# We store lastMove - by how many characters we moved last time, and
+	# lastRecursed - whether last recursion happened to the left (-1), right(1) or failed due to overshooting(0)
+	# in order to avoid certain corner cases.
+	lastMove: int | None = None
+	lastRecursed: int | None = None
+	
+	MAX_BINARY_SEARCH_ITERATIONS = 1000
+	for __ in range(MAX_BINARY_SEARCH_ITERATIONS):
+		tmpInfo = info.copy()
+		if codepointOffsetLeft <= codepointOffsetRight:
+			# Move from the left end of info. Let's compute by how many characters in moveCharacters variable.
+			tmpInfo.collapse()
+			if (
+				lastRecursed is not None and (
+					lastRecursed == 0 or (
+						lastRecursed < 0 and lastMove > 0
+					)
+				)
+			):
+				# Here we check that last time we also attempted to move from the same left end.
+				# And apparently we overshot last time. In order to avoid infinite loop
+				# or overshooting again, reduce movement by half.
+				moveCharacters = lastMove // 2
+				if moveCharacters == 0 or moveCharacters >= lastMove:
+					raise RuntimeError("Unable to find desired offset in TextInfo.")
+			else:
+				moveCharacters = codepointOffsetLeft
+			code = tmpInfo.move(UNIT_CHARACTER, moveCharacters, endPoint="end")
+			lastMove = moveCharacters
+			tmpText = tmpInfo.text
+			actualCodepointOffset = len(tmpText)
+			if not text.startswith(tmpText):
+				raise RuntimeError(f"Inner textInfo text '{tmpText}' doesn't match outer textInfo text '{text}'")
+			tmpInfo.collapse(end=True)
+		else:
+			# Move from the right end of info.
+			tmpInfo.collapse(end=True)
+			if (
+				lastRecursed is not None and (
+					lastRecursed == 0 or (
+						lastRecursed > 0 and lastMove < 0
+					)
+				)
+			):
+				# lastMove was negative, inverting it since modular division of negative numbers works weird.
+				moveCharacters = -((-lastMove) // 2)
+				if moveCharacters == 0 or moveCharacters <= lastMove:
+					raise RuntimeError("Unable to find desired offset in TextInfo.")
+			else:
+				moveCharacters = -codepointOffsetRight
+			code = tmpInfo.move(UNIT_CHARACTER, moveCharacters, endPoint="start")
+			lastMove = moveCharacters
+			tmpText = tmpInfo.text
+			actualCodepointOffset = totalCodepointOffset - len(tmpText)
+			if not text.endswith(tmpText):
+				raise RuntimeError(f"Inner textInfo text '{tmpText}' doesn't match outer textInfo text '{text}'")
+			tmpInfo.collapse()
+		if code == 0:
+			raise RuntimeError("Move by character operation unexpectedly failed.")
+		if actualCodepointOffset <= 0 or actualCodepointOffset >= totalCodepointOffset:
+			# We overshot, call this recursion attempt failed and try again lower movement
+			lastRecursed = 0
+			continue
+		if actualCodepointOffset == codepointOffsetLeft:
+			return tmpInfo
+		elif actualCodepointOffset < codepointOffsetLeft:
+			# Recursing right
+			lastRecursed = 1
+			text = text[actualCodepointOffset:]
+			codepointOffsetLeft -= actualCodepointOffset
+			totalCodepointOffset = codepointOffsetLeft + codepointOffsetRight
+			info.setEndPoint(tmpInfo, which="startToStart")
+		else:  # actualCodepointOffset > codepointOffsetLeft
+			# Recursing left
+			lastRecursed = -1
+			text = text[:actualCodepointOffset]
+			totalCodepointOffset = actualCodepointOffset
+			codepointOffsetRight = totalCodepointOffset - codepointOffsetLeft
+			info.setEndPoint(tmpInfo, which="endToEnd")
+	raise RuntimeError("Infinite loop during binary search.")
+
 class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
     beeper = Beeper()
@@ -1140,11 +1638,8 @@ class EditableIndentNav(NVDAObject):
                         self.addHistory(resultLine)
                     self.crackle(indentLevels)
                     if textInfo is not None:
-                        #mylog(f"speakTextInfo({textInfo.text})")
-                        #mylog(f"type(textInfo)={type(textInfo)}")
                         speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
                     else:
-                        #mylog(f"speakText({resultText})")
                         speech.speakText(resultText)
                 else:
                     self.endOfDocument(errorMessage)
@@ -1291,7 +1786,7 @@ class EditableIndentNav(NVDAObject):
             core.callLater(100, ui.message, _("Pasted"))
         finally:
             core.callLater(100, api.copyToClip, clipboardBackup)
-            
+
     def getHistory(self):
         try:
             return self.linesHistory, self.historyIndex
@@ -1299,7 +1794,7 @@ class EditableIndentNav(NVDAObject):
             self.linesHistory = []
             self.historyIndex = -1
             return self.linesHistory, self.historyIndex
-            
+
     def addHistory(self, lineNumber):
         history, index = self.getHistory()
         try:
@@ -1311,7 +1806,7 @@ class EditableIndentNav(NVDAObject):
         self.linesHistory.insert(self.historyIndex, lineNumber)
         if len(self.linesHistory) > self.historyIndex + 1:
             self.linesHistory = self.linesHistory[:self.historyIndex + 1]
-        
+
 
     @script(description="Go back in history.", gestures=['kb:NVDA+control+u'])
     def script_goBack(self, gesture):
@@ -1325,7 +1820,7 @@ class EditableIndentNav(NVDAObject):
                 speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
         else:
             self.endOfDocument(_(")No previous line in history"))
-            
+
     @script(description="Go forward in history.", gestures=['kb:NVDA+alt+u'])
     def script_goForward(self, gesture):
         lines, index = self.getHistory()
@@ -1385,26 +1880,55 @@ class EditableIndentNav(NVDAObject):
             return self.makeTextInfo(position)
         return None
 
-    @script(description="Test IndentNav", gestures=['kb:Windows+z'])
-    def script_indentNavTest(self, gesture):
-        #piper = getPiper(self)
-        #l = piper.getStoryLength()
-        #text = piper.getStoryText()
-        #c = piper.getCaretOffset()
-        #ui.message(f"{c} {l} {ll}")
-        #ui.message(text)
-        piper = getPiperForFocus()
-        if piper is None:
-            ui.message("No piper")
+    @script(description="IndentNav QuickFind generic script", gestures=['kb:Windows+z'])
+    def script_quickFind(self, gesture):
+        if not isinstance(gesture, keyboardHandler.KeyboardInputGesture):
+            log.warning(f"Got unexpected gesture type: {gesture}")
             return
-        st = piper.getStatus()
-        #ui.message(str(st))
-        api.p = piper
-        obj = VSCodeTextProvider(piper=piper)
-        t = obj.makeTextInfo('selection')
-        api.t = t
-        ui.message("Successfully created textInfo")
+        keystroke =         getKeystrokeFromGesture(gesture)
+        SHIFT_MODIFIER = "shift+"
+        shift = SHIFT_MODIFIER in keystroke
+        keystroke = keystroke.replace(SHIFT_MODIFIER, '')
+        global globalBookmarks
+        try:
+            bookmark = globalBookmarks[keystroke]
+        except KeyError:
+            log.warning(f"Unable to find bookmark for keystroke {keystroke}")
+            return
+        self.doQuickFind(bookmark, -1 if shift else 1)
 
+    def doQuickFind(self, bookmark, direction):
+        caretInfo = self.makeEnhancedTextInfo(textInfos.POSITION_SELECTION)
+        caretInfo.collapse(end=(direction > 0))
+        info = self.makeEnhancedTextInfo(textInfos.POSITION_ALL)
+        info.setEndPoint(caretInfo, 'startToStart' if direction > 0 else 'endToEnd')
+        text = info.text
+        matches = list(re.finditer(bookmark.pattern, text, re.MULTILINE))
+        if len(matches) == 0:
+            self.endOfDocument(_("Bookmark not found"))
+            return
+        match = matches[0 if direction > 0 else -1]
+        startIndex = match.start()
+        endIndex = match.end()
+        if isinstance(info, OffsetsTextInfo):
+            converter = textUtils.getOffsetConverter(info.encoding)(text)
+            startOffset, endOffset = converter.strToEncodedOffsets(startIndex, endIndex)
+            selectionInfo = info.copy()
+            selectionInfo.collapse()
+            selectionInfo._startOffset += startOffset
+            selectionInfo._endOffset += endOffset
+        else:
+            startInfo = moveToCodepointOffset(info, startIndex)
+            endInfo = moveToCodepointOffset(info, endIndex)
+            selectionInfo = startInfo.copy()
+            selectionInfo.setEndPoint(endInfo, 'endToEnd')
+                
+        selectionInfo.updateSelection()
+        lineInfo = selectionInfo.copy()
+        unit = textInfos.UNIT_LINE if isinstance(lineInfo, VsWpfTextViewTextInfo) else textInfos.UNIT_PARAGRAPH
+        lineInfo.expand(unit)
+        lineInfo.setEndPoint(selectionInfo, 'startToStart')
+        speech.speakTextInfo(lineInfo, unit=unit, reason=controlTypes.OutputReason.CARET)
 
 
 
@@ -1516,3 +2040,5 @@ class TreeIndentNav(NVDAObject):
         self.beeper.fancyBeep("HF", 100, volume, volume)
         if getConfig("noNextTextMessage") and message is not None:
             ui.message(message)
+
+reloadBookmarks()
