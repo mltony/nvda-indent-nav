@@ -58,6 +58,7 @@ from typing import Tuple
 import ui
 from utils.displayString import DisplayStringIntEnum
 import versionInfo
+import winUser
 import wx
 import dataclasses
 from . import textUtils
@@ -103,13 +104,15 @@ class IndentNavKeyMap(DisplayStringIntEnum):
     LAPTOP = 0
     ALT_NUMPAD = 1
     NUMPAD = 2
+    NUMPAD_ALT_REVIEW = 3
 
     @property
     def _displayStringLabels(self):
         return {
             IndentNavKeyMap.LAPTOP: _("Laptop or legacy key map: NVDA+alt+arrows"),
-            IndentNavKeyMap.ALT_NUMPAD: _("Modern key map: Alt+numPad"),
-            IndentNavKeyMap.NUMPAD: _("Advanced keymap: numpad; review cursor commands reassigned to alt+numPad"),
+            IndentNavKeyMap.ALT_NUMPAD: _("Alt+numPad"),
+            IndentNavKeyMap.NUMPAD: _("Numpad assigned to IndentNav in editables; numPad assigned to review cursor everywhere else"),
+            IndentNavKeyMap.NUMPAD_ALT_REVIEW: _("Numpad assigned to IndentNav; review cursor commands remapped to alt+NumPad"),
         }
 
 
@@ -230,6 +233,7 @@ def makeIndentNavKeyMaps():
         result[IndentNavKeyMap.LAPTOP][command] = normalizeKb(legacyKeystroke)
         result[IndentNavKeyMap.ALT_NUMPAD][command] = normalizeKb(altNumpadKeystroke)
         result[IndentNavKeyMap.NUMPAD][command] = normalizeKb(numpadKeystroke)
+        result[IndentNavKeyMap.NUMPAD_ALT_REVIEW][command] = normalizeKb(numpadKeystroke)
     return result
 
 
@@ -254,18 +258,52 @@ def makeGlobalCommandsKeyMaps():
         keystroke = gestures[0].split(':')[1]
         result[IndentNavKeyMap.LAPTOP][command] = normalizeKb(keystroke)
         result[IndentNavKeyMap.ALT_NUMPAD][command] = normalizeKb(keystroke)
-        result[IndentNavKeyMap.NUMPAD][command] = normalizeKb('alt+' + keystroke)
+        result[IndentNavKeyMap.NUMPAD][command] = normalizeKb(keystroke)
+        result[IndentNavKeyMap.NUMPAD_ALT_REVIEW][command] = normalizeKb('alt+' + keystroke)
     return result
 
 
 
 def updateKeyMap(cls, keyMap):
+    enabled = getConfig("enabled")
     gestures = getattr(cls, f"_{cls.__name__}__gestures")
+
     gestures = {
-        keyMap.get(script, keystroke): script
+        keystroke: script
         for keystroke, script in gestures.items()
+        if script not in keyMap
     }
+    if enabled:
+        gestures = {
+            **gestures,
+            **{
+                gesture: script
+                for script, gesture in keyMap.items()
+            }
+        }
     setattr(cls, f"_{cls.__name__}__gestures", gestures)
+
+def updateIndetnNavKeyMapInObject(obj, keyMap):
+    enabled = getConfig("enabled")
+    gestures = obj._gestureMap
+    functions = {
+        getattr(EditableIndentNav, f"script_{script}")
+        for script, gesture in keyMap.items()
+    }
+    gestures = {
+        keystroke: script
+        for keystroke, script in gestures.items()
+        if script.__name__.replace('script_', '') not in keyMap
+    }
+    if enabled:
+        gestures = {
+            **gestures,
+            **{
+                gesture: getattr(EditableIndentNav, f"script_{script}")
+                for script, gesture in keyMap.items()
+            }
+        }
+    obj._gestureMap = gestures
 
 
 def updateKeyMapInObject(ci, keyMap):
@@ -281,11 +319,17 @@ def updateKeyMapInObject(ci, keyMap):
 IN_KEY_MAPS = makeIndentNavKeyMaps()
 GC_KEY_MAPS = makeGlobalCommandsKeyMaps()
 
-def updateKeyMaps():
+def updateKeyMaps(obj=None):
     mode = IndentNavKeyMap(getConfig("indentNavKeyMap"))
-    updateKeyMap(EditableIndentNav, IN_KEY_MAPS[mode])
-    indentNav = next(gp for gp in globalPluginHandler.runningPlugins if gp.__module__ == 'globalPlugins.indent_nav')
-    updateKeyMapInObject(indentNav, IN_KEY_MAPS[mode])
+    keyMap = IN_KEY_MAPS[mode]
+    updateKeyMap(EditableIndentNav, keyMap)
+    if obj is not None:
+        updateIndetnNavKeyMapInObject(obj, keyMap)
+    try:
+        indentNav = next(gp for gp in globalPluginHandler.runningPlugins if gp.__module__ == 'globalPlugins.indent_nav')
+        updateKeyMapInObject(indentNav, IN_KEY_MAPS[mode])
+    except StopIteration:
+        pass
     #updateKeyMap(globalCommands.GlobalCommands, GC_KEY_MAPS[mode])
     updateKeyMapInObject(globalCommands.commands, GC_KEY_MAPS[mode])
     try:
@@ -294,8 +338,6 @@ def updateKeyMaps():
     except StopIteration:
         return
 
-# Wait 1 second until all add-ons are loaded before updating keymap
-core.callLater(1000, updateKeyMaps)
 config.post_configProfileSwitch .register(updateKeyMaps)
 
 
@@ -335,9 +377,10 @@ def initConfiguration():
         "noNextTextChimeVolume" : "integer( default=50, min=0, max=100)",
         "noNextTextMessage" : "boolean( default=False)",
         "legacyVSCode" : "boolean( default=False)",
-        "indentNavKeyMap" : "integer( default=1, min=0, max=2)",
+        "indentNavKeyMap" : "integer( default=1, min=0, max=3)",
         "clutterRegex" : f"string( default='{clutterRegex}')",
         "quickFind" : f"string( default='{defaultQuickFind}')",
+        "enabled" : "boolean( default=True)",
     }
     config.conf.spec["indentnav"] = confspec
 
@@ -394,10 +437,12 @@ def reloadBookmarks():
         **{
             keyboardHandler.KeyboardInputGesture.fromName(keystroke).normalizedIdentifiers[-1]: QF
             for keystroke, bookmark in globalBookmarks.items()
+            if bookmark.enabled
         },
         **{
             keyboardHandler.KeyboardInputGesture.fromName("shift+" + keystroke).normalizedIdentifiers[-1]: QF
             for keystroke, bookmark in globalBookmarks.items()
+            if bookmark.enabled
         },
     }
     setattr(cls, f"_{cls.__name__}__gestures", gestures)
@@ -429,7 +474,10 @@ class SettingsDialog(SettingsPanel):
         )
         index = getConfig("indentNavKeyMap")
         self.keyMapComboBox.SetSelection(index)
-
+      # Checkbox enabled
+        label = _("Enable IndentNav")
+        self.enabledCheckbox = sHelper.addItem(wx.CheckBox(self, label=label))
+        self.enabledCheckbox.Value = getConfig("enabled")
       # crackleVolumeSlider
         sizer=wx.BoxSizer(wx.HORIZONTAL)
         # Translators: volume of crackling slider
@@ -492,6 +540,7 @@ class SettingsDialog(SettingsPanel):
 
     def onSave(self):
         config.conf["indentnav"]["indentNavKeyMap"] = self.keyMapComboBox.GetSelection()
+        config.conf["indentnav"]["enabled"] = self.enabledCheckbox.Value
         config.conf["indentnav"]["crackleVolume"] = self.crackleVolumeSlider.Value
         config.conf["indentnav"]["noNextTextChimeVolume"] = self.noNextTextChimeVolumeSlider.Value
         config.conf["indentnav"]["noNextTextMessage"] = self.noNextTextMessageCheckbox.Value
@@ -740,20 +789,41 @@ class QuickFindSettingsDialog(SettingsPanel):
         saveBookmarks(self.bookmarks)
         reloadBookmarks()
 
+original_reportExtra = None
+def my_reportExtra(self):
+    # we only report numLock if no modifiers are pressed
+    if len(self.modifiers) == 0:
+        return original_reportExtra(self)
 
 class GlobalPlugin(globalPluginHandler.GlobalPlugin):
     scriptCategory = _("IndentNav")
     def __init__(self, *args, **kwargs):
         super(GlobalPlugin, self).__init__(*args, **kwargs)
         self.createMenu()
+        self.injectHooks()
+        updateKeyMaps()
+        # Also wait 1 second until all add-ons are loaded before updating keymap again to deal with charInfo add-on
+        core.callLater(500, updateKeyMaps)
+        reloadBookmarks()
+
 
     def terminate(self):
+        self.restoreHooks()
         gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(SettingsDialog)
         gui.settingsDialogs.NVDASettingsDialog.categoryClasses.remove(QuickFindSettingsDialog)
 
     def createMenu(self):
         gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(SettingsDialog)
         gui.settingsDialogs.NVDASettingsDialog.categoryClasses.append(QuickFindSettingsDialog)
+
+    def injectHooks(self):
+        global original_reportExtra
+        original_reportExtra = keyboardHandler.KeyboardInputGesture.reportExtra
+        keyboardHandler.KeyboardInputGesture.reportExtra = my_reportExtra
+
+    def restoreHooks(self):
+        global original_reportExtra
+        keyboardHandler.KeyboardInputGesture.reportExtra = original_reportExtra
 
 
     def chooseNVDAObjectOverlayClasses (self, obj, clsList):
@@ -773,9 +843,31 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             clsList.append(TreeIndentNav)
             return
 
-    @script(description="Speak current line", gestures=['kb:NVDA+Control+l'])
-    def script_speakCurrentLine(self, gesture):
-        return globalCommands.commands.script_review_currentLine(gesture)
+    @script(description="Toggle IndentNav", gestures=['kb:alt+numLock'])
+    def script_toggleIndentNav(self, gesture):
+        focus = api.getFocusObject()
+        if not isinstance(focus, EditableIndentNav):
+            focus = None
+        toggleState = winUser.getKeyState(gesture.vkCode) & 1
+        if toggleState:
+            ui.message(_("Please turn off num lock in order to toggle IndentNav"))
+            return
+        if gesture.mainKeyName == 'numLock':
+            # Something wrong happens with num lock state, where NVDA reports is as not changed, whereas Windows treats it as changed. This is the workaround:
+            nl = keyboardHandler.KeyboardInputGesture.fromName("numLock")
+            nl.send()
+            nl.send()
+        enabled = getConfig("enabled")
+        enabled = not enabled
+        setConfig("enabled", enabled)
+        if enabled:
+            msg = _("Enabled IndentNav")
+        else:
+            msg = _("Disabled IndentNav")
+        ui.message(msg)
+        updateKeyMaps(focus)
+
+
 
 class Beeper:
     BASE_FREQ = speech.IDT_BASE_FREQUENCY
@@ -1399,7 +1491,7 @@ def moveToCodepointOffset(
 		result = self.copy()
 		result.collapse(end=codepointOffset > 0)
 		return result
-	
+
 	info = self.copy()
 	# Total codepoint Length represents length in python characters of Current TextInfo we're workoing with.
 	# We start with self, and then gradually divide and conquer in order to find desired offset.
@@ -1415,7 +1507,7 @@ def moveToCodepointOffset(
 	# in order to avoid certain corner cases.
 	lastMove: int | None = None
 	lastRecursed: int | None = None
-	
+
 	MAX_BINARY_SEARCH_ITERATIONS = 1000
 	for __ in range(MAX_BINARY_SEARCH_ITERATIONS):
 		tmpInfo = info.copy()
@@ -1924,7 +2016,7 @@ class EditableIndentNav(NVDAObject):
             endInfo = moveToCodepointOffset(info, endIndex)
             selectionInfo = startInfo.copy()
             selectionInfo.setEndPoint(endInfo, 'endToEnd')
-                
+
         selectionInfo.updateSelection()
         lineInfo = selectionInfo.copy()
         unit = textInfos.UNIT_LINE if isinstance(lineInfo, VsWpfTextViewTextInfo) else textInfos.UNIT_PARAGRAPH
@@ -1932,6 +2024,9 @@ class EditableIndentNav(NVDAObject):
         lineInfo.setEndPoint(selectionInfo, 'startToStart')
         speech.speakTextInfo(lineInfo, unit=unit, reason=controlTypes.OutputReason.CARET)
 
+    @script(description="Speak current line", gestures=['kb:NVDA+Control+l'])
+    def script_speakCurrentLine(self, gesture):
+        return globalCommands.commands.script_review_currentLine(gesture)
 
 
 class TreeIndentNav(NVDAObject):
@@ -2042,5 +2137,3 @@ class TreeIndentNav(NVDAObject):
         self.beeper.fancyBeep("HF", 100, volume, volume)
         if getConfig("noNextTextMessage") and message is not None:
             ui.message(message)
-
-reloadBookmarks()
