@@ -3,11 +3,38 @@ This addon allows NVDA users to navigate by indentation level or offset of lines
 While editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level.
 It also provides similar keystrokes in tree views.
 
-Please note that as of version v1.5 (January 2019) IndentNav no longer works in browsers. Browser navigation functionality has been released as another [BrowserNav add-on](https://github.com/mltony/nvda-browser-nav), that must be installed separately.
-
 ## Download
-* Current stable version (Python 3 only, requires NVDA 2019.3 or later): [IndentNav](https://github.com/mltony/nvda-indent-nav/releases/latest/download/IndentNav.nvda-addon)
-* Last Python 2 version (compatible with NVDA 2019.2 and prior): [IndentNav v1.6](https://github.com/mltony/nvda-indent-nav/releases/download/v1.6/IndentNav-1.6.nvda-addon).
+Please install from NVDA add-on store
+
+## Note on compatibility with VSCode
+
+Builtin VSCode accessibility is very limited: as of 2024 it only exposes 500 lines of code through accessibility API, which makes IndentNav to work incorrectly in VSCode.
+
+By default IndentNav won't work with VSCode and when you try to use it, you will need to select from two options:
+
+* Install VSCode extension ([extension page](https://marketplace.visualstudio.com/items?itemName=TonyMalykh.nvda-indent-nav-accessibility))([source code](https://github.com/mltony/vscode-nvda-indent-nav-accessibility)) - recommended way. After installing extension NVDA will be able to access entire document no matter how large it is.
+* Continue using VSCode in legacy mode - enable this mode in IndentNav settings. This is not recommended since NVDA will only see 500 lines of document and will erroneously report missing siblings/parents.
+
+## Compatibility issues
+
+IndentNav has compatibility issues with [Character Information add-on](https://addons.nvda-project.org/addons/charInfo.en.html). It is currently impossible to configure both IndentNav and review cursor on numpad while this add-on is running. Please either uninstall this add-on, or use an alternative keystroke map in IndentNav.
+
+## Keystroke layouts
+
+IndentNav offers 3 builtin  keystroke mappings:
+
+* Legacy or laptop layout: this is for people who were using IndentNav v1.x and don't want to learn new layouts or for laptop keyboards that don;t have numpads.
+* Alt+numpad layout.
+* Numpad keys layout. There are two modes of dealing with review cursor keystroke conflict:
+    * Use numpad for IndentNav in editables and review cursor everywhere else. If you still need to use review cursor in editables, you can temporarily disable IndentNav by pressing `alt+numLock`.
+    * Remap review cursor commands to alt+numpad, thus avoiding keystroke conflict.
+    
+## Keystrokes
+
+| Action | Legacy layout | `Alt+numpad` layout | Numpad layout |
+| -- | -- | -- | -- |
+| Toggle IndentNav | `alt+numLock` | `alt+numLock` | `alt+numLock` |
+| Jump to next/previous sibling | `NVDA+Alt+Down/UpArrow` | `alt+numPad2/numPad8` | `numPad2/numPad8` |
 
 ## Usage 
 IndentNav can  be useful for editing source code in many programming languages. 
