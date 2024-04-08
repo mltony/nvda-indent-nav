@@ -332,27 +332,24 @@ def rebindGestures(self):
         except AttributeError:
             pass
 
+needUpdateGCKeyMap = False
 def updateKeyMaps():
+    global needUpdateGCKeyMap
     mode = IndentNavKeyMap(getConfig("indentNavKeyMap"))
+    if mode == IndentNavKeyMap.NUMPAD_ALT_REVIEW:
+        needUpdateGCKeyMap = True
     keyMap = IN_KEY_MAPS[mode]
     updateKeyMap(EditableIndentNav, keyMap)
-    #if obj is not None:
-        #updateIndetnNavKeyMapInObject(obj, keyMap)
-    try:
-        indentNav = next(gp for gp in globalPluginHandler.runningPlugins if gp.__module__ == 'globalPlugins.indent_nav')
-        updateKeyMapInObject(indentNav, IN_KEY_MAPS[mode])
-    except StopIteration:
-        pass
-    #updateKeyMap(globalCommands.GlobalCommands, GC_KEY_MAPS[mode])
-    updateKeyMapInObject(globalCommands.commands, GC_KEY_MAPS[mode])
-    try:
-        ci = next(gp for gp in globalPluginHandler.runningPlugins if gp.__module__ == 'globalPlugins.charinfo')
-        updateKeyMapInObject(ci, GC_KEY_MAPS[mode])
-    except StopIteration:
-        pass
+    if needUpdateGCKeyMap:
+        updateKeyMapInObject(globalCommands.commands, GC_KEY_MAPS[mode])
+        try:
+            ci = next(gp for gp in globalPluginHandler.runningPlugins if gp.__module__ == 'globalPlugins.charinfo')
+            updateKeyMapInObject(ci, GC_KEY_MAPS[mode])
+        except StopIteration:
+            pass
     focus = api.getFocusObject()
     rebindGestures(focus)
-        
+
 
 config.post_configProfileSwitch .register(updateKeyMaps)
 
