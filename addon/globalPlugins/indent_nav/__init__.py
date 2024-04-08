@@ -72,7 +72,7 @@ except AttributeError:
 
 BUILD_YEAR = getattr(versionInfo, "version_year", 2023)
 
-debug = True
+debug = False
 if debug:
     LOG_FILE_NAME = r"H:\\2.txt"
     f = open(LOG_FILE_NAME, "w", encoding='utf=8')
@@ -82,8 +82,6 @@ if debug:
         with LOG_MUTEX:
             f = open(LOG_FILE_NAME, "a", encoding='utf-8')
             print(s, file=f)
-            #f.write(s.encode('UTF-8'))
-            #f.write('\n')
             f.close()
 else:
     def mylog(*arg, **kwarg):
@@ -1325,7 +1323,7 @@ def getPiperForFocus():
 
 
 class VSCodeTextInfo(NVDAObjectTextInfo):
-    encoding = "utf_32_le"
+    encoding = textUtils.WCHAR_ENCODING # empirically verified
 
     def __init__(self,obj,position):
         obj = obj or position.obj
@@ -2059,6 +2057,13 @@ class EditableIndentNav(NVDAObject):
     @script(description="Speak current line", gestures=['kb:NVDA+Control+l'])
     def script_speakCurrentLine(self, gesture):
         return globalCommands.commands.script_review_currentLine(gesture)
+        
+    @script(description="Debug", gestures=['kb:control+numPad5'])
+    def script_debug(self, gesture):
+        with self.getLineManager() as lm:
+            api.lm = lm
+            tones.beep(500, 50)
+
 
 
 class TreeIndentNav(NVDAObject):
