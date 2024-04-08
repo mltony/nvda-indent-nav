@@ -1,5 +1,5 @@
 # IndentNav addon for NVDA
-This addon allows NVDA users to navigate by indentation level or offset of lines.
+This addon allows NVDA users to navigate by indentation level of lines.
 While editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level.
 It also provides similar keystrokes in tree views.
 
@@ -17,7 +17,7 @@ By default IndentNav won't work with VSCode and when you try to use it, you will
 
 ## Compatibility issues
 
-IndentNav has compatibility issues with [Character Information add-on](https://addons.nvda-project.org/addons/charInfo.en.html). It is currently impossible to configure both IndentNav and review cursor on numpad while this add-on is running. Please either uninstall this add-on, or use an alternative keystroke map in IndentNav.
+IndentNav has known compatibility issues with [Character Information add-on](https://addons.nvda-project.org/addons/charInfo.en.html). It is currently impossible to configure both IndentNav and review cursor on numpad while this add-on is running. Please either uninstall this add-on, or use an alternative keystroke map in IndentNav.
 
 ## Keystroke layouts
 
@@ -28,46 +28,37 @@ IndentNav offers 3 builtin  keystroke mappings:
 * Numpad keys layout. There are two modes of dealing with review cursor keystroke conflict:
     * Use numpad for IndentNav in editables and review cursor everywhere else. If you still need to use review cursor in editables, you can temporarily disable IndentNav by pressing `alt+numLock`.
     * Remap review cursor commands to alt+numpad, thus avoiding keystroke conflict.
-    
+
+Keystroke layout can be selected in IndentNav settings.
+
 ## Keystrokes
 
-| Action | Legacy layout | `Alt+numpad` layout | Numpad layout |
-| -- | -- | -- | -- |
-| Toggle IndentNav | `alt+numLock` | `alt+numLock` | `alt+numLock` |
-| Jump to next/previous sibling | `NVDA+Alt+Down/UpArrow` | `alt+numPad2/numPad8` | `numPad2/numPad8` |
+| Action | Legacy layout | `Alt+numpad` layout | Numpad layout | Description |
+| -- | -- | -- | -- | -- |
+| Toggle IndentNav | `alt+numLock` | `alt+numLock` | `alt+numLock` | This is useful when both NVDA and review cursor gestures are assigned to numPad. |
+| Jump to previous/next sibling | `NVDA+Alt+up/downArrow` | `alt+numPad8/numPad2` | `numPad8/numPad2` | Sibling is defined as a line with the same indentation level.<br>This command will not take cursor beyond current code block. |
+| Jump to previous/next sibling skipping over clutter | N/A | `control+alt+numPad8/numPad2` | `control+numPad8/numPad2` | You can configure clutter regular expression in settings. |
+| Jump to first/last sibling | `NVDA+Alt+shift+up/downArrow` | `alt+numPad4/numPad6` | `numPad4/numPad6` | Sibling is defined as a line with the same indentation level.<br>This command will not take cursor beyond current code block. |
+| Jump to previous/last sibling potentially outside of current block | `NVDA+control+Alt+up/downArrow` | `control+alt+numPad4/numPad6` | `control+numPad4/numPad6` | This command allows you to jump to a sibling in another block. |
+| Jump to previous/next parent | `NVDA+Alt+leftArrow`,<br>`NVDA+alt+control+leftArrow` | `alt+numPad7/numPad1` | `numPad7/numPad1` | Parent is defined as a line with lower indentation level. |
+| Jump to previous/next child | `NVDA+Alt+control+rightArrow`,<br>`NVDA+alt+rightArrow` | `alt+numPad9/numPad3` | `numPad9/numPad3` | Child is defined as a line with greater indentation level.<br>This command will not take cursor beyond current code block. |
+| Select current block | `NVDA+control+i` | `control+alt+numPad7` | `control+numPad7` | Selects current line plus all following lines having strictly greater indentation level.<br>Press repeatedly to select multiple blocks. |
+| Select current block and all following blocks on the same indentation level | `NVDA+alt+i` | `control+alt+numPad9` | `control+numPad9` | Selects current line plus all following lines having  greater or equal indentation level. |
+| Indent-paste | `NVDA+v` | `NVDA+v` | `NVDA+v` | When you need to paste a block of code to a place with different indentation level, this command will adjust indentation level before pasting. |
+| Go back/forward in history | N/A | `control+alt+numPad1/numPad3` | `control+numPad1/numPad3` | IndentNav keeps a history of lines which you visited via IndentNav commands. |
+| Speak current line | N/A | `alt+numPad5` | `numPad5` | This is really a review cursor command remapped for convenience. |
+| Speak parent line | `NVDA+i` | N/A | N/A | |
 
-## Usage 
-IndentNav can  be useful for editing source code in many programming languages. 
-Languages like Python require the source code to be properly indented, while in many other programming languages it is strongly recommended.
-With IndentNav you can press NVDA+Alt+DownArrow or UpArrow to jump to next or previous line with the same indentation level.
-You can also press NVDA+Alt+LeftArrow to jump to a parent line, that is a previous line with lower indentation level.
-In Python you can easily find current function definition or class definition.
-You can also press NVDA+Alt+RightArrow to go to the first child of current line, that is next line with greater indentation level.
+## Other features
 
-If your NVDA is set to express line indentation as tones, then IndentNav will quickly play the tones of all the skipped lines.
-Otherwise it will only crackle to roughly denote the number of skipped lines.
+### QuickFind bookmarks
 
-IndentNav also works in tree views.
+IndentNav allows you to configure any number of bookmarks that you can easily jump to. A bookmark is defined by a regular expression and a custom keystroke to jump to a match. Press `shift+` keystroke to find previous occurrence.
 
-Keystrokes:
+### Crackling:
 
-* NVDA+Alt+UpArrow or DownArrow: Jump to previous or next line with the same indentation level within the current indentation block.
-* NVDA+Alt+Control+UpArrow or DownArrow: Force-jump to previous or next line with the same indentation level. This command will jump to other indentation blocks (such as other Python functions) if necessary.
-* NVDA+Alt+Shift+UpArrow or DownArrow: Jump to first or last line with the same indentation level within the current indentation block.
-* NVDA+alt+LeftArrow: Jump to parent - that is previous line with lesser indentation level.
-* NVDA+control+alt+LeftArrow: Jump to next parent - that is next line with lesser indentation level.
-* NVDA+Alt+RightArrow: Jump to first child - that is next line with greater indentation level within the same indentation block.
-* NVDA+control+Alt+RightArrow: Jump to previous  child - that is previous line with greater indentation level within the same indentation block.
-* NVDA+I: Announce parent line without moving the cursor there. Press twice or multiple times to query second level or further level parent.
-* NVDA+control+I: Select current indentation block. Press repeatedly to select multiple indentation blocks.
-* NVDA+Alt+I: Select current indentation block and all the following indentation blocks on the same level. Press twice to copy to clipboard.
-* NVDA+V: Indent paste, that is first reindent current clipboard text to match indentation level of current file and then paste.
-
-## Known issues
-* IndentNav doesn't  support VSCode at this time. Due to its internal optimizations, VSCode doesn't load the entire document in the editable control, which makes it impossible to find lines far from current line.  
-  Please use [IndentNav VSCode extension](https://github.com/mltony/vscode-indent-nav/) instead.
-  Or alternatively, please consider using [Indentation Level Movement](https://marketplace.visualstudio.com/items?itemName=kaiwood.indentation-level-movement) VSCode extension instead.
-* Experimental VSCode support has been added in vscode branch, but at this time it doesn't work well enough.
+When jumping over many lines of code, IndentNav will try to quickly play indentation levels as tones of the lines skipped over. This feature is only enabled when report indentation as tones is turned on in NVDA settings. Crackling volume can be adjusted or disabled in IndentNav settings.
 
 ## Source code
+
 Source code is available at <http://github.com/mltony/nvda-indent-nav>.
