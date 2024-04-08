@@ -518,6 +518,10 @@ class SettingsDialog(SettingsPanel):
         label = _("Speak message when no next paragraph containing text available in the document")
         self.noNextTextMessageCheckbox = sHelper.addItem(wx.CheckBox(self, label=label))
         self.noNextTextMessageCheckbox.Value = getConfig("noNextTextMessage")
+      # EditBox clutter regexp
+        label = _("Clutter regular expression")
+        self.clutterRegexEdit = sHelper.addLabeledControl(label, wx.TextCtrl)
+        self.clutterRegexEdit.Value = getConfig("clutterRegex")
 
       # Checkboxes legacy VSCode
         label = _("Use legacy mode in VSCode (not recommended)")
@@ -550,8 +554,23 @@ class SettingsDialog(SettingsPanel):
     def onLearn(self, evt):
         url = "https://marketplace.visualstudio.com/items?itemName=TonyMalykh.nvda-indent-nav-accessibility"
         os.startfile(url)
+        
+    def isValid(self) -> bool:
+        clutterRegex = self.clutterRegexEdit.Value
+        try:
+            re.compile(clutterRegex)
+        except re.error as e:
+            errorMsg = _('Failed to compile regular expression: %s') % str(e)
+            gui.messageBox(errorMsg, _("Regular expression error"), wx.OK|wx.ICON_WARNING, self)
+            #self.clutterRegexEdit.SetFocus()
+            return False
+        return True
+
+
 
     def onSave(self):
+        clutterRegex = self.clutterRegexEdit.Value
+        setConfig("clutterRegex", clutterRegex)
         config.conf["indentnav"]["indentNavKeyMap"] = self.keyMapComboBox.GetSelection()
         config.conf["indentnav"]["enabled"] = self.enabledCheckbox.Value
         config.conf["indentnav"]["crackleVolume"] = self.crackleVolumeSlider.Value
