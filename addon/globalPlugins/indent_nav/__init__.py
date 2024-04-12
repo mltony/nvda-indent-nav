@@ -360,19 +360,19 @@ def initConfiguration():
             # ) : #comment
                 r"\)\s*:?\s*(#.*)?",
             # ) -> type :
-                r"\)\s*->[\s\w.,\[\]|]*:",
+                r"""\)\s*->[\s\w.,\[\]|"']*:""",
             # ), # comment
-                r"\)\s*,?\s*(#.*)?",
+            # ], # comment
+            # }, # comment
+            # Also allows // comment; also allows semicolon;
+                r"[\])}]\s*[,;]?\s*((#|//).*)?",
             # # comment
                 r"#.*",
             # from? import
                 r"(^from\s+[\w\s.]+\s+|^)import\s+.*",
           # C++
             # ) { // comment
-            # ); //comment
                 r"\)\s*[{;]?\s*(//.*)?",
-            # }, //comment - - also for json
-                r"\}\s*,?(//.*)?",
             # // comment
                 r"//.*",
             # #include
