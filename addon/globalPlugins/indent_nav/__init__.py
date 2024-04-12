@@ -2034,6 +2034,12 @@ class EditableIndentNav(NVDAObject):
         match = matches[0 if direction > 0 else -1]
         startIndex = match.start()
         endIndex = match.end()
+        compoundMode = False
+        if isinstance(info, CompoundTextInfo):
+            if info._start == info._end and  isinstance(info._start, OffsetsTextInfo):
+                compoundMode = True
+                outerTextInfo = info
+                info = outerTextInfo._start
         if isinstance(info, OffsetsTextInfo):
             converter = textUtils.getOffsetConverter(info.encoding)(text)
             startOffset, endOffset = converter.strToEncodedOffsets(startIndex, endIndex)
@@ -2046,7 +2052,10 @@ class EditableIndentNav(NVDAObject):
             endInfo = moveToCodepointOffset(info, endIndex)
             selectionInfo = startInfo.copy()
             selectionInfo.setEndPoint(endInfo, 'endToEnd')
-
+        if compoundMode:
+            outerTextInfo = outerTextInfo.copy()
+            outerTextInfo._start = outerTextInfo._end = selectionInfo
+            selectionInfo = outerTextInfo
         selectionInfo.updateSelection()
         lineInfo = selectionInfo.copy()
         unit = textInfos.UNIT_LINE if isinstance(lineInfo, VsWpfTextViewTextInfo) else textInfos.UNIT_PARAGRAPH
