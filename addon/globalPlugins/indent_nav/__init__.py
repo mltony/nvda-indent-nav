@@ -1935,10 +1935,12 @@ class EditableIndentNav(NVDAObject):
     def script_goBack(self, gesture):
         lines, index = self.getHistory()
         if index > 0:
-            index -= 1
-            self.historyIndex = index
-            lineNumber = lines[index]
             with self.getLineManager() as lm:
+                currentLineIndex = lm.lineIndex
+                if currentLineIndex == lines[index]:
+                    index -= 1
+                self.historyIndex = index
+                lineNumber = lines[index]
                 textInfo = lm.updateCaret(lineNumber)
                 speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
         else:
@@ -2067,7 +2069,7 @@ class EditableIndentNav(NVDAObject):
     def script_speakCurrentLine(self, gesture):
         return globalCommands.commands.script_review_currentLine(gesture)
         
-    @script(description="Debug", gestures=['kb:control+numPad5'])
+    #@script(description="Debug", gestures=['kb:control+shift+nvda'])
     def script_debug(self, gesture):
         with self.getLineManager() as lm:
             api.lm = lm
