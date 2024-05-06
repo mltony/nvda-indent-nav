@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 #A part of the IndentNav addon for NVDA
 #Copyright (C) 2017-2024 Tony Malykh
 #This file is covered by the GNU General Public License.
@@ -18,7 +20,6 @@ import controlTypes
 import config
 from NVDAObjects.IAccessible.chromium import ChromeVBufTextInfo
 import addonHandler
-addonHandler.initTranslation()
 
 
 try:
@@ -468,6 +469,7 @@ def getKeystrokeFromGesture(gesture):
     keystroke = gesture.identifiers[-1].split(':')[1]
     return keystroke
 
+addonHandler.initTranslation()
 
 class SettingsDialog(SettingsPanel):
     # Translators: Title for the settings dialog
