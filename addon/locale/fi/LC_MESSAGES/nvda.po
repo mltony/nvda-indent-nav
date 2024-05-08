@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: IndentNav\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2018-11-23 09:05+1000\n"
-"PO-Revision-Date: 2019-09-19 03:25+0200\n"
+"PO-Revision-Date: 2022-05-30 16:28+0200\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: Jani Kinnunen <jani.kinnunen@wippies.fi>\n"
 "Language: fi\n"
@@ -21,7 +21,7 @@ msgstr ""
 #. Add-on summary, usually the user visible name of the addon.
 #. Translators: Summary for this add-on to be shown on installation and add-on information.
 msgid "IndentNav"
-msgstr "IndentNav"
+msgstr "Sisennysnavigointi"
 
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
