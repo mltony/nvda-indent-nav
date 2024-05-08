@@ -1,3 +1,4 @@
+# -*- coding: UTF-8 -*-
 #A part of the IndentNav addon for NVDA
 #Copyright (C) 2017-2024 Tony Malykh
 #This file is covered by the GNU General Public License.
