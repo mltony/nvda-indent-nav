@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: IndentNav 1.1\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2018-11-23 09:05+1000\n"
-"PO-Revision-Date: 2023-07-28 14:39+0100\n"
+"PO-Revision-Date: 2024-05-10 22:28+0100\n"
 "Last-Translator: Ângelo Abrantes <ampa4374@gmail.com>\n"
 "Language-Team: Equipa Portuguesa do NVDA <ampa4374@gmail.com; rui."
 "fontes@tiflotecnia.pt>\n"
@@ -16,13 +16,333 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.4\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
+msgid "Laptop or legacy key map: NVDA+alt+arrows"
+msgstr "Mapa de teclas para computador portátil ou antigo: NVDA+alt+setas"
+
+msgid "Alt+numPad"
+msgstr "Alt+bloco numérico"
+
+msgid ""
+"Numpad assigned to IndentNav in editables; numPad assigned to review cursor "
+"everywhere else"
+msgstr ""
+"Bloco numérico atribuído ao IndentNav em caixas editáveis; numPad atribuído "
+"ao cursor de revisão em todos os outros sítios"
+
+msgid ""
+"Numpad assigned to IndentNav; review cursor commands remapped to alt+NumPad"
+msgstr ""
+"Bloco numérico atribuído a IndentNav; comandos do cursor de revisão "
+"remapeados para alt+NumPad"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav settings"
+msgstr "Configurações do IndentNav"
+
+#. Key map combo box
+msgid "Keyboard shortcuts"
+msgstr "Atalhos de teclado"
+
+#. Checkbox enabled
+msgid "Enable IndentNav"
+msgstr "Ativar IndentNav"
+
+#. Translators: volume of crackling slider
+msgid "Crackling volume"
+msgstr "Oscilação de volume"
+
+#. Translators: End of document chime volume
+msgid "Volume of chime when no more sentences available"
+msgstr "Volume do sinal sonoro quando não há mais frases disponíveis"
+
+#. Checkboxes noNextTextMessageCheckbox
+#. Translators: Checkbox that controls spoken message when no next or previous text paragraph is available in the document
+msgid ""
+"Speak message when no next paragraph containing text available in the "
+"document"
+msgstr "Ler mensagem quando não houver texto em nenhum dos próximos parágrafos"
+
+#. EditBox clutter regexp
+msgid "Clutter regular expression"
+msgstr "Expressão regular Clutter"
+
+#. Checkboxes legacy VSCode
+msgid "Use legacy mode in VSCode (not recommended)"
+msgstr "Utilizar o modo antigo no VSCode (não recomendado)"
+
+msgid "&Install VSCode extension (recommended)"
+msgstr "&Instalar a extensão VSCode (recomendado)"
+
+#. Learn about VSCode Extension
+msgid "&Learn more about VSCode accessibility extension"
+msgstr "&Saiba mais sobre a extensão de acessibilidade VSCode"
+
+msgid ""
+"We will install accessibility extension in default VSCode instance on your "
+"system - the one found in %PATH% environment variable.\n"
+"If you have multiple instances or a custom version of VSCode, such as VSCode "
+"Insiders, you would need to install accessibility extension manually.\n"
+"Please review output of command to make sure installation is successful.\n"
+"If successful, the extension would be launched right away and there is no "
+"need to restart VSCode.\n"
+"Are you sure you want to proceed?"
+msgstr ""
+"Iremos instalar a extensão de acessibilidade na instância predefinida do "
+"VSCode no seu sistema - a que se encontra na variável de ambiente %PATH%.\n"
+"Se tiver várias instâncias ou uma versão personalizada do VSCode, como o "
+"VSCode Insiders, terá de instalar a extensão de acessibilidade manualmente.\n"
+"Reveja a saída do comando para se certificar de que a instalação foi bem-"
+"sucedida.\n"
+"Se for bem-sucedida, a extensão será iniciada imediatamente e não será "
+"necessário reiniciar o VSCode.\n"
+"Tem certeza de que deseja continuar?"
+
+msgid "Confirmation"
+msgstr "Confirmação"
+
+#, python-format
+msgid "Failed to compile regular expression: %s"
+msgstr "Falha na compilação da expressão regular: %s"
+
+msgid "Regular expression error"
+msgstr "Erro de expressão regular"
+
+msgid "Edit IndentNav QuickFind bookmark"
+msgstr "Editar o marcador IndentNav QuickFind"
+
+#. Translators: label for name
+msgid "&Display name (optional)"
+msgstr "&mostrar nome (opcional)"
+
+#. Translators:  Custom keystroke button
+msgid "&Keystroke"
+msgstr "&tecla de atalho"
+
+#. Translators: pattern
+msgid "&Pattern"
+msgstr "&Padrão"
+
+#. Translators: label for enabled checkbox
+msgid "Bookmark enabled"
+msgstr "Marcador activado"
+
+msgid "Pattern cannot be empty!"
+msgstr "O padrão não pode estar vazio!"
+
+#. Translators: This is an error message to let the user know that the pattern field is not valid.
+msgid "Bookmark entry error"
+msgstr "Erro de entrada nos marcadores "
+
+msgid "Please specify keystroke gesture."
+msgstr "Especificar o comando de teclas."
+
+#, python-format
+msgid "&Keystroke: %s"
+msgstr "&atalho: %s"
+
+msgid "Keystroke: None"
+msgstr "Tecla de atalho: Nenhum"
+
+msgid "Press desired keystroke now"
+msgstr "Premir agora a tecla pretendida"
+
+#, python-format
+msgid "Invalid keystroke %s: cannot overload essential  NVDA keystrokes!"
+msgstr ""
+"Tecla inválida %s: não é possível sobrecarregar as teclas essenciais do NVDA!"
+
+#, python-format
+msgid ""
+"Invalid keystroke %s: Cannot use keystrokes with shift modifier for "
+"quickFind bookmarks!"
+msgstr ""
+"Atalho inválido %s: Não é possível utilizar teclas com o modificador shift "
+"para os marcadores do quickFind!"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav QuickFind bookmarks settings"
+msgstr "Definições dos marcadores IndentNav QuickFind"
+
+#. bookmarks table
+msgid "&QuickFind bookmarks"
+msgstr "marcadores &QuickFind"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Enabled"
+msgstr "Activado"
+
+msgid "Gesture"
+msgstr "Comando"
+
+msgid "Pattern"
+msgstr "Padrão"
+
+#. Buttons
+msgid "&Add"
+msgstr "&Adicionar"
+
+msgid "&Edit"
+msgstr "&Editar"
+
+msgid "&Remove"
+msgstr "&Remover"
+
+msgid "Move &up"
+msgstr "Mover para &cima"
+
+msgid "Move &down"
+msgstr "Mover para &baixo"
+
+msgid "&Sort"
+msgstr "&Classificar"
+
+msgid "Disabled"
+msgstr "Desativado"
+
 #. Add-on summary, usually the user visible name of the addon.
-#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#. Translators: Summary for this add-on
+#. to be shown on installation and add-on information found in Add-ons Manager.
 msgid "IndentNav"
 msgstr "IndentNav"
+
+msgid "Please turn off num lock in order to toggle IndentNav"
+msgstr "Desativar o bloco numérico para ativar o IndentNav"
+
+msgid "Enabled IndentNav"
+msgstr "IndentNav ativado"
+
+msgid "Disabled IndentNav"
+msgstr "IndentNav Desativado "
+
+msgid ""
+"IndentNav requires VSCode accessibility extension to be installed in order "
+"to work correctly in VSCode."
+msgstr ""
+"O IndentNav requer a instalação da extensão de acessibilidade VSCode para "
+"funcionar corretamente no VSCode."
+
+msgid "Please install VSCode extension"
+msgstr "Instalar a extensão VSCode"
+
+msgid "&Use VSCode in legacy mode without extension (not recommended)"
+msgstr "&Utilizar o VSCode em modo antigo sem extensão (não recomendado)"
+
+msgid "&Cancel"
+msgstr "&Cancelar"
+
+msgid ""
+"Please enable legacy support of VSCode in IndentNav settings.\n"
+"Please note that builtin VSCode accessibility provides access to only 500 "
+"lines of code.\n"
+"As a result, in larger files IndentNav will not work correctly.\n"
+"Please use it at your own risk."
+msgstr ""
+"Active o suporte antigo do VSCode nas definições do IndentNav.\n"
+"Tenha em atenção que a acessibilidade VSCode incorporada fornece acesso a "
+"apenas 500 linhas de código.\n"
+"Como resultado, em ficheiros maiores, o IndentNav não funcionará "
+"corretamente.\n"
+"Utilize-o por sua conta e risco."
+
+msgid "Information"
+msgstr "Informação"
+
+#. Translators: error message if next sibling couldn't be found (in editable control or in browser)
+msgid "No next line within indentation block"
+msgstr "Nenhuma linha seguinte dentro do bloco de indentação"
+
+#. Translators: error message if next sibling couldn't be found in editable control (forced command)
+#. Translators: error message if last sibling couldn't be found in editable control (forced command)
+msgid "No next line in the document"
+msgstr "Nenhuma linha seguinte no documento"
+
+#. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
+msgid "No previous line within indentation block"
+msgstr "Nenhuma linha anterior dentro do bloco de indentação"
+
+#. Translators: error message if previous sibling couldn't be found in editable control (forced command)
+#. Translators: error message if first sibling couldn't be found in editable control (forced command)
+msgid "No previous line in the document"
+msgstr "Nenhuma linha anterior no documento"
+
+#. Translators: error message if parent couldn't be found (in editable control or in browser)
+msgid "No parent of indentation block"
+msgstr "Nenhum pai do bloco de indentação"
+
+#. Translators: error message if a child couldn't be found (in editable control or in browser)
+msgid "No child block within indentation block"
+msgstr "Nenhum bloco filho dentro do bloco de indentação"
+
+#. Translators: error message if a previous child couldn't be found (in editable control)
+msgid "No previous child block within indentation block"
+msgstr "Nenhum bloco filho anterior dentro do bloco de indentação"
+
+#. Translators: error message if previous parent couldn't be found (in editable control)
+msgid "No next parent of indentation block"
+msgstr "Nenhum próximo pai do bloco de indentação"
+
+msgid "Indent block copied to clipboard. "
+msgstr "Bloco indentado copiado para a área de transferência "
+
+msgid "Indent blocks copied to clipboard. "
+msgstr "Blocos indentados copiados para a área de transferência "
+
+msgid "Nothing to select"
+msgstr "Nada para seleccionar"
+
+msgid "No more indentation blocks!"
+msgstr "Acabaram-se os blocos de indentação!"
+
+msgid "Some text selected! Cannot indent-paste."
+msgstr "Alguns textos seleccionados! Não é possível colar a indentação."
+
+msgid "Cannot indent-paste: current line is not empty!"
+msgstr "Não é possível colar a indentação: a linha actual não está vazia!"
+
+msgid "Pasted"
+msgstr "Colado"
+
+msgid ")No previous line in history"
+msgstr ")Sem linha anterior no histórico"
+
+msgid ")No next line in history"
+msgstr ")Não há linha seguinte no histórico"
+
+msgid "Bookmark not found"
+msgstr "Marcador não encontrado"
+
+#. Translators: error message if next sibling couldn't be found in Tree view
+msgid "No next item on the same level within this subtree"
+msgstr "Nenhum próximo item no mesmo nível dentro desta sub-árvore"
+
+#. Translators: error message if next sibling couldn't be found in Tree view
+msgid "No previous item on the same level within this subtree"
+msgstr "Nenhum item anterior no mesmo nível dentro desta sub-árvore"
+
+#. Translators: error message if next sibling couldn't be found in Tree view
+msgid "No next item on the same level in this tree view"
+msgstr "Nenhum item seguinte no mesmo nível nesta vista de árvore"
+
+#. Translators: error message if previous sibling couldn't be found in Tree view
+msgid "No previous item on the same level in this tree view"
+msgstr "Nenhum item anterior no mesmo nível nesta vista de árvore"
+
+#. Translators: error message if parent couldn't be found)
+msgid "No parent item in this tree view"
+msgstr "Nenhum item pai nesta vista em árvore"
+
+#. Translators: error message if a child couldn't be found
+msgid "NO child"
+msgstr "Sem objecto filho"
+
+#. Translators: error message if parent couldn't be found
+msgid "No parent"
+msgstr "(Sem categoria principal)"
 
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager

@@ -1,4 +1,4 @@
-# GirintiGezintisi #
+# GirintiDolaşımı #
 
 * Yazar: Tony Malykh
 * [Kararlı sürümü indir][1]
@@ -13,7 +13,7 @@ daha küçük veya daha büyük düzeydeki girinti satırlarını bulmanıza yar
 eder.
 
 ## Tarayıcılardaki kullanım
-Girinti Gezintisi eklentisi, ekranın solundan başlayarak aynı düzeyler arası
+Girinti Dolaşımı eklentisi, ekranın solundan başlayarak aynı düzeyler arası
 dolaşım için kullanılabilir. özellikle aynı düzeydeki paragraflar arası
 dolaşım için NVDA+Alt+ aşağı veya yukarı yön tuşlarını kullanabilirsiniz.
 Örnek olarak bu hiyerarşik açıklama ağaçlarında dolaşımda sadece birinci
@@ -31,11 +31,11 @@ Kısayollar:
 * NVDA+Alt+Sağ ok: Daha büyük düzeydeki bir sonraki paragrafa gider.
 
 ## Metin editörlerindeki kullanım
-Girinti Gezintisi eklentisi, birçok programlama dilindeki kaynak kodları
+Girinti Dolaşımı eklentisi, birçok programlama dilindeki kaynak kodları
 düzenlerken de çok yararlıdır.  Python gibi diller kaynak kodların düzgün
 biçimde girintilenmesini gerektirir,  Birçok programda da girintilendirme
-şiddetle tavsiye edilir. Girinti Gezintisi ile NVDA+Alt+Aşağı veya yukarı
-oka basarak bir sonraki veya bir önceki aynı girintiye
+şiddetle tavsiye edilir. Girinti Dolaşımı ile NVDA+Alt+Aşağı veya yukarı oka
+basarak bir sonraki veya bir önceki aynı girintiye
 gidebilirsiniz. NVDA+Alt+Sol oka  basarak bir üst düzeydeki , yani daha
 düşük girintideki satıra gidebilirsiniz.  Python içinde geçerli fonksiyon
 tanımını ya da sınıf tanımını kolayca bulabilirsiniz.  NVDA+Alt+Sağ oka

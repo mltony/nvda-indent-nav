@@ -5,23 +5,343 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: IndentNav 1.12\n"
+"Project-Id-Version: Girinti Dolaşımı\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2021-07-09 09:00+0000\n"
-"PO-Revision-Date: 2023-05-20 16:56+0300\n"
+"PO-Revision-Date: 2024-05-11 14:00+0300\n"
 "Last-Translator: Umut KORKMAZ <umutkork@gmail.com>\n"
-"Language-Team: \n"
+"Language-Team: Umut KORKMAZ <umutkork@gmail.com>\n"
 "Language: tr_TR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.4.4\n"
+
+msgid "Laptop or legacy key map: NVDA+alt+arrows"
+msgstr "Dizüstü veya eski tuş haritası: NVDA+alt+yön tuşları"
+
+msgid "Alt+numPad"
+msgstr "Alt+sayısal tuş takımı"
+
+msgid ""
+"Numpad assigned to IndentNav in editables; numPad assigned to review cursor "
+"everywhere else"
+msgstr ""
+"Sayısal tuş takımı, düzenlenebilir dosyalarda Girinti Dolaşımı eklentisine "
+"atanır. Diğer her yerde inceleme imlecine atanır"
+
+msgid ""
+"Numpad assigned to IndentNav; review cursor commands remapped to alt+NumPad"
+msgstr ""
+"Sayısal tuş takımı, Girinti Dolaşımı eklentisine atandı. İnceleme imleci "
+"için ALT+Sayısal Tuş Takımı tuşları yeniden eşlendi"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav settings"
+msgstr "Girinti Dolaşımı ayarları"
+
+#. Key map combo box
+msgid "Keyboard shortcuts"
+msgstr "Klavye kısayolları"
+
+#. Checkbox enabled
+msgid "Enable IndentNav"
+msgstr "Girinti Dolaşımı'nı Etkinleştir"
+
+#. Translators: volume of crackling slider
+msgid "Crackling volume"
+msgstr "Çatırdayan ses seviyesi"
+
+#. Translators: End of document chime volume
+msgid "Volume of chime when no more sentences available"
+msgstr "Başka cümle olmadığında zil sesi seviyesi"
+
+#. Checkboxes noNextTextMessageCheckbox
+#. Translators: Checkbox that controls spoken message when no next or previous text paragraph is available in the document
+msgid ""
+"Speak message when no next paragraph containing text available in the "
+"document"
+msgstr "Belgede metin içeren bir sonraki paragraf bulunmadığında mesajı söyle"
+
+#. EditBox clutter regexp
+msgid "Clutter regular expression"
+msgstr "Dağınıklık düzenli ifadesi"
+
+#. Checkboxes legacy VSCode
+msgid "Use legacy mode in VSCode (not recommended)"
+msgstr "VSCode'da eski modu kullan (önerilmez)"
+
+msgid "&Install VSCode extension (recommended)"
+msgstr "&VSCode eklentisini yükle (önerilir)"
+
+#. Learn about VSCode Extension
+msgid "&Learn more about VSCode accessibility extension"
+msgstr "VSCode erişi&lebilirlik Eklentisi hakkında daha fazla bilgi edinin"
+
+msgid ""
+"We will install accessibility extension in default VSCode instance on your "
+"system - the one found in %PATH% environment variable.\n"
+"If you have multiple instances or a custom version of VSCode, such as VSCode "
+"Insiders, you would need to install accessibility extension manually.\n"
+"Please review output of command to make sure installation is successful.\n"
+"If successful, the extension would be launched right away and there is no "
+"need to restart VSCode.\n"
+"Are you sure you want to proceed?"
+msgstr ""
+"Erişilebilirlik Eklentisi sisteminizdeki varsayılan VSCode örneğine (%PATH% "
+"ortam değişkeninde bulunan) yüklenecek.\n"
+"Birden fazla örneğiniz veya VSCode Insiders gibi özel bir VSCode sürümünüz "
+"varsa erişilebilirlik eklentisini el ile yüklemeniz gerekir.\n"
+"Lütfen kurulumun başarılı olduğundan emin olmak için komutun çıktısını "
+"inceleyin.\n"
+"Başarılı olursa, eklenti hemen başlatılır ve VSCode'u yeniden başlatmaya "
+"gerek yoktur.\n"
+"Devam etmek istediğinizden emin misiniz?"
+
+msgid "Confirmation"
+msgstr "Onaylayın"
+
+#, python-format
+msgid "Failed to compile regular expression: %s"
+msgstr "Normal ifade derlenemedi: %s"
+
+msgid "Regular expression error"
+msgstr "Düzenli ifade hatası"
+
+msgid "Edit IndentNav QuickFind bookmark"
+msgstr "Girinti Dolaşımı Hızlı arama yer işaretini düzenle"
+
+#. Translators: label for name
+msgid "&Display name (optional)"
+msgstr "Görünen a&d (isteğe bağlı)"
+
+#. Translators:  Custom keystroke button
+msgid "&Keystroke"
+msgstr "&Tuş vuruşu"
+
+#. Translators: pattern
+msgid "&Pattern"
+msgstr "&Kalıp"
+
+#. Translators: label for enabled checkbox
+msgid "Bookmark enabled"
+msgstr "Yer işareti etkin"
+
+msgid "Pattern cannot be empty!"
+msgstr "Kalıp boş olamaz!"
+
+#. Translators: This is an error message to let the user know that the pattern field is not valid.
+msgid "Bookmark entry error"
+msgstr "Yer işareti giriş hatası"
+
+msgid "Please specify keystroke gesture."
+msgstr "Lütfen tuş vuruşu hareketini belirtin."
+
+#, python-format
+msgid "&Keystroke: %s"
+msgstr "&Tuş vuruşu: %s"
+
+msgid "Keystroke: None"
+msgstr "Tuş vuruşu: Hiçbiri"
+
+msgid "Press desired keystroke now"
+msgstr "Şimdi istediğiniz tuşa basın"
+
+#, python-format
+msgid "Invalid keystroke %s: cannot overload essential  NVDA keystrokes!"
+msgstr "Geçersiz tuş vuruşu %s: temel NVDA tuş vuruşları aşırı yüklenemez!"
+
+#, python-format
+msgid ""
+"Invalid keystroke %s: Cannot use keystrokes with shift modifier for "
+"quickFind bookmarks!"
+msgstr ""
+"Geçersiz tuş vuruşu %s: Hızlı arama yer işaretleri için shift değiştiricili "
+"tuş vuruşları kullanılamaz!"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav QuickFind bookmarks settings"
+msgstr "Girinti Dolaşımı Hızlı Arama ayarları"
+
+#. bookmarks table
+msgid "&QuickFind bookmarks"
+msgstr "&Hızlı Arama yer İşaretleri"
+
+msgid "Name"
+msgstr "Ad"
+
+msgid "Enabled"
+msgstr "Etkin"
+
+msgid "Gesture"
+msgstr "Hareket"
+
+msgid "Pattern"
+msgstr "Kalıp"
+
+#. Buttons
+msgid "&Add"
+msgstr "&Ekle"
+
+msgid "&Edit"
+msgstr "D&üzenle"
+
+msgid "&Remove"
+msgstr "Kaldı&r"
+
+msgid "Move &up"
+msgstr "Y&ukarı taşı"
+
+msgid "Move &down"
+msgstr "A&şağı taşı"
+
+msgid "&Sort"
+msgstr "&Sırala"
+
+msgid "Disabled"
+msgstr "Devre dışı"
 
 #. Add-on summary, usually the user visible name of the addon.
-#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#. Translators: Summary for this add-on
+#. to be shown on installation and add-on information found in Add-ons Manager.
 msgid "IndentNav"
-msgstr "IndentNav"
+msgstr "Girinti Dolaşımı"
+
+msgid "Please turn off num lock in order to toggle IndentNav"
+msgstr ""
+"Girdi Dolaşımı Eklentisine geçiş yapmak için lütfen numara kilidini kapatın"
+
+msgid "Enabled IndentNav"
+msgstr "Girdi Dolaşımı Etkin"
+
+msgid "Disabled IndentNav"
+msgstr "Girinti Dolaşımı Devre dışı"
+
+msgid ""
+"IndentNav requires VSCode accessibility extension to be installed in order "
+"to work correctly in VSCode."
+msgstr ""
+"Girdi Dolaşımı eklentisinin VSCode'da düzgün çalışması için VSCode "
+"erişilebilirlik eklentisinin kurulu olması gerekir."
+
+msgid "Please install VSCode extension"
+msgstr "Lütfen VSCode eklentisini yükleyin"
+
+msgid "&Use VSCode in legacy mode without extension (not recommended)"
+msgstr "VSCode'u eski modda eklenti olmadan k&ullanın (önerilmez)"
+
+msgid "&Cancel"
+msgstr "İ&ptal"
+
+msgid ""
+"Please enable legacy support of VSCode in IndentNav settings.\n"
+"Please note that builtin VSCode accessibility provides access to only 500 "
+"lines of code.\n"
+"As a result, in larger files IndentNav will not work correctly.\n"
+"Please use it at your own risk."
+msgstr ""
+"Lütfen Girinti Dolaşımı ayarlarında VSCode'un eski desteğini etkinleştirin.\n"
+"Yerleşik VSCode erişilebilirliğinin yalnızca 500 kod satırına erişim "
+"sağladığını lütfen unutmayın.\n"
+"Sonuç olarak, daha büyük dosyalarda Girinti Dolaşımı düzgün "
+"çalışmayacaktır.\n"
+"Lütfen riski size ait olmak üzere kullanın."
+
+msgid "Information"
+msgstr "Bilgi"
+
+#. Translators: error message if next sibling couldn't be found (in editable control or in browser)
+msgid "No next line within indentation block"
+msgstr "Girinti bloğunda sonraki satır yok"
+
+#. Translators: error message if next sibling couldn't be found in editable control (forced command)
+#. Translators: error message if last sibling couldn't be found in editable control (forced command)
+msgid "No next line in the document"
+msgstr "Belgede sonraki satır yok"
+
+#. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
+msgid "No previous line within indentation block"
+msgstr "Girinti bloğunda önceki satır yok"
+
+#. Translators: error message if previous sibling couldn't be found in editable control (forced command)
+#. Translators: error message if first sibling couldn't be found in editable control (forced command)
+msgid "No previous line in the document"
+msgstr "Belgede önceki satır yok"
+
+#. Translators: error message if parent couldn't be found (in editable control or in browser)
+msgid "No parent of indentation block"
+msgstr "Girinti bloğunda üst öğe yok"
+
+#. Translators: error message if a child couldn't be found (in editable control or in browser)
+msgid "No child block within indentation block"
+msgstr "Girinti bloğu içinde alt blok yok"
+
+#. Translators: error message if a previous child couldn't be found (in editable control)
+msgid "No previous child block within indentation block"
+msgstr "Girinti bloğunda önceki alt blok yok"
+
+#. Translators: error message if previous parent couldn't be found (in editable control)
+msgid "No next parent of indentation block"
+msgstr "Girinti bloğunda sonraki üst öğe yok"
+
+msgid "Indent block copied to clipboard. "
+msgstr "Girinti bloğu panoya kopyalandı. "
+
+msgid "Indent blocks copied to clipboard. "
+msgstr "Girinti blokları panoya kopyalandı. "
+
+msgid "Nothing to select"
+msgstr "Seçilecek bir şey yok"
+
+msgid "No more indentation blocks!"
+msgstr "Artık girinti bloğu yok!"
+
+msgid "Some text selected! Cannot indent-paste."
+msgstr "Bazı metinler seçildi! Girinti-yapıştırma yapılamıyor."
+
+msgid "Cannot indent-paste: current line is not empty!"
+msgstr "Girinti-yapıştırılamıyor: geçerli satır boş değil!"
+
+msgid "Pasted"
+msgstr "Yapıştırıldı"
+
+msgid ")No previous line in history"
+msgstr ")Geçmişte önceki satır yok"
+
+msgid ")No next line in history"
+msgstr ")Geçmişte sonraki satır yok"
+
+msgid "Bookmark not found"
+msgstr "Yer işareti bulunamadı"
+
+#. Translators: error message if next sibling couldn't be found in Tree view
+msgid "No next item on the same level within this subtree"
+msgstr "Bu alt ağaçta aynı seviyede bir sonraki öğe yok"
+
+#. Translators: error message if next sibling couldn't be found in Tree view
+msgid "No previous item on the same level within this subtree"
+msgstr "Bu alt ağaçta aynı seviyede önceki öğe yok"
+
+#. Translators: error message if next sibling couldn't be found in Tree view
+msgid "No next item on the same level in this tree view"
+msgstr "Bu ağaç görünümünde aynı seviyede sonraki öğe yok"
+
+#. Translators: error message if previous sibling couldn't be found in Tree view
+msgid "No previous item on the same level in this tree view"
+msgstr "Bu ağaç görünümünde aynı seviyede önceki öğe yok"
+
+#. Translators: error message if parent couldn't be found)
+msgid "No parent item in this tree view"
+msgstr "Bu ağaç görünümünde üst öğe yok"
+
+#. Translators: error message if a child couldn't be found
+msgid "NO child"
+msgstr "Alt öğe yok"
+
+#. Translators: error message if parent couldn't be found
+msgid "No parent"
+msgstr "Üst öğe yok"
 
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
@@ -36,12 +356,12 @@ msgid ""
 "jump between the lines of the same indentation level, as well as quickly "
 "find lines with greater or lesser indentation level."
 msgstr ""
-"Girinti Gezinme eklentisi.\n"
-"NVDA kullanıcılarının satırların veya paragrafların girinti düzeyine veya "
-"kaymasına göre gezinmesine olanak tanır.\n"
-"Tarayıcılarda, hiyerarşik bir yorum ağacındaki birinci seviye yorumlar "
-"gibi, ekranın sol kenarından aynı uzaklığa sahip paragrafları hızlı bir "
-"şekilde bulmaya olanak tanır.\n"
-"Ayrıca birçok programlama dilinde kaynak kodunu düzenlerken, aynı girinti "
-"seviyesindeki satırlar arasında geçiş yapmanın yanı sıra daha büyük veya "
-"daha az girinti seviyesine sahip satırları hızlı bir şekilde bulmayı sağlar."
+"Girinti Dolaşımı eklentisi.\n"
+"NVDA kullanıcılarının satır veya paragrafların girinti düzeyine veya "
+"uzaklığına göre gezinmesine olanak tanır.\n"
+"Tarayıcılarda, hiyerarşik bir yorum ağacındaki birinci düzey yorumlar gibi, "
+"ekranın sol kenarından aynı uzaklığa sahip paragrafların hızlı bir şekilde "
+"bulunmasına olanak tanır.\n"
+"Ayrıca birçok programlama dilinde kaynak kodu düzenlerken, aynı girinti "
+"seviyesindeki satırlar arasında geçiş yapılmasına ve daha büyük veya daha az "
+"girinti seviyesine sahip satırların hızla bulunmasına olanak tanır."

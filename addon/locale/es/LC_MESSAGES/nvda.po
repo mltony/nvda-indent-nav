@@ -8,19 +8,343 @@ msgstr ""
 "Project-Id-Version: IndentNav 1.1\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2018-11-23 09:05+1000\n"
-"PO-Revision-Date: 2018-11-23 11:19+0100\n"
+"PO-Revision-Date: 2024-05-11 19:50+0200\n"
+"Last-Translator: José Manuel Delicado <jm.delicado@nvda.es>\n"
+"Language-Team: \n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Last-Translator: José Manuel Delicado <jmdaweb@hotmail.com>\n"
-"Language-Team: \n"
-"X-Generator: Poedit 2.2\n"
+"X-Generator: Poedit 3.4.4\n"
+
+msgid "Laptop or legacy key map: NVDA+alt+arrows"
+msgstr "Mapa de teclado de portátil o antiguo: NVDA+alt+flechas"
+
+msgid "Alt+numPad"
+msgstr "Alt+Bloqueo numérico"
+
+msgid ""
+"Numpad assigned to IndentNav in editables; numPad assigned to review cursor "
+"everywhere else"
+msgstr ""
+"Bloque numérico asignado a IndentNav en campos editables, y al cursor de "
+"revisión en los demás sitios"
+
+msgid ""
+"Numpad assigned to IndentNav; review cursor commands remapped to alt+NumPad"
+msgstr ""
+"Bloque numérico asignado a IndentNav, órdenes del cursor de revisión "
+"reasignadas a alt+bloque numérico"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav settings"
+msgstr "Opciones de IndentNav"
+
+#. Key map combo box
+msgid "Keyboard shortcuts"
+msgstr "Atajos de teclado"
+
+#. Checkbox enabled
+msgid "Enable IndentNav"
+msgstr "Activar IndentNav"
+
+#. Translators: volume of crackling slider
+msgid "Crackling volume"
+msgstr "Volumen crepitante"
+
+#. Translators: End of document chime volume
+msgid "Volume of chime when no more sentences available"
+msgstr "Volumen del timbre cuando no hay más frases disponibles"
+
+#. Checkboxes noNextTextMessageCheckbox
+#. Translators: Checkbox that controls spoken message when no next or previous text paragraph is available in the document
+msgid ""
+"Speak message when no next paragraph containing text available in the "
+"document"
+msgstr ""
+"Verbalizar mensaje cuando no haya siguiente párrafo que contenga texto "
+"disponible en el documento"
+
+#. EditBox clutter regexp
+msgid "Clutter regular expression"
+msgstr "Expresión regular de desorden"
+
+#. Checkboxes legacy VSCode
+msgid "Use legacy mode in VSCode (not recommended)"
+msgstr "Usar modo heredado en VSCode (no recomendado)"
+
+msgid "&Install VSCode extension (recommended)"
+msgstr "&Instalar extensión para VSCode (recomendado)"
+
+#. Learn about VSCode Extension
+msgid "&Learn more about VSCode accessibility extension"
+msgstr "&Saber más sobre la extensión de accesibilidad para VSCode"
+
+msgid ""
+"We will install accessibility extension in default VSCode instance on your "
+"system - the one found in %PATH% environment variable.\n"
+"If you have multiple instances or a custom version of VSCode, such as VSCode "
+"Insiders, you would need to install accessibility extension manually.\n"
+"Please review output of command to make sure installation is successful.\n"
+"If successful, the extension would be launched right away and there is no "
+"need to restart VSCode.\n"
+"Are you sure you want to proceed?"
+msgstr ""
+"Instalaremos la extensión de accesibilidad en la instancia de VSCode por "
+"defecto del sistema, la que se encuentre en la variable de entorno %PATH%.\n"
+"Si tienes varias instancias o una versión personalizada de VSCode, como "
+"VSCode Insider, tendrías que instalar la extensión de accesibilidad "
+"manualmente.\n"
+"Revisa la salida del comando para asegurarte de que la instalación tiene "
+"éxito.\n"
+"Si todo va bien, la extensión se carga directamente y no hay necesidad de "
+"reiniciar VSCode.\n"
+"¿Seguro que quieres proceder?"
+
+msgid "Confirmation"
+msgstr "Confirmación"
+
+#, python-format
+msgid "Failed to compile regular expression: %s"
+msgstr "Fallo al compilar expresión regular: %s"
+
+msgid "Regular expression error"
+msgstr "Error de expresión regular"
+
+msgid "Edit IndentNav QuickFind bookmark"
+msgstr "Editar marcador de búsqueda rápida de IndentNav"
+
+#. Translators: label for name
+msgid "&Display name (optional)"
+msgstr "&Nombre para mostrar (opcional)"
+
+#. Translators:  Custom keystroke button
+msgid "&Keystroke"
+msgstr "&Atajo de teclado"
+
+#. Translators: pattern
+msgid "&Pattern"
+msgstr "&Patrón"
+
+#. Translators: label for enabled checkbox
+msgid "Bookmark enabled"
+msgstr "Marcador activado"
+
+msgid "Pattern cannot be empty!"
+msgstr "¡El patrón no puede estar vacío!"
+
+#. Translators: This is an error message to let the user know that the pattern field is not valid.
+msgid "Bookmark entry error"
+msgstr "Error en la entrada del marcador"
+
+msgid "Please specify keystroke gesture."
+msgstr "Por favor, indica el atajo de teclado."
+
+#, python-format
+msgid "&Keystroke: %s"
+msgstr "&Atajo de teclado: %s"
+
+msgid "Keystroke: None"
+msgstr "Atajo de teclado: ninguno"
+
+msgid "Press desired keystroke now"
+msgstr "Pulsa ahora el atajo de teclado deseado"
+
+#, python-format
+msgid "Invalid keystroke %s: cannot overload essential  NVDA keystrokes!"
+msgstr ""
+"Atajo de teclado %s no válido: ¡no se pueden sobrecargar los atajos "
+"esenciales de NVDA!"
+
+#, python-format
+msgid ""
+"Invalid keystroke %s: Cannot use keystrokes with shift modifier for "
+"quickFind bookmarks!"
+msgstr ""
+"Atajo de teclado %s no válido: ¡no se pueden usar atajos de teclado con la "
+"tecla modificadora shift para marcadores de búsqueda!"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav QuickFind bookmarks settings"
+msgstr "Opciones de marcadores rápidos de búsqueda de IndentNav"
+
+#. bookmarks table
+msgid "&QuickFind bookmarks"
+msgstr "Marcadores de &búsqueda rápida"
+
+msgid "Name"
+msgstr "Nombre"
+
+msgid "Enabled"
+msgstr "Activado"
+
+msgid "Gesture"
+msgstr "Gesto"
+
+msgid "Pattern"
+msgstr "Patrón"
+
+#. Buttons
+msgid "&Add"
+msgstr "&Añadir"
+
+msgid "&Edit"
+msgstr "&Editar"
+
+msgid "&Remove"
+msgstr "E&liminar"
+
+msgid "Move &up"
+msgstr "&Subir"
+
+msgid "Move &down"
+msgstr "&Bajar"
+
+msgid "&Sort"
+msgstr "&Ordenar"
+
+msgid "Disabled"
+msgstr "Desactivado"
 
 #. Add-on summary, usually the user visible name of the addon.
-#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#. Translators: Summary for this add-on
+#. to be shown on installation and add-on information found in Add-ons Manager.
 msgid "IndentNav"
 msgstr "IndentNav"
+
+msgid "Please turn off num lock in order to toggle IndentNav"
+msgstr "Por favor, desactiva el bloqueo numérico para conmutar IndentNav"
+
+msgid "Enabled IndentNav"
+msgstr "IndentNav  activado"
+
+msgid "Disabled IndentNav"
+msgstr "IndentNav desactivado"
+
+msgid ""
+"IndentNav requires VSCode accessibility extension to be installed in order "
+"to work correctly in VSCode."
+msgstr ""
+"IndentNav necesita que la extensión de accesibilidad para VSCode esté "
+"instalada para poder funcionar adecuadamente en este programa."
+
+msgid "Please install VSCode extension"
+msgstr "Por favor, instala la extensión para VSCode"
+
+msgid "&Use VSCode in legacy mode without extension (not recommended)"
+msgstr "&Usar VSCode en modo heredado sin extensión (no recomendado)"
+
+msgid "&Cancel"
+msgstr "&Cancelar"
+
+msgid ""
+"Please enable legacy support of VSCode in IndentNav settings.\n"
+"Please note that builtin VSCode accessibility provides access to only 500 "
+"lines of code.\n"
+"As a result, in larger files IndentNav will not work correctly.\n"
+"Please use it at your own risk."
+msgstr ""
+"Por favor, activa el soporte heredado para VSCode en las opciones de "
+"IndentNav.\n"
+"Ten en cuenta que la accesibilidad incorporada en VSCode proporciona acceso "
+"sólo a 500 líneas de código.\n"
+"Como resultado, IndentNav no funcionará correctamente en archivos grandes.\n"
+"Usa esta función bajo tu responsabilidad."
+
+msgid "Information"
+msgstr "Información"
+
+#. Translators: error message if next sibling couldn't be found (in editable control or in browser)
+msgid "No next line within indentation block"
+msgstr "No hay línea siguiente dentro del bloque con sangría"
+
+#. Translators: error message if next sibling couldn't be found in editable control (forced command)
+#. Translators: error message if last sibling couldn't be found in editable control (forced command)
+msgid "No next line in the document"
+msgstr "No hay línea siguiente en el documento"
+
+#. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
+msgid "No previous line within indentation block"
+msgstr "No hay línea anterior dentro del bloque con sangría"
+
+#. Translators: error message if previous sibling couldn't be found in editable control (forced command)
+#. Translators: error message if first sibling couldn't be found in editable control (forced command)
+msgid "No previous line in the document"
+msgstr "No hay línea anterior en el documento"
+
+#. Translators: error message if parent couldn't be found (in editable control or in browser)
+msgid "No parent of indentation block"
+msgstr "No hay padre del bloque con sangría"
+
+#. Translators: error message if a child couldn't be found (in editable control or in browser)
+msgid "No child block within indentation block"
+msgstr "No hay bloque hijo dentro del bloque con sangría"
+
+#. Translators: error message if a previous child couldn't be found (in editable control)
+msgid "No previous child block within indentation block"
+msgstr "No hay bloque hijo anterior dentro del bloque con sangría"
+
+#. Translators: error message if previous parent couldn't be found (in editable control)
+msgid "No next parent of indentation block"
+msgstr "No hay siguiente padre del bloque con sangría"
+
+msgid "Indent block copied to clipboard. "
+msgstr "Bloque con sangría copiado al portapapeles. "
+
+msgid "Indent blocks copied to clipboard. "
+msgstr "Bloques con sangría copiados al portapapeles. "
+
+msgid "Nothing to select"
+msgstr "Nada para seleccionar"
+
+msgid "No more indentation blocks!"
+msgstr "¡No hay más bloques con sangría!"
+
+msgid "Some text selected! Cannot indent-paste."
+msgstr "¡Hay texto seleccionado! No se puede pegar con sangría."
+
+msgid "Cannot indent-paste: current line is not empty!"
+msgstr "No se puede pegar con sangría: ¡la línea actual no está vacía!"
+
+msgid "Pasted"
+msgstr "Pegado"
+
+msgid ")No previous line in history"
+msgstr ")No hay línea anterior en el historial"
+
+msgid ")No next line in history"
+msgstr ")No hay siguiente línea en el historial"
+
+msgid "Bookmark not found"
+msgstr "Marcador no encontrado"
+
+#. Translators: error message if next sibling couldn't be found in Tree view
+msgid "No next item on the same level within this subtree"
+msgstr "No hay elemento siguiente al mismo nivel en este subárbol"
+
+#. Translators: error message if next sibling couldn't be found in Tree view
+msgid "No previous item on the same level within this subtree"
+msgstr "No hay elemento anterior al mismo nivel en este subárbol"
+
+#. Translators: error message if next sibling couldn't be found in Tree view
+msgid "No next item on the same level in this tree view"
+msgstr "No hay elemento siguiente al mismo nivel en esta vista de árbol"
+
+#. Translators: error message if previous sibling couldn't be found in Tree view
+msgid "No previous item on the same level in this tree view"
+msgstr "No hay elemento anterior al mismo nivel en esta vista de árbol"
+
+#. Translators: error message if parent couldn't be found)
+msgid "No parent item in this tree view"
+msgstr "No hay elemento padre en esta vista de árbol"
+
+#. Translators: error message if a child couldn't be found
+msgid "NO child"
+msgstr "Sin hijo"
+
+#. Translators: error message if parent couldn't be found
+msgid "No parent"
+msgstr "Sin padre"
 
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
@@ -36,11 +360,11 @@ msgid ""
 "find lines with greater or lesser indentation level."
 msgstr ""
 "Complemento de navegación por sangría.\n"
-"Permite a los usuarios de NVDA navegar por nivel de sangría o "
-"desplazamiento de líneas y párrafos.\n"
+"Permite a los usuarios de NVDA navegar por nivel de sangría o desplazamiento "
+"de líneas y párrafos.\n"
 "En los navegadores, permite encontrar párrafos rápidamente con el mismo "
-"desplazamiento desde el borde izquierdo de la pantalla, como los "
-"comentarios de primer nivel en una vista jerárquica de comentarios.\n"
+"desplazamiento desde el borde izquierdo de la pantalla, como los comentarios "
+"de primer nivel en una vista jerárquica de comentarios.\n"
 "Además, al editar el código fuente de muchos lenguajes de programación, "
 "permite saltar entre líneas con el mismo nivel de sangría, así como "
 "encontrar líneas con más o menos nivel de sangría."
