@@ -1679,7 +1679,7 @@ class EditableIndentNav(NVDAObject):
         self.move(-1, [msgEditable], excludeFilterRegex=re.compile(getConfig("clutterRegex")))
 
 
-    @script(description=_("Moves to the previous line with the same indentation level as the current line within the current indentation block."), gestures=['kb:NVDA+alt+control+UpArrow'])
+    @script(description=_("Moves to the previous line with the same indentation level as the current line potentially in the preceding indentation block."), gestures=['kb:NVDA+alt+control+UpArrow'])
     def script_moveToPreviousSiblingForce(self, gesture):
         # Translators: error message if previous sibling couldn't be found in editable control (forced command)
         msgEditable = _("No previous line in the document")
