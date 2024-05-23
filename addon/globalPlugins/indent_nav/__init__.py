@@ -874,7 +874,7 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             clsList.append(TreeIndentNav)
             return
 
-    @script(description="Toggle IndentNav", gestures=['kb:alt+numLock'])
+    @script(description=_("Toggle IndentNav"), gestures=['kb:alt+numLock'])
     def script_toggleIndentNav(self, gesture):
         focus = api.getFocusObject()
         if not isinstance(focus, EditableIndentNav):
@@ -1640,58 +1640,58 @@ class EditableIndentNav(NVDAObject):
             self.beeper.simpleCrackle(len(levels), volume=getConfig("crackleVolume"))
 
 
-    @script(description="Moves to the next line with the same indentation level as the current line within the current indentation block.", gestures=['kb:NVDA+alt+DownArrow'])
+    @script(description=_("Moves to the next line with the same indentation level as the current line within the current indentation block."), gestures=['kb:NVDA+alt+DownArrow'])
     def script_moveToNextSibling(self, gesture):
         # Translators: error message if next sibling couldn't be found (in editable control or in browser)
         msgEditable = _("No next line within indentation block")
         self.move(1, [msgEditable])
 
 
-    @script(description="Moves to the next line with the same indentation level as the current line within the current indentation block and skipping over clutter.", gestures=['kb:NVDA+alt+windows+DownArrow'])
+    @script(description=_("Moves to the next line with the same indentation level as the current line within the current indentation block and skipping over clutter."), gestures=['kb:NVDA+alt+windows+DownArrow'])
     def script_moveToNextSiblingSkipClutter(self, gesture):
         # Translators: error message if next sibling couldn't be found (in editable control or in browser)
         msgEditable = _("No next line within indentation block")
         self.move(1, [msgEditable], excludeFilterRegex=re.compile(getConfig("clutterRegex")))
 
-    @script(description="Moves to the next line with the same indentation level as the current line potentially in the following indentation block.", gestures=['kb:NVDA+alt+control+DownArrow'])
+    @script(description=_("Moves to the next line with the same indentation level as the current line potentially in the following indentation block."), gestures=['kb:NVDA+alt+control+DownArrow'])
     def script_moveToNextSiblingForce(self, gesture):
         # Translators: error message if next sibling couldn't be found in editable control (forced command)
         msgEditable = _("No next line in the document")
         self.move(1, [msgEditable], unbounded=True)
 
 
-    @script(description="Moves to the last line with the same indentation level as the current line within the current indentation block.", gestures=['kb:NVDA+alt+shift+DownArrow'])
+    @script(description=_("Moves to the last line with the same indentation level as the current line within the current indentation block."), gestures=['kb:NVDA+alt+shift+DownArrow'])
     def script_moveToLastSibling(self, gesture):
         # Translators: error message if last sibling couldn't be found in editable control (forced command)
         msgEditable = _("No next line in the document")
         self.move(1, [msgEditable], moveCount=1000)
 
-    @script(description="Moves to the previous line with the same indentation level as the current line within the current indentation block.", gestures=['kb:NVDA+alt+UpArrow'])
+    @script(description=_("Moves to the previous line with the same indentation level as the current line within the current indentation block."), gestures=['kb:NVDA+alt+UpArrow'])
     def script_moveToPreviousSibling(self, gesture):
         # Translators: error message if previous sibling couldn't be found (in editable control or in browser)
         msgEditable = _("No previous line within indentation block")
         self.move(-1, [msgEditable])
 
-    @script(description="Moves to the previous line with the same indentation level as the current line within the current indentation block and skipping over clutter.", gestures=['kb:NVDA+windows+alt+UpArrow'])
+    @script(description=_("Moves to the previous line with the same indentation level as the current line within the current indentation block and skipping over clutter."), gestures=['kb:NVDA+windows+alt+UpArrow'])
     def script_moveToPreviousSiblingSkipClutter(self, gesture):
         # Translators: error message if previous sibling couldn't be found (in editable control or in browser)
         msgEditable = _("No previous line within indentation block")
         self.move(-1, [msgEditable], excludeFilterRegex=re.compile(getConfig("clutterRegex")))
 
 
-    @script(description="Moves to the previous line with the same indentation level as the current line within the current indentation block.", gestures=['kb:NVDA+alt+control+UpArrow'])
+    @script(description=_("Moves to the previous line with the same indentation level as the current line within the current indentation block."), gestures=['kb:NVDA+alt+control+UpArrow'])
     def script_moveToPreviousSiblingForce(self, gesture):
         # Translators: error message if previous sibling couldn't be found in editable control (forced command)
         msgEditable = _("No previous line in the document")
         self.move(-1, [msgEditable], unbounded=True)
 
-    @script(description="Moves to the first line with the same indentation level as the current line within the current indentation block.", gestures=['kb:NVDA+alt+shift+UpArrow'])
+    @script(description=_("Moves to the first line with the same indentation level as the current line within the current indentation block."), gestures=['kb:NVDA+alt+shift+UpArrow'])
     def script_moveToFirstSibling(self, gesture):
         # Translators: error message if first sibling couldn't be found in editable control (forced command)
         msgEditable = _("No previous line in the document")
         self.move(-1, [msgEditable], moveCount=1000)
 
-    @script(description="Speak parent line.", gestures=['kb:NVDA+I'])
+    @script(description=_("Speak parent line."), gestures=['kb:NVDA+I'])
     def script_speakParent(self, gesture):
         focus = api.getFocusObject()
         count=scriptHandler.getLastScriptRepeatCount()
@@ -1773,36 +1773,36 @@ class EditableIndentNav(NVDAObject):
     def getLineManager(self, selectionMode=False):
         return FastLineManagerV2(self, selectionMode)
 
-    @script(description="Moves to the next line with a greater indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+alt+RightArrow'])
+    @script(description=_("Moves to the next line with a greater indentation level than the current line within the current indentation block."), gestures=['kb:NVDA+alt+RightArrow'])
     def script_moveToChild(self, gesture):
         # Translators: error message if a child couldn't be found (in editable control or in browser)
         msgEditable = _("No child block within indentation block")
         self.move(1, [msgEditable], unbounded=False, op=operator.gt)
 
-    @script(description="Moves to the previous line with a lesser indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+alt+LeftArrow'])
+    @script(description=_("Moves to the previous line with a lesser indentation level than the current line within the current indentation block."), gestures=['kb:NVDA+alt+LeftArrow'])
     def script_moveToParent(self, gesture):
         # Translators: error message if parent couldn't be found (in editable control or in browser)
         msgEditable = _("No parent of indentation block")
         self.move(-1, [msgEditable], unbounded=True, op=operator.lt)
 
-    @script(description="Moves to the previous line with a greater indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+control+alt+RightArrow'])
+    @script(description=_("Moves to the previous line with a greater indentation level than the current line within the current indentation block."), gestures=['kb:NVDA+control+alt+RightArrow'])
     def script_moveToPreviousChild(self, gesture):
         # Translators: error message if a previous child couldn't be found (in editable control)
         msgEditable = _("No previous child block within indentation block")
         self.move(-1, [msgEditable], unbounded=False, op=operator.gt)
 
-    @script(description="Moves to the next line with a lesser indentation level than the current line within the current indentation block.", gestures=['kb:NVDA+control+alt+LeftArrow'])
+    @script(description=_("Moves to the next line with a lesser indentation level than the current line within the current indentation block."), gestures=['kb:NVDA+control+alt+LeftArrow'])
     def script_moveToNextParent(self, gesture):
         # Translators: error message if previous parent couldn't be found (in editable control)
         msgEditable = _("No next parent of indentation block")
         self.move(1, [msgEditable], unbounded=True, op=operator.lt)
 
-    @script(description="Select current indentation block. Press twice to copy to clipboard.", gestures=['kb:NVDA+control+i'])
+    @script(description=_("Select current indentation block. Press twice to copy to clipboard."), gestures=['kb:NVDA+control+i'])
     def script_selectSingleIndentationBlock(self, gesture):
         msg = _("Indent block copied to clipboard. ")
         self.selectIndentationBlock(selectMultiple=False, successMessage=msg)
 
-    @script(description="Select current indentation block, as well as follwoing blocks of the same level. Press twice to copy to clipboard.", gestures=['kb:NVDA+alt+i'])
+    @script(description=_("Select current indentation block, as well as follwoing blocks of the same level. Press twice to copy to clipboard."), gestures=['kb:NVDA+alt+i'])
     def script_selectMultipleIndentationBlocks(self, gesture):
         msg = _("Indent blocks copied to clipboard. ")
         self.selectIndentationBlock(selectMultiple=True, successMessage=msg)
@@ -1862,7 +1862,7 @@ class EditableIndentNav(NVDAObject):
             self.crackle(indentLevels)
             speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
 
-    @script(description="Indent-paste. This will figure out indentation level in the current line and paste text from clipboard adjusting indentation level correspondingly.", gestures=['kb:NVDA+V'])
+    @script(description=_("Indent-paste. This will figure out indentation level in the current line and paste text from clipboard adjusting indentation level correspondingly."), gestures=['kb:NVDA+V'])
     def script_indentPaste(self, gesture):
         clipboardBackup = api.getClipData()
         try:
@@ -1932,7 +1932,7 @@ class EditableIndentNav(NVDAObject):
             self.linesHistory = self.linesHistory[:self.historyIndex + 1]
 
 
-    @script(description="Go back in history.", gestures=['kb:NVDA+control+u'])
+    @script(description=_("Go back in history."), gestures=['kb:NVDA+control+u'])
     def script_goBack(self, gesture):
         lines, index = self.getHistory()
         if index > 0:
@@ -1947,7 +1947,7 @@ class EditableIndentNav(NVDAObject):
         else:
             self.endOfDocument(_(")No previous line in history"))
 
-    @script(description="Go forward in history.", gestures=['kb:NVDA+alt+u'])
+    @script(description=_("Go forward in history."), gestures=['kb:NVDA+alt+u'])
     def script_goForward(self, gesture):
         lines, index = self.getHistory()
         index += 1
@@ -2006,7 +2006,7 @@ class EditableIndentNav(NVDAObject):
             return self.makeTextInfo(position)
         return None
 
-    @script(description="IndentNav QuickFind generic script", gestures=['kb:Windows+z'])
+    @script(description=_("IndentNav QuickFind generic script"), gestures=['kb:Windows+z'])
     def script_quickFind(self, gesture):
         if not isinstance(gesture, keyboardHandler.KeyboardInputGesture):
             log.warning(f"Got unexpected gesture type: {gesture}")
@@ -2066,11 +2066,11 @@ class EditableIndentNav(NVDAObject):
         lineInfo.setEndPoint(selectionInfo, 'startToStart')
         speech.speakTextInfo(lineInfo, unit=unit, reason=controlTypes.OutputReason.CARET)
 
-    @script(description="Speak current line", gestures=['kb:NVDA+Control+l'])
+    @script(description=_("Speak current line"), gestures=['kb:NVDA+Control+l'])
     def script_speakCurrentLine(self, gesture):
         return globalCommands.commands.script_review_currentLine(gesture)
         
-    #@script(description="Debug", gestures=['kb:control+shift+nvda'])
+    #@script(description=_("Debug"), gestures=['kb:control+shift+nvda'])
     def script_debug(self, gesture):
         with self.getLineManager() as lm:
             api.lm = lm
@@ -2082,56 +2082,56 @@ class TreeIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
     beeper = Beeper()
 
-    @script(description="Moves to the next item on the same level within current subtree.", gestures=['kb:NVDA+alt+DownArrow'])
+    @script(description=_("Moves to the next item on the same level within current subtree."), gestures=['kb:NVDA+alt+DownArrow'])
     def script_moveToNextSibling(self, gesture):
         # Translators: error message if next sibling couldn't be found in Tree view
         errorMsg = _("No next item on the same level within this subtree")
         self.moveInTree(1, errorMsg, op=operator.eq)
 
-    @script(description="Moves to the previous item on the same level within current subtree.", gestures=['kb:NVDA+alt+UpArrow'])
+    @script(description=_("Moves to the previous item on the same level within current subtree."), gestures=['kb:NVDA+alt+UpArrow'])
     def script_moveToPreviousSibling(self, gesture):
         # Translators: error message if next sibling couldn't be found in Tree view
         errorMsg = _("No previous item on the same level within this subtree")
         self.moveInTree(-1, errorMsg, op=operator.eq)
 
-    @script(description="Moves to the next item on the same level.", gestures=['kb:NVDA+Control+alt+DownArrow'])
+    @script(description=_("Moves to the next item on the same level."), gestures=['kb:NVDA+Control+alt+DownArrow'])
     def script_moveToNextSiblingForce(self, gesture):
         # Translators: error message if next sibling couldn't be found in Tree view
         errorMsg = _("No next item on the same level in this tree view")
         self.moveInTree(1, errorMsg, op=operator.eq, unbounded=True)
 
-    @script(description="Moves to the previous item on the same level.", gestures=['kb:NVDA+Control+alt+UpArrow'])
+    @script(description=_("Moves to the previous item on the same level."), gestures=['kb:NVDA+Control+alt+UpArrow'])
     def script_moveToPreviousSiblingForce(self, gesture):
         # Translators: error message if previous sibling couldn't be found in Tree view
         errorMsg = _("No previous item on the same level in this tree view")
         self.moveInTree(-1, errorMsg, op=operator.eq, unbounded=True)
 
-    @script(description="Moves to the last item on the same level within current subtree.", gestures=['kb:NVDA+alt+Shift+DownArrow'])
+    @script(description=_("Moves to the last item on the same level within current subtree."), gestures=['kb:NVDA+alt+Shift+DownArrow'])
     def script_moveToLastSibling(self, gesture):
         # Translators: error message if next sibling couldn't be found in Tree view
         errorMsg = _("No next item on the same level within this subtree")
         self.moveInTree(1, errorMsg, op=operator.eq, moveCount=1000)
 
-    @script(description="Moves to the first item on the same level within current subtree.", gestures=['kb:NVDA+alt+Shift+UpArrow'])
+    @script(description=_("Moves to the first item on the same level within current subtree."), gestures=['kb:NVDA+alt+Shift+UpArrow'])
     def script_moveToFirstSibling(self, gesture):
         # Translators: error message if next sibling couldn't be found in Tree view
         errorMsg = _("No previous item on the same level within this subtree")
         self.moveInTree(-1, errorMsg, op=operator.eq, moveCount=1000)
 
-    @script(description="Speak parent item.", gestures=['kb:NVDA+I'])
+    @script(description=_("Speak parent item."), gestures=['kb:NVDA+I'])
     def script_speakParent(self, gesture):
         count=scriptHandler.getLastScriptRepeatCount()
         # Translators: error message if parent couldn't be found)
         errorMsg = _("No parent item in this tree view")
         self.moveInTree(-1, errorMsg, unbounded=True, op=operator.lt, speakOnly=True, moveCount=count+1)
 
-    @script(description="Moves to the next child in tree view.", gestures=['kb:NVDA+alt+RightArrow'])
+    @script(description=_("Moves to the next child in tree view."), gestures=['kb:NVDA+alt+RightArrow'])
     def script_moveToChild(self, gesture):
         # Translators: error message if a child couldn't be found
         errorMsg = _("NO child")
         self.moveInTree(1, errorMsg, unbounded=False, op=operator.gt)
 
-    @script(description="Moves to parent in tree view.", gestures=['kb:NVDA+alt+LeftArrow'])
+    @script(description=_("Moves to parent in tree view."), gestures=['kb:NVDA+alt+LeftArrow'])
     def script_moveToParent(self, gesture):
         # Translators: error message if parent couldn't be found
         errorMsg = _("No parent")
