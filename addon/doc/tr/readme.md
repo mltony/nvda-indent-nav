@@ -1,71 +1,103 @@
 # GirintiDolaşımı #
 
-* Yazar: Tony Malykh
-* [Kararlı sürümü indir][1]
+Bu eklenti, NVDA kullanıcılarının satırların girinti düzeyine göre
+gezinmesine olanak tanır. Birçok programlama dilinde kaynak kodu
+düzenlerken, aynı girinti seviyesindeki satırlar arasında geçiş yapılmasına
+olanak sağladığı gibi, daha fazla veya daha az girinti seviyesine sahip
+satırları hızlı bir şekilde bulmayı da sağlar. Ağaç görünümlerinde de benzer
+tuş vuruşlarını sağlar.
 
-Bu eklenti NVDA kullanıcılarının girintiler, satır veya paragraflar arasında
-dolaşmasını sağlar.  tarayıcılarda aynı düzeydeki paragrafları ekranın
-solundan başlayarak kolayca bulmanıza yardım eder. Örneğin bu şekilde
-hiyerarşik bir ağaç görünümündeki birinci seviye açıklamaları
-bulabilirsiniz. Ayrıca program dillerindeki kaynak kodlarını düzenlerken,
-Aynı düzey girintideki satırlara kolayca gitmenizi sağlar, buna ek olarak da
-daha küçük veya daha büyük düzeydeki girinti satırlarını bulmanıza yardım
-eder.
+## İndirmek
+Lütfen NVDA eklenti mağazasından yükleyin
 
-## Tarayıcılardaki kullanım
-Girinti Dolaşımı eklentisi, ekranın solundan başlayarak aynı düzeyler arası
-dolaşım için kullanılabilir. özellikle aynı düzeydeki paragraflar arası
-dolaşım için NVDA+Alt+ aşağı veya yukarı yön tuşlarını kullanabilirsiniz.
-Örnek olarak bu hiyerarşik açıklama ağaçlarında dolaşımda sadece birinci
-seviye açıklamalar arasında gezip diğer tüm seviyeleri atlarken çok yararlı
-olabilir (on reddit.com gibi).
+## VSCode ile uyumluluk hakkında not
 
-Daha net konuşmak gerekirse, GirintiGezintisi NVDA programının ağaç nesne
-algılaması sağladığı her uygulamada kullanılabilir.
+Yerleşik VSCode erişilebilirliği çok sınırlıdır: 2024 itibariyle
+erişilebilirlik API'si aracılığıyla yalnızca 500 satır kod açığa çıkarır ve
+bu da Girinti Dolaşımı eklentisinin VSCode'da hatalı çalışmasına neden olur.
 
-Kısayollar:
+Varsayılan olarak Girinti Dolaşımı, VSCode ile çalışmaz ve onu kullanmaya
+çalıştığınızda iki seçenek arasından seçim yapmanız gerekir:
 
-* NVDA+Alt+Yukarı veya aşağı ok: Aynı düzeydeki önceki veya sonraki
-  paragrafa gider.
-* NVDA+alt+Sol Ok: Daha küçük düzeydeki bir önceki paragrafa gider.
-* NVDA+Alt+Sağ ok: Daha büyük düzeydeki bir sonraki paragrafa gider.
+* VSCode eklentisini yükleyin ([Eklenti
+  sayfası](https://marketplace.visualstudio.com/items?itemName=TonyMalykh.nvda-indent-nav-accessibility))
+  ([kaynak kodu](https://github.com/mltony/
+  vscode-nvda-indent-nav-accessibility)) - önerilen yol. eklentiyi
+  yükledikten sonra NVDA, ne kadar büyük olursa olsun belgenin tamamına
+  erişebilecektir.
+* VSCode'u eski modda kullanmaya devam edin - Girinti Dolaşımı ayarlarında
+  bu modu etkinleştirin. NVDA yalnızca 500 satırlık belge göreceği ve kayıp
+  kardeşleri/ebeveynleri yanlışlıkla bildireceği için bu önerilmez.
 
-## Metin editörlerindeki kullanım
-Girinti Dolaşımı eklentisi, birçok programlama dilindeki kaynak kodları
-düzenlerken de çok yararlıdır.  Python gibi diller kaynak kodların düzgün
-biçimde girintilenmesini gerektirir,  Birçok programda da girintilendirme
-şiddetle tavsiye edilir. Girinti Dolaşımı ile NVDA+Alt+Aşağı veya yukarı oka
-basarak bir sonraki veya bir önceki aynı girintiye
-gidebilirsiniz. NVDA+Alt+Sol oka  basarak bir üst düzeydeki , yani daha
-düşük girintideki satıra gidebilirsiniz.  Python içinde geçerli fonksiyon
-tanımını ya da sınıf tanımını kolayca bulabilirsiniz.  NVDA+Alt+Sağ oka
-basarak da bir alt düzeydeki, yani daha büyük girintideki satıra
-gidebilirsiniz.
+## Uyumluluk sorunları
 
-Eğer NVDA satır girintilerini seslerle çalacak şekilde ayarlandıysa, bu
-durumda Girinti Gezintisi eklentisi tüm atlanan satırlar için kısa bir ses
-çalacaktır.  Aksi halde atlanan satırları belirtmek için minik bir çıtırtı
-çıkaracaktır.
+Girinti Dolaşımı eklentisinin [Karakter Bilgisi
+Eklentisiyle](https://addons.nvda-project.org/addons/charInfo.en.html)
+uyumluluk sorunları olduğu bilinmektedir. Bu eklenti çalışırken hem Girinti
+Dolaşımı eklentisini hem de sayısal tuş takımında inceleme imlecini
+yapılandırmak şu anda mümkün değildir. Lütfen bu eklentiyi kaldırın veya
+Girinti Dolaşımı'nda alternatif bir tuş vuruşu haritası kullanın.
 
-Kısayollar:
+## Tuş vuruşu düzenleri
 
-* NVDA+Alt+Yukarı veya  aşağı ok: geçerli girinti bloğundaki aynı düzeyde
-  olan bir önceki veya bir sonraki satıra gider.
-* NVDA+Alt+Control+Yukarı veya aşağı ok: Aynı düzeydeki bir önceki veya bir
-  sonraki girintiye gitmeye zorlar. Bu komut gerekirse başka bloklardaki
-  aynı düzeye gider. (diğer Python fonksiyonu gibi)..
-* NVDA+alt+Sol Ok: Aynı girinti bloğundaki bir yukarı düzey satıra yani daha
-  küçük girintiye gider.
-* NVDA+Alt+sağ ok: Aynı girinti bloğundaki bir alt düzey satıra yani daha
-  büyük girintiye gider.
+Girinti Dolaşımı 3 yerleşik tuş vuruşu eşlemesi sunar:
 
-## Sürüm geçmişi
-* [v1.2](https://github.com/mltony/nvda-indent-nav/raw/master/releases/IndentNav-1.2.nvda-addon)
-  * Uluslarası destek eklendi.
-  * kaynak dosyalarda GPL headers eklendi.
-  * küçük hata düzeltmeleri.
-* [v1.1](https://github.com/mltony/nvda-indent-nav/raw/master/releases/IndentNav-1.1.nvda-addon)
-  * İlk sürüm.
+* Eski veya dizüstü bilgisayar düzeni: Bu, Girinti Dolaşımı v1.x kullanan,
+  yeni düzenler öğrenmek istemeyen kişiler veya sayısal tuş takımı olmayan
+  dizüstü bilgisayar klavyeleri içindir.
+* Alt+sayısal tuş takımı düzeni.
+* Sayısal tuş takımı düzeni. İnceleme imleci tuş vuruşu çakışmasını
+  gidermenin iki yolu vardır:
+
+    * Düzenlenebilir öğelerde Girinti Dolaşımı için sayısal tuş takımını
+      kullanın ve imleci diğer her yerde inceleyin. Düzenlenebilir öğelerde
+      hâlâ inceleme imlecini kullanmanız gerekiyorsa, 'alt+Numara kilidi'
+      tuşlarına basarak Girinti Dolaşımı'nı geçici olarak devre dışı
+      bırakabilirsiniz.
+    * İnceleme imleci komutlarını alt+Sayısal tuş takımı'na yeniden eşleyin,
+      böylece tuş vuruşu çakışması önlenir.
+
+Tuş vuruşu düzeni Girinti Dolaşımı ayarlarında seçilebilir.
+
+## Tuş vuruşları
+
+| Eylem | Eski Düzen | `Alt+sayısal tuş takımı` Düzeni | Sayısal tuş takımı düzeni | Tanım |
+| -- | -- | -- | -- | -- |
+| Girinti Dolaşımı'nı aç/kapat | `alt+Numara Kilidi` | `alt+Numara Kilidi` | `alt+Numara Kilidi` | Bu, hem NVDA hem de gözden geçirme imleç hareketleri sayısal tuş takımı'na atandığında kullanışlıdır. |
+| Önceki/sonraki kardeşe atla | `NVDA+Alt+yukarı/aşağı Ok` | `alt+sayısal tuş takımı8/sayısal tuş takımı2` | `sayısal tuş takımı8/sayısal tuş takımı2` | Kardeş, aynı girinti seviyesine sahip bir satır olarak tanımlanır.<br>Bu komut, imleci geçerli kod bloğunun ötesine götürmez. |
+| Dağınıklığı atlayarak önceki/sonraki kardeşe atla | N/A | `CTRL+alt+sayısal tuş takımı8/sayısal tuş takımı2` | `CTRL+sayısal tuş takımı8/sayısal tuş takımı2` | Dağınıklık normal ifadesini ayarlarda yapılandırabilirsiniz. |
+| İlk/son kardeşe atla | `NVDA+Alt+shift+yukarı/aşağı Ok` | `alt+sayısal tuş takımı4/sayısal tuş takımı6` | `sayısal tuş takımı4/sayısal tuş takımı6` | Kardeş, aynı girinti seviyesine sahip bir satır olarak tanımlanır.<br>Bu komut, imleci geçerli kod bloğunun ötesine götürmez. |
+| Potansiyel olarak geçerli bloğun dışındaki önceki/son kardeşe atla | `NVDA+control+Alt+yukarı/aşağı Ok` | `CTRL+alt+sayısal tuş takımı4/sayısal tuş takımı6` | `CTRL+sayısal tuş takımı4/sayısal tuş takımı6` | Bu komut başka bir bloktaki kardeşe atlamanızı sağlar. |
+| Önceki/sonraki ebeveyne atla | `NVDA+Alt+sol ok`,<br>`NVDA+alt+CTRL+sol ok` | `alt+sayısal tuş takımı7/sayısal tuş takımı1` | `sayısal tuş takımı7/sayısal tuş takımı1` | Ebeveyn, daha düşük girinti seviyesine sahip bir satır olarak tanımlanır. |
+| Önceki/sonraki çocuğa atla | `NVDA+Alt+CTRL+sağ ok`,<br>`NVDA+alt+sağ ok` | `alt+sayısal tuş takımı9/sayısal tuş takımı3` | `sayısal tuş takımı9/sayısal tuş takımı3` | Çocuk, girinti düzeyi daha yüksek olan bir satır olarak tanımlanır.<br>Bu komut, imleci geçerli kod bloğunun ötesine götürmez. |
+| Geçerli bloğu seç | `NVDA+CTRL+i` | `CTRL+alt+sayısal tuş takımı7` | `CTRL+sayısal tuş takımı7` | Geçerli satırı ve kesinlikle daha yüksek girinti düzeyine sahip olan tüm sonraki satırları seçer.<br>Birden fazla blok seçmek için art arda basın. |
+| Geçerli bloğu ve aynı girinti düzeyindeki tüm sonraki blokları seç | `NVDA+alt+i` | `CTRL+alt+sayısal tuş takımı9` | `CTRL+sayısal tuş takımı9` | Geçerli satırı ve daha büyük veya eşit girinti düzeyine sahip sonraki tüm satırları seçer. |
+| Girinti-yapıştır | `NVDA+v` | `NVDA+v` | `NVDA+v` | Bir kod bloğunu farklı girinti düzeyine sahip bir yere yapıştırmanız gerektiğinde, bu komut yapıştırmadan önce girinti düzeyini ayarlayacaktır. |
+| Geçmişte geri/ileri git | N/A | `CTRL+alt+sayısal tuş takımı1/sayısal tuş takımı3` | `CTRL+1/sayısal tuş takımı3` | Girinti Dolaşımı, Girinti Dolaşımı komutları aracılığıyla ziyaret ettiğiniz satırların geçmişini tutar. |
+| Geçerli satırı konuş | N/A | `alt+sayısal tuş takımı5` | `sayısal tuş takımı5` | Bu gerçekten kolaylık sağlamak için yeniden eşlenen bir inceleme imleci komutudur. |
+| Ebeveyn satırını konuş | `NVDA+i` | N/A | N/A | |
+
+## Diğer özellikler
+
+### Hızlı Bul yer imleri
+
+Girinti Dolaşımı, kolayca atlayabileceğiniz istediğiniz sayıda yer imini
+yapılandırmanıza olanak tanır. Yer imi, normal bir ifadeyle ve bir eşleşmeye
+atlamak için özel bir tuş vuruşuyla tanımlanır. Önceki oluşumu bulmak için
+'shift+' tuş vuruşuna basın.
+
+### Çıtırtı:
+
+Birçok kod satırının üzerinden atlarken, Girinti Dolaşımı, satırların
+tonları atlandıkça girinti seviyelerini hızlı bir şekilde oynatmaya
+çalışacaktır. Bu özellik yalnızca NVDA ayarlarında ton olarak rapor
+girintisi açıkken etkinleştirilir. çıtırtı sesi Girinti Dolaşımı ayarlarında
+ayarlanabilir veya devre dışı bırakılabilir.
+
+## Kaynak kodu
+
+Kaynak kodu şu adreste mevcuttur:
+<http://github.com/mltony/nvda-indent-nav>.
 
 [[!tag dev stable]]
 

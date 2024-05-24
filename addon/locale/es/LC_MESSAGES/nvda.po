@@ -212,6 +212,10 @@ msgstr "Desactivado"
 msgid "IndentNav"
 msgstr "IndentNav"
 
+#, fuzzy
+msgid "Toggle IndentNav"
+msgstr "Activar IndentNav"
+
 msgid "Please turn off num lock in order to toggle IndentNav"
 msgstr "Por favor, desactiva el bloqueo numérico para conmutar IndentNav"
 
@@ -254,42 +258,113 @@ msgstr ""
 msgid "Information"
 msgstr "Información"
 
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+
 #. Translators: error message if next sibling couldn't be found (in editable control or in browser)
 msgid "No next line within indentation block"
 msgstr "No hay línea siguiente dentro del bloque con sangría"
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"within the current indentation block and skipping over clutter."
+msgstr ""
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"potentially in the following indentation block."
+msgstr ""
 
 #. Translators: error message if next sibling couldn't be found in editable control (forced command)
 #. Translators: error message if last sibling couldn't be found in editable control (forced command)
 msgid "No next line in the document"
 msgstr "No hay línea siguiente en el documento"
 
+msgid ""
+"Moves to the last line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line within the current indentation block."
+msgstr ""
+
 #. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
 msgid "No previous line within indentation block"
 msgstr "No hay línea anterior dentro del bloque con sangría"
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line within the current indentation block and skipping over clutter."
+msgstr ""
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line potentially in the preceding indentation block."
+msgstr ""
 
 #. Translators: error message if previous sibling couldn't be found in editable control (forced command)
 #. Translators: error message if first sibling couldn't be found in editable control (forced command)
 msgid "No previous line in the document"
 msgstr "No hay línea anterior en el documento"
 
+msgid ""
+"Moves to the first line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+
+msgid "Speak parent line."
+msgstr ""
+
 #. Translators: error message if parent couldn't be found (in editable control or in browser)
 msgid "No parent of indentation block"
 msgstr "No hay padre del bloque con sangría"
+
+msgid ""
+"Moves to the next line with a greater indentation level than the current "
+"line within the current indentation block."
+msgstr ""
 
 #. Translators: error message if a child couldn't be found (in editable control or in browser)
 msgid "No child block within indentation block"
 msgstr "No hay bloque hijo dentro del bloque con sangría"
 
+msgid ""
+"Moves to the previous line with a lesser indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+
+msgid ""
+"Moves to the previous line with a greater indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+
 #. Translators: error message if a previous child couldn't be found (in editable control)
 msgid "No previous child block within indentation block"
 msgstr "No hay bloque hijo anterior dentro del bloque con sangría"
+
+msgid ""
+"Moves to the next line with a lesser indentation level than the current line "
+"within the current indentation block."
+msgstr ""
 
 #. Translators: error message if previous parent couldn't be found (in editable control)
 msgid "No next parent of indentation block"
 msgstr "No hay siguiente padre del bloque con sangría"
 
+msgid "Select current indentation block. Press twice to copy to clipboard."
+msgstr ""
+
 msgid "Indent block copied to clipboard. "
 msgstr "Bloque con sangría copiado al portapapeles. "
+
+msgid ""
+"Select current indentation block, as well as follwoing blocks of the same "
+"level. Press twice to copy to clipboard."
+msgstr ""
 
 msgid "Indent blocks copied to clipboard. "
 msgstr "Bloques con sangría copiados al portapapeles. "
@@ -300,6 +375,11 @@ msgstr "Nada para seleccionar"
 msgid "No more indentation blocks!"
 msgstr "¡No hay más bloques con sangría!"
 
+msgid ""
+"Indent-paste. This will figure out indentation level in the current line and "
+"paste text from clipboard adjusting indentation level correspondingly."
+msgstr ""
+
 msgid "Some text selected! Cannot indent-paste."
 msgstr "¡Hay texto seleccionado! No se puede pegar con sangría."
 
@@ -309,38 +389,87 @@ msgstr "No se puede pegar con sangría: ¡la línea actual no está vacía!"
 msgid "Pasted"
 msgstr "Pegado"
 
+#, fuzzy
+msgid "Go back in history."
+msgstr ")No hay siguiente línea en el historial"
+
 msgid ")No previous line in history"
 msgstr ")No hay línea anterior en el historial"
+
+msgid "Go forward in history."
+msgstr ""
 
 msgid ")No next line in history"
 msgstr ")No hay siguiente línea en el historial"
 
+#, fuzzy
+msgid "IndentNav QuickFind generic script"
+msgstr "Opciones de marcadores rápidos de búsqueda de IndentNav"
+
 msgid "Bookmark not found"
 msgstr "Marcador no encontrado"
+
+msgid "Speak current line"
+msgstr ""
+
+#, fuzzy
+msgid "Moves to the next item on the same level within current subtree."
+msgstr "No hay elemento siguiente al mismo nivel en este subárbol"
 
 #. Translators: error message if next sibling couldn't be found in Tree view
 msgid "No next item on the same level within this subtree"
 msgstr "No hay elemento siguiente al mismo nivel en este subárbol"
 
+#, fuzzy
+msgid "Moves to the previous item on the same level within current subtree."
+msgstr "No hay elemento anterior al mismo nivel en este subárbol"
+
 #. Translators: error message if next sibling couldn't be found in Tree view
 msgid "No previous item on the same level within this subtree"
 msgstr "No hay elemento anterior al mismo nivel en este subárbol"
+
+#, fuzzy
+msgid "Moves to the next item on the same level."
+msgstr "No hay elemento siguiente al mismo nivel en esta vista de árbol"
 
 #. Translators: error message if next sibling couldn't be found in Tree view
 msgid "No next item on the same level in this tree view"
 msgstr "No hay elemento siguiente al mismo nivel en esta vista de árbol"
 
+#, fuzzy
+msgid "Moves to the previous item on the same level."
+msgstr "No hay elemento anterior al mismo nivel en esta vista de árbol"
+
 #. Translators: error message if previous sibling couldn't be found in Tree view
 msgid "No previous item on the same level in this tree view"
 msgstr "No hay elemento anterior al mismo nivel en esta vista de árbol"
+
+#, fuzzy
+msgid "Moves to the last item on the same level within current subtree."
+msgstr "No hay elemento siguiente al mismo nivel en este subárbol"
+
+#, fuzzy
+msgid "Moves to the first item on the same level within current subtree."
+msgstr "No hay elemento siguiente al mismo nivel en este subárbol"
+
+msgid "Speak parent item."
+msgstr ""
 
 #. Translators: error message if parent couldn't be found)
 msgid "No parent item in this tree view"
 msgstr "No hay elemento padre en esta vista de árbol"
 
+#, fuzzy
+msgid "Moves to the next child in tree view."
+msgstr "No hay elemento siguiente al mismo nivel en esta vista de árbol"
+
 #. Translators: error message if a child couldn't be found
 msgid "NO child"
 msgstr "Sin hijo"
+
+#, fuzzy
+msgid "Moves to parent in tree view."
+msgstr "No hay elemento padre en esta vista de árbol"
 
 #. Translators: error message if parent couldn't be found
 msgid "No parent"
