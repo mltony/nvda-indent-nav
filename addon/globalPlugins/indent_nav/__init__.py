@@ -984,6 +984,10 @@ class Beeper:
 class TextInfoUnavailableException(Exception):
     pass
 
+class VSCodeNotMainEditorException(Exception):
+    pass
+
+
 class FastLineManagerV2:
     def __init__(self, obj, selectionMode=False):
         self.obj = obj
@@ -1421,6 +1425,27 @@ class VSCodeRequestDialog(wx.Dialog):
     def onClose(self, evt):
         self.Hide()
 
+def isVSCodeMainEditor(obj):
+    if obj.role != controlTypes.Role.EDITABLETEXT:
+        return False
+    def findLandmark(obj):
+        simpleParent = obj.simpleParent
+        if simpleParent.role == controlTypes.Role.LANDMARK:
+            return simpleParent
+        while True:
+            obj = obj.parent
+            if obj is None:
+                return None
+            if obj.role == controlTypes.Role.LANDMARK:
+                return obj
+
+    landmark = findLandmark(obj)
+    if landmark is None:
+        return False
+    try:
+        return landmark.IA2Attributes['id'] == 'workbench.parts.editor'
+    except (KeyError, AttributeError):
+        return False
 
 
 def moveToCodepointOffset(
@@ -1769,6 +1794,9 @@ class EditableIndentNav(NVDAObject):
                     self.endOfDocument(errorMessage)
         except TextInfoUnavailableException:
             VSCodeRequestDialog(gui.mainFrame, self.appModule).Show()
+        except VSCodeNotMainEditorException:
+            msg = _("Cannot use IndentNav not in the main editor of VSCode")
+            self.endOfDocument(msg)
 
     def getLineManager(self, selectionMode=False):
         return FastLineManagerV2(self, selectionMode)
@@ -1999,6 +2027,8 @@ class EditableIndentNav(NVDAObject):
     ):
         if not self.isVscodeApp():
             return self.makeTextInfo(position)
+        if not isVSCodeMainEditor(self):
+            raise VSCodeNotMainEditorException()
         piper = self.getPiper()
         if piper is not None:
             return VSCodeTextInfo(self, position)
