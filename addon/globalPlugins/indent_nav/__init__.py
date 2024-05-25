@@ -858,6 +858,10 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
 
 
     def chooseNVDAObjectOverlayClasses (self, obj, clsList):
+        try:
+            obj.windowClassName
+        except AttributeError:
+            return
         if obj.windowClassName == u'Scintilla':
             clsList.append(EditableIndentNav)
             return
