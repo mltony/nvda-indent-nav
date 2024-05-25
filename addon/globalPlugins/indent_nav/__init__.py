@@ -367,6 +367,8 @@ def initConfiguration():
             # }, # comment
             # Also allows // comment; also allows semicolon;
                 r"[\])}]\s*[,;]?\s*((#|//).*)?",
+            # { // comment
+                r"[{]\s*((#|//).*)?",
             # # comment
                 r"#.*",
             # from? import
@@ -873,9 +875,6 @@ class GlobalPlugin(globalPluginHandler.GlobalPlugin):
             return
         if obj.role == ROLE_EDITABLETEXT:
             clsList.append(EditableIndentNav)
-            return
-        if obj.role == ROLE_TREEVIEWITEM:
-            clsList.append(TreeIndentNav)
             return
 
     @script(description=_("Toggle IndentNav"), gestures=['kb:alt+numLock'])
@@ -2110,114 +2109,3 @@ class EditableIndentNav(NVDAObject):
         with self.getLineManager() as lm:
             api.lm = lm
             tones.beep(500, 50)
-
-
-
-class TreeIndentNav(NVDAObject):
-    scriptCategory = _("IndentNav")
-    beeper = Beeper()
-
-    @script(description=_("Moves to the next item on the same level within current subtree."), gestures=['kb:NVDA+alt+DownArrow'])
-    def script_moveToNextSibling(self, gesture):
-        # Translators: error message if next sibling couldn't be found in Tree view
-        errorMsg = _("No next item on the same level within this subtree")
-        self.moveInTree(1, errorMsg, op=operator.eq)
-
-    @script(description=_("Moves to the previous item on the same level within current subtree."), gestures=['kb:NVDA+alt+UpArrow'])
-    def script_moveToPreviousSibling(self, gesture):
-        # Translators: error message if next sibling couldn't be found in Tree view
-        errorMsg = _("No previous item on the same level within this subtree")
-        self.moveInTree(-1, errorMsg, op=operator.eq)
-
-    @script(description=_("Moves to the next item on the same level."), gestures=['kb:NVDA+Control+alt+DownArrow'])
-    def script_moveToNextSiblingForce(self, gesture):
-        # Translators: error message if next sibling couldn't be found in Tree view
-        errorMsg = _("No next item on the same level in this tree view")
-        self.moveInTree(1, errorMsg, op=operator.eq, unbounded=True)
-
-    @script(description=_("Moves to the previous item on the same level."), gestures=['kb:NVDA+Control+alt+UpArrow'])
-    def script_moveToPreviousSiblingForce(self, gesture):
-        # Translators: error message if previous sibling couldn't be found in Tree view
-        errorMsg = _("No previous item on the same level in this tree view")
-        self.moveInTree(-1, errorMsg, op=operator.eq, unbounded=True)
-
-    @script(description=_("Moves to the last item on the same level within current subtree."), gestures=['kb:NVDA+alt+Shift+DownArrow'])
-    def script_moveToLastSibling(self, gesture):
-        # Translators: error message if next sibling couldn't be found in Tree view
-        errorMsg = _("No next item on the same level within this subtree")
-        self.moveInTree(1, errorMsg, op=operator.eq, moveCount=1000)
-
-    @script(description=_("Moves to the first item on the same level within current subtree."), gestures=['kb:NVDA+alt+Shift+UpArrow'])
-    def script_moveToFirstSibling(self, gesture):
-        # Translators: error message if next sibling couldn't be found in Tree view
-        errorMsg = _("No previous item on the same level within this subtree")
-        self.moveInTree(-1, errorMsg, op=operator.eq, moveCount=1000)
-
-    @script(description=_("Speak parent item."), gestures=['kb:NVDA+I'])
-    def script_speakParent(self, gesture):
-        count=scriptHandler.getLastScriptRepeatCount()
-        # Translators: error message if parent couldn't be found)
-        errorMsg = _("No parent item in this tree view")
-        self.moveInTree(-1, errorMsg, unbounded=True, op=operator.lt, speakOnly=True, moveCount=count+1)
-
-    @script(description=_("Moves to the next child in tree view."), gestures=['kb:NVDA+alt+RightArrow'])
-    def script_moveToChild(self, gesture):
-        # Translators: error message if a child couldn't be found
-        errorMsg = _("NO child")
-        self.moveInTree(1, errorMsg, unbounded=False, op=operator.gt)
-
-    @script(description=_("Moves to parent in tree view."), gestures=['kb:NVDA+alt+LeftArrow'])
-    def script_moveToParent(self, gesture):
-        # Translators: error message if parent couldn't be found
-        errorMsg = _("No parent")
-        self.moveInTree(-1, errorMsg, unbounded=True, op=operator.lt)
-
-    def getLevel(self, obj):
-        try:
-            return obj.positionInfo["level"]
-        except AttributeError:
-            return None
-        except KeyError:
-            return None
-
-
-    def moveInTree(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1):
-        obj = api.getFocusObject()
-        level = self.getLevel(obj)
-        found = False
-        levels = []
-        while True:
-            if increment > 0:
-                obj = obj.next
-            else:
-                obj = obj.previous
-            newLevel = self.getLevel(obj)
-            if newLevel is None:
-                break
-            if op(newLevel, level):
-                found = True
-                level = newLevel
-                result = obj
-                moveCount -= 1
-                if moveCount == 0:
-                    break
-            elif newLevel < level:
-                # Not found in this subtree
-                if not unbounded:
-                    break
-            levels.append(newLevel )
-
-        if found:
-            self.beeper.fancyCrackle(levels, volume=getConfig("crackleVolume"))
-            if not speakOnly:
-                result.setFocus()
-            else:
-                speech.speakObject(result)
-        else:
-            self.endOfDocument(errorMessage)
-
-    def endOfDocument(self, message=None):
-        volume = getConfig("noNextTextChimeVolume")
-        self.beeper.fancyBeep("HF", 100, volume, volume)
-        if getConfig("noNextTextMessage") and message is not None:
-            ui.message(message)

@@ -1,7 +1,8 @@
 # IndentNav addon for NVDA
 This addon allows NVDA users to navigate by indentation level of lines.
 While editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level.
-It also provides similar keystrokes in tree views.
+
+Please note that tree navigation commands have been moved to [TreeNav add-on](https://github.com/mltony/nvda-tree-nav).
 
 ## Download
 Please install from NVDA add-on store
