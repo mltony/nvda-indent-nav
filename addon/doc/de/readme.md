@@ -1,78 +1,106 @@
 # IndentNav #
 
-* Autor: Tony Malykh
-* [Stabile Version herunterladen][1]
+Mit dieser NVDA-Erweiterung können Benutzer nach der Einrückungsebene von
+Zeilen navigieren.  Bei der Bearbeitung von Quellcode in vielen
+Programmiersprachen ermöglicht es, zwischen den Zeilen der gleichen
+Einrückungsebene zu springen und schnell Zeilen mit größerer oder kleinerer
+Einrückungsebene zu finden.  Ähnliche Tastenkombinationen sind auch in
+Baumansichten möglich.
 
-Diese Erweiterung ermöglicht die Navigation im Text nach der
-Einrückungsebene oder dem Abstand von Zeilen und Absätzen.  In Browsern
-ermöglicht diese Erweiterung das schnelle Auffinden von Absätzen mit
-gleichem Abstand zum linken Bildschirmrand, wie z.B. Kommentare der ersten
-Ebene in einem hierarchischen Kommentarbaum.  Auch beim Editieren von
-Quellcode in vielen Programmiersprachen erlaubt Indentnav zwischen den
-Zeilen der gleichen Einrückungsebene zu springen, sowie schnell Zeilen mit
-niedrigerer oder höherer Einrückungsebene zu finden.
+Please note that tree navigation commands have been moved to [TreeNav
+add-on](https://github.com/mltony/nvda-tree-nav).
 
-## Verwendung in Browsern
-IndentNav kann verwendet werden, um zu einem bestimmten Abstand vom linken
-Bildschirmrand zu navigieren.  Insbesondere können Sie NVDA+Alt+Pfeil ab und
-auf drücken, um zum nächsten oder vorherigen Absatz mit dem gleichen Abstand
-zu springen.  Dies kann z.B. nützlich sein, wenn Sie hierarchische Bäume von
-Kommentaren durchsuchen (z.B. auf reddit.com). So können Sie zwischen
-Kommentaren der ersten Ebene springen und alle Kommentare der höheren Ebene
-überspringen.
+## Download
+Bitte aus dem Store für NVDA-Erweiterungen  installieren
 
-Streng genommen kann IndentNav in jeder Anwendung verwendet werden, für
-welche NVDA ein Tree-Interceptor-Objekt zur Verfügung stellt.
+## Hinweis zur Kompatibilität mit VSCode
 
-Tastenkürzel:
+Die in VSCode eingebaute Barrierefreiheit ist sehr begrenzt: Seit 2024
+werden nur 500 Zeilen Code über die API der Barrierefreiheit zugänglich
+gemacht, was dazu führt, dass IndentNav in VSCode nicht korrekt
+funktioniert.
 
-* NVDA+Alt+Pfeil aufwärts oder abwärts: Springt zum vorherigen oder nächsten
-  Absatz mit dem gleichen Abstand vom linken Bildschirmrand.
-* NVDA+alt+Linkspfeil: Springt zum vorherigen Absatz mit geringerem Abstand
-  vom linken Bildschirmrand.
-* NVDA+Alt+Rechtspfeil: Springt zum nächsten Absatz mit größerem Abstand vom
-  linken Bildschirmrand.
+Standardmäßig funktioniert IndentNav nicht mit VSCode und wenn Sie
+versuchen, es zu verwenden, müssen Sie zwischen zwei Optionen wählen:
 
-## Einsatz in Text-Editoren
-IndentNav kann auch nützlich sein, um Quellcode in vielen
-Programmiersprachen zu bearbeiten.  Sprachen wie Python verlangen, dass der
-Quellcode richtig eingerückt wird, während es in vielen anderen
-Programmiersprachen dringend empfohlen wird.  Mit IndentNav können Sie
-NVDA+Alt+Pfeil ab- und aufwärts drücken, um zur nächsten oder vorherigen
-Zeile mit der gleichen Einrückungsebene zu springen.  Sie können auch
-NVDA+Alt+Linkspfeil drücken, um zu einer übergeordneten Zeile zu springen,
-d.h. zu einer vorherigen Zeile mit niedrigerer Einrückungsebene.  In Python
-finden Sie somit leicht die aktuelle Funktionsdefinition oder
-Klassendefinition.  Sie können NVDA+Alt+Rechtspfeil drücken, um zum ersten
-Child der aktuellen Zeile zu gehen, d.h. zur nächsten Zeile mit größerer
-Einrückungsebene.
+* Installieren Sie die VSCode-Erweiterung ([von der
+  Seite](https://marketplace.visualstudio.com/items?itemName=TonyMalykh.nvda-indent-nav-accessibility))([Quellcode](https://github.com/mltony/vscode-nvda-indent-nav-accessibility))
+  - empfohlener Weg. Nach der Installation der Erweiterung ist NVDA in der
+  Lage, auf das gesamte Dokument zuzugreifen, egal wie groß es ist.
+* Verwenden Sie VSCode weiterhin im Legacy-Modus - aktivieren Sie diesen
+  Modus in den IndentNav-Einstellungen. Dies wird nicht empfohlen, da NVDA
+  nur 500 Zeilen des Dokuments sieht und fälschlicherweise fehlende Einträge
+  in der Hierarchie mitteilt.
 
-Wenn NVDA so eingestellt ist, dass Zeileneinrückungen als Töne ausgedrückt
-werden, wird IndentNav schnell die Töne aller übersprungenen Zeilen
-wiedergeben.  Andernfalls wird es nur knacken, um die Anzahl der
-übersprungenen Zeilen grob darzustellen.
+## Kompatibilitätsprobleme
 
-Tastenkürzel:
+IndentNav hat bekannte Kompatibilitätsprobleme mit der NVDA-Erweiterung
+[Zeichen-Informationen](https://addons.nvda-project.org/addons/charInfo.en.html).
+Es ist derzeit nicht möglich, sowohl IndentNav als auch den Prüfcursor auf
+dem Ziffernblock zu konfigurieren, während dieser NVDA-Erweiterung
+läuft. Bitte deinstallieren Sie entweder sie es oder verwenden Sie eine
+alternative Tastaturbelegung in IndentNav.
 
-* NVDA+Alt+Pfeil aufwärts oder abwärts: Springt zur vorherigen oder nächsten
-  Zeile mit der gleichen Einrückung innerhalb des aktuellen
-  Einrückungsblocks.
-* NVDA+Alt+STRG+Pfeil aufwärts oder abwärts: Erzwingt den Sprung zur
-  vorherigen oder nächsten Zeile mit der gleichen Einrückung. Dieser Befehl
-  springt bei Bedarf zu anderen Einrückungsblöcken (z.B. anderen
-  Python-Funktionen).
-* NVDA+alt+Linkspfeil: Springt zur übergeordneten Zeile - das ist die
-  vorherige Zeile mit der niedrigeren Einrückung.
-* NVDA+Alt+Rechtspfeil: Springt zur ersten Zeile mit größerer Einrückung
-  innerhalb desselben Einrückungsblocks.
+## Keystroke layouts
 
-## Versionsverlauf
-* [v1.2](https://github.com/mltony/nvda-indent-nav/raw/master/releases/IndentNav-1.2.nvda-addon)
-  * Unterstützung für Übersetzungen wurde hinzugefügt.
-  * GPL-Kopfdaten wurden in den Quelldateien eingefügt.
-  * Geringfügige Verbesserungen.
-* [v1.1](https://github.com/mltony/nvda-indent-nav/raw/master/releases/IndentNav-1.1.nvda-addon)
-  * Erste Version.
+IndentNav bietet drei eingebaute Tastenzuordnungen:
+
+* Legacy- oder Laptop-Layout: Dies ist für diejenigen, die IndentNav V1.x
+  benutzt haben und keine neuen Layouts lernen wollen oder für
+  Laptop-Tastaturen, die keine Zifferntasten haben.
+* Alt+numpad layout.
+* Numpad keys layout. There are two modes of dealing with review cursor
+  keystroke conflict:
+
+    * Verwenden Sie den Nummernblock für IndentNav in Eingabefeldern und den
+      NVDA-Cursor überall sonst. Wenn Sie ihn in Dateien zum Bearbeiten
+      trotzdem verwenden müssen, können Sie IndentNav vorübergehend
+      deaktivieren, indem Sie die Tastenkombination `Alt+Nummernblock-Taste`
+      drücken.
+    * Remap review cursor commands to alt+numpad, thus avoiding keystroke
+      conflict.
+
+Keystroke layout can be selected in IndentNav settings.
+
+## Keystrokes
+
+| Action | Legacy layout | `Alt+numpad` layout | Numpad layout | Description |
+| -- | -- | -- | -- | -- |
+| Toggle IndentNav | `alt+numLock` | `alt+numLock` | `alt+numLock` | This is useful when both NVDA and review cursor gestures are assigned to numPad. |
+| Jump to previous/next sibling | `NVDA+Alt+up/downArrow` | `alt+numPad8/numPad2` | `numPad8/numPad2` | Sibling is defined as a line with the same indentation level.<br>This command will not take cursor beyond current code block. |
+| Jump to previous/next sibling skipping over clutter | N/A | `control+alt+numPad8/numPad2` | `control+numPad8/numPad2` | You can configure clutter regular expression in settings. |
+| Jump to first/last sibling | `NVDA+Alt+shift+up/downArrow` | `alt+numPad4/numPad6` | `numPad4/numPad6` | Sibling is defined as a line with the same indentation level.<br>This command will not take cursor beyond current code block. |
+| Jump to previous/last sibling potentially outside of current block | `NVDA+control+Alt+up/downArrow` | `control+alt+numPad4/numPad6` | `control+numPad4/numPad6` | This command allows you to jump to a sibling in another block. |
+| Jump to previous/next parent | `NVDA+Alt+leftArrow`,<br>`NVDA+alt+control+leftArrow` | `alt+numPad7/numPad1` | `numPad7/numPad1` | Parent is defined as a line with lower indentation level. |
+| Jump to previous/next child | `NVDA+Alt+control+rightArrow`,<br>`NVDA+alt+rightArrow` | `alt+numPad9/numPad3` | `numPad9/numPad3` | Child is defined as a line with greater indentation level.<br>This command will not take cursor beyond current code block. |
+| Select current block | `NVDA+control+i` | `control+alt+numPad7` | `control+numPad7` | Selects current line plus all following lines having strictly greater indentation level.<br>Press repeatedly to select multiple blocks. |
+| Select current block and all following blocks on the same indentation level | `NVDA+alt+i` | `control+alt+numPad9` | `control+numPad9` | Selects current line plus all following lines having  greater or equal indentation level. |
+| Indent-paste | `NVDA+v` | `NVDA+v` | `NVDA+v` | When you need to paste a block of code to a place with different indentation level, this command will adjust indentation level before pasting. |
+| Go back/forward in history | N/A | `control+alt+numPad1/numPad3` | `control+numPad1/numPad3` | IndentNav keeps a history of lines which you visited via IndentNav commands. |
+| Speak current line | N/A | `alt+numPad5` | `numPad5` | This is really a review cursor command remapped for convenience. |
+| Speak parent line | `NVDA+i` | N/A | N/A | |
+
+## Weitere Features
+
+### Lesezeichen für die Schnellsuche
+
+IndentNav allows you to configure any number of bookmarks that you can
+easily jump to. A bookmark is defined by a regular expression and a custom
+keystroke to jump to a match. Press `shift+` keystroke to find previous
+occurrence.
+
+### Crackling:
+
+When jumping over many lines of code, IndentNav will try to quickly play
+indentation levels as tones of the lines skipped over. This feature is only
+enabled when report indentation as tones is turned on in NVDA
+settings. Crackling volume can be adjusted or disabled in IndentNav
+settings.
+
+## Quellcode
+
+Der Quellcode ist verfügbar unter
+<http://github.com/mltony/nvda-indent-nav>.
 
 [[!tag dev stable]]
 

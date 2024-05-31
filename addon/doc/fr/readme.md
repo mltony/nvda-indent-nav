@@ -7,6 +7,9 @@ niveau d'indentation, ainsi que de trouver rapidement des lignes avec un
 niveau d'indentation plus ou moins élevé. Elle fournit également des touches
 de commandes similaires dans les arborescences.
 
+Please note that tree navigation commands have been moved to [TreeNav
+add-on](https://github.com/mltony/nvda-tree-nav).
+
 ## Télécharger
 Veuillez installer à partir de l'add-on store de NVDA
 
@@ -67,16 +70,16 @@ paramètres d'IndentNav.
 | Actions | Disposition héritée | Disposition `Alt+pavé numérique` | Disposition du pavé numérique | Description |
 | -- | -- | -- | -- | -- |
 | Basculer IndentNav | `alt+verrouillage numérique` | `alt+verrouillage numérique` | `alt+verrouillage numérique` | Ceci est utile lorsque les gestes NVDA et du curseur de revue sont attribués au pavé numérique. |
-| Aller au enfant précédent/suivant | `NVDA+Alt+flèche haut/bas` | `alt+PavNum8/PavNum2` | `PavNum8/PavNum2` | L'enfant est défini comme une ligne avec le même niveau d'indentation.<br>Cette commande ne déplacera pas le curseur au-delà du bloc de code actuel. |
-| Passer au enfant précédent/suivant en sautant en désordre | N/A | `contrôle+alt+PavNum8/PavNum2` | `contrôle+PavNum8/PavNum2` | Vous pouvez configurer l'expression régulière en désordre dans les paramètres. |
+| Aller à l'enfant précédent/suivant | `NVDA+Alt+flèche haut/bas` | `alt+PavNum8/PavNum2` | `PavNum8/PavNum2` | L'enfant est défini comme une ligne avec le même niveau d'indentation.<br>Cette commande ne déplacera pas le curseur au-delà du bloc de code actuel. |
+| Aller à l'enfant précédent/suivant en ignorant le désordre | N/A | `contrôle+alt+PavNum8/PavNum2` | `contrôle+PavNum8/PavNum2` | Vous pouvez configurer l'expression régulière en désordre dans les paramètres. |
 | Aller au premier/dernier enfant | `NVDA+Alt+maj+flèche haut/bas` | `alt+PavNum4/PavNum6` | `PavNum4/PavNum6` | L'enfant est défini comme une ligne avec le même niveau d'indentation.<br>Cette commande ne déplacera pas le curseur au-delà du bloc de code actuel. |
-| Passer au enfant précédent/dernier potentiellement en dehors du bloc actuel | `NVDA+contrôle+Alt+flèche haut/bas` | `contrôle+alt+PavNum4/PaVNum6` | `contrôle+PaVNum4/PaVNum6` | Cette commande vous permet de passer à un enfant dans un autre bloc. |
+| Aller à l'enfant précédent/dernier potentiellement en dehors du bloc actuel | `NVDA+contrôle+Alt+flèche haut/bas` | `contrôle+alt+PavNum4/PaVNum6` | `contrôle+PaVNum4/PaVNum6` | Cette commande vous permet de Aller à un enfant dans un autre bloc. |
 | Aller au parent précédent/suivant | `NVDA+Alt+Flèche gauche`,<br>`NVDA+alt+contrôle+Flèche gauche` | `alt+PavNum7/PavNum1` | `PavNum7/PavNum1` | Le parent est défini comme une ligne avec un niveau d'indentation inférieur. |
 | Aller à l'enfant précédent/suivant | `NVDA+Alt+contrôle+Flèche droite`,<br>`NVDA+alt+Flèche droite` | `alt+PavNum9/PavNum3` | `PavNum9/PavNum3` | L'enfant est défini comme une ligne avec un niveau d'indentation plus élevé.<br>Cette commande ne déplacera pas le curseur au-delà du bloc de code actuel. |
 | Sélectionner le bloc actuel | `NVDA+contrôle+i` | `contrôle+alt+PavNum7` | `contrôle+PavNum7` | Sélectionne la ligne actuelle ainsi que toutes les lignes suivantes ayant un niveau d'indentation strictement supérieur.<br>Appuyez à plusieurs reprises pour sélectionner plusieurs blocs. |
 | Sélectionnez le bloc actuel et tous les blocs suivants sur le même niveau d'indentation | `NVDA+alt+i` | `contrôle+alt+PavNum9` | `contrôle+PavNum9` | Sélectionne la ligne actuelle ainsi que toutes les lignes suivantes ayant un niveau d'indentation supérieur ou égal. |
 | Coller l'indentation | `NVDA+v` | `NVDA+v` | `NVDA+v` | Lorsque vous devez coller un bloc de code à un endroit avec un niveau d'indentation différent, cette commande ajustera le niveau d'indentation avant de le coller. |
-| Revenir en arrière/avancer dans l'historique | N/A | `contrôle+alt+PavNum1/PavNum3` | `contrôle+PavNum1/PavNum3` | IndentNav conserve un historique des lignes que vous avez visitées via les commandes IndentNav. |
+| Aller en arrière/en avance dans l'historique | N/A | `contrôle+alt+PavNum1/PavNum3` | `contrôle+PavNum1/PavNum3` | IndentNav conserve un historique des lignes que vous avez visitées via les commandes IndentNav. |
 | Annoncer la ligne actuelle | N/A | `alt+PavNum5` | `PavNum5` | Il s’agit en réalité d’une commande du curseur de revue remappée pour plus de commodité. |
 | Annoncer la ligne parent | `NVDA+i` | N/A | N/A | |
 

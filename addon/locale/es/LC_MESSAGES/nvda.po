@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: IndentNav 1.1\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2018-11-23 09:05+1000\n"
-"PO-Revision-Date: 2024-05-11 19:50+0200\n"
+"PO-Revision-Date: 2024-05-24 14:44+0200\n"
 "Last-Translator: José Manuel Delicado <jm.delicado@nvda.es>\n"
 "Language-Team: \n"
 "Language: es\n"
@@ -212,9 +212,8 @@ msgstr "Desactivado"
 msgid "IndentNav"
 msgstr "IndentNav"
 
-#, fuzzy
 msgid "Toggle IndentNav"
-msgstr "Activar IndentNav"
+msgstr "Conmutar IndentNav"
 
 msgid "Please turn off num lock in order to toggle IndentNav"
 msgstr "Por favor, desactiva el bloqueo numérico para conmutar IndentNav"
@@ -262,6 +261,8 @@ msgid ""
 "Moves to the next line with the same indentation level as the current line "
 "within the current indentation block."
 msgstr ""
+"Se mueve a la siguiente línea con el mismo nivel de sangría que la actual "
+"dentro del bloque actual."
 
 #. Translators: error message if next sibling couldn't be found (in editable control or in browser)
 msgid "No next line within indentation block"
@@ -271,11 +272,15 @@ msgid ""
 "Moves to the next line with the same indentation level as the current line "
 "within the current indentation block and skipping over clutter."
 msgstr ""
+"Se mueve a la siguiente línea con el mismo nivel de sangría que la actual "
+"dentro del bloque actual y evita el desorden."
 
 msgid ""
 "Moves to the next line with the same indentation level as the current line "
 "potentially in the following indentation block."
 msgstr ""
+"Se mueve a la siguiente línea con el mismo nivel de sangría de la actual "
+"potencialmente en el siguiente bloque con sangría."
 
 #. Translators: error message if next sibling couldn't be found in editable control (forced command)
 #. Translators: error message if last sibling couldn't be found in editable control (forced command)
@@ -286,11 +291,15 @@ msgid ""
 "Moves to the last line with the same indentation level as the current line "
 "within the current indentation block."
 msgstr ""
+"Se mueve a la última línea con el mismo nivel de sangría que la actual "
+"dentro del bloque actual."
 
 msgid ""
 "Moves to the previous line with the same indentation level as the current "
 "line within the current indentation block."
 msgstr ""
+"Se mueve a la línea anterior con el mismo nivel de sangría que la actual "
+"dentro del bloque actual."
 
 #. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
 msgid "No previous line within indentation block"
@@ -300,11 +309,15 @@ msgid ""
 "Moves to the previous line with the same indentation level as the current "
 "line within the current indentation block and skipping over clutter."
 msgstr ""
+"Se mueve a la línea anterior con el mismo nivel de sangría que la actual "
+"dentro del bloque actual y evita el desorden."
 
 msgid ""
 "Moves to the previous line with the same indentation level as the current "
 "line potentially in the preceding indentation block."
 msgstr ""
+"Se mueve a la línea anterior con el mismo nivel de sangría de la actual "
+"potencialmente en el bloque con sangría anterior."
 
 #. Translators: error message if previous sibling couldn't be found in editable control (forced command)
 #. Translators: error message if first sibling couldn't be found in editable control (forced command)
@@ -315,9 +328,11 @@ msgid ""
 "Moves to the first line with the same indentation level as the current line "
 "within the current indentation block."
 msgstr ""
+"Se mueve a la primera línea con el mismo nivel de sangría que la actual "
+"dentro del bloque actual."
 
 msgid "Speak parent line."
-msgstr ""
+msgstr "Verbalizar línea padre."
 
 #. Translators: error message if parent couldn't be found (in editable control or in browser)
 msgid "No parent of indentation block"
@@ -327,6 +342,8 @@ msgid ""
 "Moves to the next line with a greater indentation level than the current "
 "line within the current indentation block."
 msgstr ""
+"Se mueve a la siguiente línea con un nivel de sangría mayor al actual dentro "
+"del bloque actual."
 
 #. Translators: error message if a child couldn't be found (in editable control or in browser)
 msgid "No child block within indentation block"
@@ -336,11 +353,15 @@ msgid ""
 "Moves to the previous line with a lesser indentation level than the current "
 "line within the current indentation block."
 msgstr ""
+"Se mueve a la línea anterior con un nivel de sangría menor que el actual "
+"dentro del bloque actual."
 
 msgid ""
 "Moves to the previous line with a greater indentation level than the current "
 "line within the current indentation block."
 msgstr ""
+"Se mueve a la línea anterior con un nivel de sangría mayor al actual dentro "
+"del bloque actual."
 
 #. Translators: error message if a previous child couldn't be found (in editable control)
 msgid "No previous child block within indentation block"
@@ -350,6 +371,8 @@ msgid ""
 "Moves to the next line with a lesser indentation level than the current line "
 "within the current indentation block."
 msgstr ""
+"Se mueve a la siguiente línea con un nivel de sangría menor que el actual "
+"dentro del bloque actual."
 
 #. Translators: error message if previous parent couldn't be found (in editable control)
 msgid "No next parent of indentation block"
@@ -357,6 +380,7 @@ msgstr "No hay siguiente padre del bloque con sangría"
 
 msgid "Select current indentation block. Press twice to copy to clipboard."
 msgstr ""
+"Selecciona el bloque actual. Pulsa dos veces para copiarlo al portapapeles."
 
 msgid "Indent block copied to clipboard. "
 msgstr "Bloque con sangría copiado al portapapeles. "
@@ -365,6 +389,8 @@ msgid ""
 "Select current indentation block, as well as follwoing blocks of the same "
 "level. Press twice to copy to clipboard."
 msgstr ""
+"Selecciona el bloque actual, así como los bloques siguientes al mismo nivel. "
+"Pulsa dos veces para copiar al portapapeles."
 
 msgid "Indent blocks copied to clipboard. "
 msgstr "Bloques con sangría copiados al portapapeles. "
@@ -379,6 +405,9 @@ msgid ""
 "Indent-paste. This will figure out indentation level in the current line and "
 "paste text from clipboard adjusting indentation level correspondingly."
 msgstr ""
+"Pegar con sangría. Esto determinará el nivel de sangría en la línea actual y "
+"pegará el texto del portapapeles ajustando el nivel de sangría como "
+"corresponda."
 
 msgid "Some text selected! Cannot indent-paste."
 msgstr "¡Hay texto seleccionado! No se puede pegar con sangría."
@@ -389,87 +418,81 @@ msgstr "No se puede pegar con sangría: ¡la línea actual no está vacía!"
 msgid "Pasted"
 msgstr "Pegado"
 
-#, fuzzy
 msgid "Go back in history."
-msgstr ")No hay siguiente línea en el historial"
+msgstr "Retroceder por el historial."
 
 msgid ")No previous line in history"
 msgstr ")No hay línea anterior en el historial"
 
 msgid "Go forward in history."
-msgstr ""
+msgstr "Avanzar en el historial."
 
 msgid ")No next line in history"
 msgstr ")No hay siguiente línea en el historial"
 
-#, fuzzy
 msgid "IndentNav QuickFind generic script"
-msgstr "Opciones de marcadores rápidos de búsqueda de IndentNav"
+msgstr "Script genérico de búsqueda rápida de IndentNav"
 
 msgid "Bookmark not found"
 msgstr "Marcador no encontrado"
 
 msgid "Speak current line"
-msgstr ""
+msgstr "Verbalizar línea actual"
 
-#, fuzzy
 msgid "Moves to the next item on the same level within current subtree."
-msgstr "No hay elemento siguiente al mismo nivel en este subárbol"
+msgstr ""
+"Se mueve al siguiente elemento del mismo nivel dentro del subárbol actual."
 
 #. Translators: error message if next sibling couldn't be found in Tree view
 msgid "No next item on the same level within this subtree"
 msgstr "No hay elemento siguiente al mismo nivel en este subárbol"
 
-#, fuzzy
 msgid "Moves to the previous item on the same level within current subtree."
-msgstr "No hay elemento anterior al mismo nivel en este subárbol"
+msgstr ""
+"Se mueve al elemento anterior del mismo nivel dentro del subárbol actual."
 
 #. Translators: error message if next sibling couldn't be found in Tree view
 msgid "No previous item on the same level within this subtree"
 msgstr "No hay elemento anterior al mismo nivel en este subárbol"
 
-#, fuzzy
 msgid "Moves to the next item on the same level."
-msgstr "No hay elemento siguiente al mismo nivel en esta vista de árbol"
+msgstr "Se mueve al siguiente elemento con el mismo nivel."
 
 #. Translators: error message if next sibling couldn't be found in Tree view
 msgid "No next item on the same level in this tree view"
 msgstr "No hay elemento siguiente al mismo nivel en esta vista de árbol"
 
-#, fuzzy
 msgid "Moves to the previous item on the same level."
-msgstr "No hay elemento anterior al mismo nivel en esta vista de árbol"
+msgstr "Se mueve al elemento anterior con el mismo nivel."
 
 #. Translators: error message if previous sibling couldn't be found in Tree view
 msgid "No previous item on the same level in this tree view"
 msgstr "No hay elemento anterior al mismo nivel en esta vista de árbol"
 
-#, fuzzy
 msgid "Moves to the last item on the same level within current subtree."
-msgstr "No hay elemento siguiente al mismo nivel en este subárbol"
+msgstr ""
+"Se mueve al último elemento del mismo nivel dentro del subárbol actual."
 
-#, fuzzy
 msgid "Moves to the first item on the same level within current subtree."
-msgstr "No hay elemento siguiente al mismo nivel en este subárbol"
+msgstr ""
+"Se mueve al primer elemento del mismo nivel dentro del subárbol actual."
 
 msgid "Speak parent item."
-msgstr ""
+msgstr "Verbalizar elemento padre."
 
 #. Translators: error message if parent couldn't be found)
 msgid "No parent item in this tree view"
 msgstr "No hay elemento padre en esta vista de árbol"
 
-#, fuzzy
 msgid "Moves to the next child in tree view."
-msgstr "No hay elemento siguiente al mismo nivel en esta vista de árbol"
+msgstr "Se mueve al siguiente hijo en la vista de árbol."
 
 #. Translators: error message if a child couldn't be found
 msgid "NO child"
 msgstr "Sin hijo"
 
-#, fuzzy
 msgid "Moves to parent in tree view."
-msgstr "No hay elemento padre en esta vista de árbol"
+msgstr "Se mueve al padre en la vista de árbol."
 
 #. Translators: error message if parent couldn't be found
 msgid "No parent"

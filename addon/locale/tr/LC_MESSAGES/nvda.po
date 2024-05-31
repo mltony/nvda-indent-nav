@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Girinti Dolaşımı\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2021-07-09 09:00+0000\n"
-"PO-Revision-Date: 2024-05-11 14:00+0300\n"
+"PO-Revision-Date: 2024-05-24 14:06+0300\n"
 "Last-Translator: Umut KORKMAZ <umutkork@gmail.com>\n"
 "Language-Team: Umut KORKMAZ <umutkork@gmail.com>\n"
 "Language: tr_TR\n"
@@ -208,9 +208,8 @@ msgstr "Devre dışı"
 msgid "IndentNav"
 msgstr "Girinti Dolaşımı"
 
-#, fuzzy
 msgid "Toggle IndentNav"
-msgstr "Girinti Dolaşımı'nı Etkinleştir"
+msgstr "Girinti Dolaşımı'nı aç/kapat"
 
 msgid "Please turn off num lock in order to toggle IndentNav"
 msgstr ""
@@ -259,6 +258,8 @@ msgid ""
 "Moves to the next line with the same indentation level as the current line "
 "within the current indentation block."
 msgstr ""
+"Geçerli girinti bloğu içinde geçerli satırla aynı girinti düzeyine sahip bir "
+"sonraki satıra taşır."
 
 #. Translators: error message if next sibling couldn't be found (in editable control or in browser)
 msgid "No next line within indentation block"
@@ -268,11 +269,15 @@ msgid ""
 "Moves to the next line with the same indentation level as the current line "
 "within the current indentation block and skipping over clutter."
 msgstr ""
+"Geçerli girinti bloğu içinde geçerli satırla aynı girinti düzeyine sahip bir "
+"sonraki satıra taşır ve yığılmayı atlar."
 
 msgid ""
 "Moves to the next line with the same indentation level as the current line "
 "potentially in the following indentation block."
 msgstr ""
+"Sonraki girinti bloğunda potansiyel olarak geçerli satırla aynı girinti "
+"seviyesine sahip sonraki satıra taşır."
 
 #. Translators: error message if next sibling couldn't be found in editable control (forced command)
 #. Translators: error message if last sibling couldn't be found in editable control (forced command)
@@ -283,11 +288,15 @@ msgid ""
 "Moves to the last line with the same indentation level as the current line "
 "within the current indentation block."
 msgstr ""
+"Geçerli girinti bloğu içinde geçerli satırla aynı girinti düzeyine sahip son "
+"satıra taşır."
 
 msgid ""
 "Moves to the previous line with the same indentation level as the current "
 "line within the current indentation block."
 msgstr ""
+"Geçerli girinti bloğu içinde geçerli satırla aynı girinti düzeyine sahip "
+"önceki satıra taşır."
 
 #. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
 msgid "No previous line within indentation block"
@@ -297,11 +306,15 @@ msgid ""
 "Moves to the previous line with the same indentation level as the current "
 "line within the current indentation block and skipping over clutter."
 msgstr ""
+"Geçerli girinti bloğu içinde geçerli satırla aynı girinti düzeyine sahip "
+"önceki satıra taşır ve yığılmayı atlar."
 
 msgid ""
 "Moves to the previous line with the same indentation level as the current "
 "line potentially in the preceding indentation block."
 msgstr ""
+"Önceki girinti bloğunda potansiyel olarak geçerli satırla aynı girinti "
+"seviyesine sahip önceki satıra taşır."
 
 #. Translators: error message if previous sibling couldn't be found in editable control (forced command)
 #. Translators: error message if first sibling couldn't be found in editable control (forced command)
@@ -312,9 +325,11 @@ msgid ""
 "Moves to the first line with the same indentation level as the current line "
 "within the current indentation block."
 msgstr ""
+"Geçerli girinti bloğu içinde geçerli satırla aynı girinti düzeyine sahip ilk "
+"satıra taşır."
 
 msgid "Speak parent line."
-msgstr ""
+msgstr "Ana satırı duyur."
 
 #. Translators: error message if parent couldn't be found (in editable control or in browser)
 msgid "No parent of indentation block"
@@ -324,6 +339,8 @@ msgid ""
 "Moves to the next line with a greater indentation level than the current "
 "line within the current indentation block."
 msgstr ""
+"Geçerli girinti bloğu içinde geçerli satırdan daha büyük girinti düzeyine "
+"sahip bir sonraki satıra taşır."
 
 #. Translators: error message if a child couldn't be found (in editable control or in browser)
 msgid "No child block within indentation block"
@@ -333,11 +350,15 @@ msgid ""
 "Moves to the previous line with a lesser indentation level than the current "
 "line within the current indentation block."
 msgstr ""
+"Geçerli girinti bloğu içinde geçerli satırdan daha az girinti düzeyine sahip "
+"önceki satıra taşır."
 
 msgid ""
 "Moves to the previous line with a greater indentation level than the current "
 "line within the current indentation block."
 msgstr ""
+"Geçerli girinti bloğu içinde geçerli satırdan daha büyük bir girinti "
+"düzeyine sahip önceki satıra taşır."
 
 #. Translators: error message if a previous child couldn't be found (in editable control)
 msgid "No previous child block within indentation block"
@@ -347,13 +368,15 @@ msgid ""
 "Moves to the next line with a lesser indentation level than the current line "
 "within the current indentation block."
 msgstr ""
+"Geçerli girinti bloğu içinde geçerli satırdan daha az girinti düzeyine sahip "
+"bir sonraki satıra taşır."
 
 #. Translators: error message if previous parent couldn't be found (in editable control)
 msgid "No next parent of indentation block"
 msgstr "Girinti bloğunda sonraki üst öğe yok"
 
 msgid "Select current indentation block. Press twice to copy to clipboard."
-msgstr ""
+msgstr "Geçerli girinti bloğunu seçer. Panoya kopyalamak için iki kez basın."
 
 msgid "Indent block copied to clipboard. "
 msgstr "Girinti bloğu panoya kopyalandı. "
@@ -362,6 +385,8 @@ msgid ""
 "Select current indentation block, as well as follwoing blocks of the same "
 "level. Press twice to copy to clipboard."
 msgstr ""
+"Geçerli girinti bloğunu ve aynı seviyedeki takip eden blokları seçer. Panoya "
+"kopyalamak için iki kez basın."
 
 msgid "Indent blocks copied to clipboard. "
 msgstr "Girinti blokları panoya kopyalandı. "
@@ -376,6 +401,8 @@ msgid ""
 "Indent-paste. This will figure out indentation level in the current line and "
 "paste text from clipboard adjusting indentation level correspondingly."
 msgstr ""
+"Girinti-yapıştır. Bu, geçerli satırdaki girinti düzeyini belirleyecek ve "
+"girinti düzeyini buna göre ayarlayarak metni panodan yapıştıracaktır."
 
 msgid "Some text selected! Cannot indent-paste."
 msgstr "Bazı metinler seçildi! Girinti-yapıştırma yapılamıyor."
@@ -386,87 +413,77 @@ msgstr "Girinti-yapıştırılamıyor: geçerli satır boş değil!"
 msgid "Pasted"
 msgstr "Yapıştırıldı"
 
-#, fuzzy
 msgid "Go back in history."
-msgstr ")Geçmişte sonraki satır yok"
+msgstr "Geçmişte geri git."
 
 msgid ")No previous line in history"
 msgstr ")Geçmişte önceki satır yok"
 
 msgid "Go forward in history."
-msgstr ""
+msgstr "Geçmşte ileri git."
 
 msgid ")No next line in history"
 msgstr ")Geçmişte sonraki satır yok"
 
-#, fuzzy
 msgid "IndentNav QuickFind generic script"
-msgstr "Girinti Dolaşımı Hızlı Arama ayarları"
+msgstr "Girinti Dolaşımı Hızlı Bul genel komutları"
 
 msgid "Bookmark not found"
 msgstr "Yer işareti bulunamadı"
 
 msgid "Speak current line"
-msgstr ""
+msgstr "Geçerli satırı duyur"
 
-#, fuzzy
 msgid "Moves to the next item on the same level within current subtree."
-msgstr "Bu alt ağaçta aynı seviyede bir sonraki öğe yok"
+msgstr "Geçerli alt ağaçta aynı düzeydeki sonraki öğeye gider."
 
 #. Translators: error message if next sibling couldn't be found in Tree view
 msgid "No next item on the same level within this subtree"
 msgstr "Bu alt ağaçta aynı seviyede bir sonraki öğe yok"
 
-#, fuzzy
 msgid "Moves to the previous item on the same level within current subtree."
-msgstr "Bu alt ağaçta aynı seviyede önceki öğe yok"
+msgstr "Geçerli alt ağaçta aynı düzeydeki önceki öğeye gider."
 
 #. Translators: error message if next sibling couldn't be found in Tree view
 msgid "No previous item on the same level within this subtree"
 msgstr "Bu alt ağaçta aynı seviyede önceki öğe yok"
 
-#, fuzzy
 msgid "Moves to the next item on the same level."
-msgstr "Bu ağaç görünümünde aynı seviyede sonraki öğe yok"
+msgstr "Aynı seviyedeki bir sonraki öğeye gider."
 
 #. Translators: error message if next sibling couldn't be found in Tree view
 msgid "No next item on the same level in this tree view"
 msgstr "Bu ağaç görünümünde aynı seviyede sonraki öğe yok"
 
-#, fuzzy
 msgid "Moves to the previous item on the same level."
-msgstr "Bu ağaç görünümünde aynı seviyede önceki öğe yok"
+msgstr "Aynı seviyedeki önceki öğeye gider."
 
 #. Translators: error message if previous sibling couldn't be found in Tree view
 msgid "No previous item on the same level in this tree view"
 msgstr "Bu ağaç görünümünde aynı seviyede önceki öğe yok"
 
-#, fuzzy
 msgid "Moves to the last item on the same level within current subtree."
-msgstr "Bu alt ağaçta aynı seviyede bir sonraki öğe yok"
+msgstr "Geçerli alt ağaçta aynı düzeydeki son öğeye gider."
 
-#, fuzzy
 msgid "Moves to the first item on the same level within current subtree."
-msgstr "Bu alt ağaçta aynı seviyede bir sonraki öğe yok"
+msgstr "Geçerli alt ağaçta aynı düzeydeki ilk öğeye gider."
 
 msgid "Speak parent item."
-msgstr ""
+msgstr "Ana öğeyi duyur."
 
 #. Translators: error message if parent couldn't be found)
 msgid "No parent item in this tree view"
 msgstr "Bu ağaç görünümünde üst öğe yok"
 
-#, fuzzy
 msgid "Moves to the next child in tree view."
-msgstr "Bu ağaç görünümünde aynı seviyede sonraki öğe yok"
+msgstr "Ağaç görünümünde bir sonraki alt öğeye gider."
 
 #. Translators: error message if a child couldn't be found
 msgid "NO child"
 msgstr "Alt öğe yok"
 
-#, fuzzy
 msgid "Moves to parent in tree view."
-msgstr "Bu ağaç görünümünde üst öğe yok"
+msgstr "Ağaç görünümünde üst öğeye gider."
 
 #. Translators: error message if parent couldn't be found
 msgid "No parent"
