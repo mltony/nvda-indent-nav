@@ -6,6 +6,9 @@ programación, permite saltar entre líneas con el mismo nivel de sangría, así
 como encontrar líneas con mayor o menor nivel de sangría. También
 proporciona atajos de teclado similares en las vistas en árbol.
 
+Please note that tree navigation commands have been moved to [TreeNav
+add-on](https://github.com/mltony/nvda-tree-nav).
+
 ## Descarga
 Instala desde la tienda de complementos de NVDA
 

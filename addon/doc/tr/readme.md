@@ -7,6 +7,10 @@ olanak sağladığı gibi, daha fazla veya daha az girinti seviyesine sahip
 satırları hızlı bir şekilde bulmayı da sağlar. Ağaç görünümlerinde de benzer
 tuş vuruşlarını sağlar.
 
+Ağaçta dolaşma komutlarının [Ağaç Dolaşımı
+eklentisine](https://github.com/mltony/nvda-tree-nav) taşındığını lütfen
+unutmayın.
+
 ## İndirmek
 Lütfen NVDA eklenti mağazasından yükleyin
 
