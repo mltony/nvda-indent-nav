@@ -7,8 +7,9 @@ niveau d'indentation, ainsi que de trouver rapidement des lignes avec un
 niveau d'indentation plus ou moins élevé. Elle fournit également des touches
 de commandes similaires dans les arborescences.
 
-Please note that tree navigation commands have been moved to [TreeNav
-add-on](https://github.com/mltony/nvda-tree-nav).
+Veuillez noter que les commandes de navigation dans l'arborescence ont été
+déplacées vers [l'extension
+TreeNav](https://github.com/mltony/nvda-tree-nav).
 
 ## Télécharger
 Veuillez installer à partir de l'add-on store de NVDA

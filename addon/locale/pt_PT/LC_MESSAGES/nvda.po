@@ -336,6 +336,9 @@ msgstr "Falar a linha do pai."
 msgid "No parent of indentation block"
 msgstr "Nenhum pai do bloco de indentação"
 
+msgid "Cannot use IndentNav not in the main editor of VSCode"
+msgstr ""
+
 msgid ""
 "Moves to the next line with a greater indentation level than the current "
 "line within the current indentation block."
@@ -438,70 +441,13 @@ msgstr "Marcador não encontrado"
 msgid "Speak current line"
 msgstr "Falar a linha atual"
 
-msgid "Moves to the next item on the same level within current subtree."
-msgstr "Move-se para o próximo item no mesmo nível dentro da subárvore atual."
-
-#. Translators: error message if next sibling couldn't be found in Tree view
-msgid "No next item on the same level within this subtree"
-msgstr "Nenhum próximo item no mesmo nível dentro desta sub-árvore"
-
-msgid "Moves to the previous item on the same level within current subtree."
-msgstr "Move-se para o item anterior no mesmo nível dentro da subárvore atual."
-
-#. Translators: error message if next sibling couldn't be found in Tree view
-msgid "No previous item on the same level within this subtree"
-msgstr "Nenhum item anterior no mesmo nível dentro desta sub-árvore"
-
-msgid "Moves to the next item on the same level."
-msgstr "Passa para o item seguinte no mesmo nível."
-
-#. Translators: error message if next sibling couldn't be found in Tree view
-msgid "No next item on the same level in this tree view"
-msgstr "Nenhum item seguinte no mesmo nível nesta vista de árvore"
-
-msgid "Moves to the previous item on the same level."
-msgstr "Passa para o item anterior no mesmo nível."
-
-#. Translators: error message if previous sibling couldn't be found in Tree view
-msgid "No previous item on the same level in this tree view"
-msgstr "Nenhum item anterior no mesmo nível nesta vista de árvore"
-
-msgid "Moves to the last item on the same level within current subtree."
-msgstr "Move-se para o último item no mesmo nível na subárvore atual."
-
-msgid "Moves to the first item on the same level within current subtree."
-msgstr "Move-se para o primeiro item no mesmo nível dentro da subárvore atual."
-
-msgid "Speak parent item."
-msgstr "Falar o item pai."
-
-#. Translators: error message if parent couldn't be found)
-msgid "No parent item in this tree view"
-msgstr "Nenhum item pai nesta vista em árvore"
-
-msgid "Moves to the next child in tree view."
-msgstr "Move-se para o filho seguinte na vista de árvore."
-
-#. Translators: error message if a child couldn't be found
-msgid "NO child"
-msgstr "Sem objecto filho"
-
-msgid "Moves to parent in tree view."
-msgstr "Move-se para o pai na vista de árvore."
-
-#. Translators: error message if parent couldn't be found
-msgid "No parent"
-msgstr "(Sem categoria principal)"
-
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+#, fuzzy
 msgid ""
 "Indentation Navigation addon.\n"
 "It allows NVDA users to navigate by indentation level or offset of lines or "
 "paragraphs.\n"
-"In browsers it allows to quickly find paragraphs with the same offset from "
-"the left edge of the screen, such as first level comments in a hierarchical "
-"tree of comments.\n"
 "Also while editing source code in many programming languages, it allows to "
 "jump between the lines of the same indentation level, as well as quickly "
 "find lines with greater or lesser indentation level."
@@ -515,3 +461,54 @@ msgstr ""
 "Além disso, ao editar o código-fonte, em muitas linguagens de programação, "
 "permite saltar entre as linhas do mesmo nível de indentação, bem como "
 "localizar rapidamente as linhas com maior ou menor nível de indentação."
+
+#~ msgid "Moves to the next item on the same level within current subtree."
+#~ msgstr ""
+#~ "Move-se para o próximo item no mesmo nível dentro da subárvore atual."
+
+#~ msgid "No next item on the same level within this subtree"
+#~ msgstr "Nenhum próximo item no mesmo nível dentro desta sub-árvore"
+
+#~ msgid "Moves to the previous item on the same level within current subtree."
+#~ msgstr ""
+#~ "Move-se para o item anterior no mesmo nível dentro da subárvore atual."
+
+#~ msgid "No previous item on the same level within this subtree"
+#~ msgstr "Nenhum item anterior no mesmo nível dentro desta sub-árvore"
+
+#~ msgid "Moves to the next item on the same level."
+#~ msgstr "Passa para o item seguinte no mesmo nível."
+
+#~ msgid "No next item on the same level in this tree view"
+#~ msgstr "Nenhum item seguinte no mesmo nível nesta vista de árvore"
+
+#~ msgid "Moves to the previous item on the same level."
+#~ msgstr "Passa para o item anterior no mesmo nível."
+
+#~ msgid "No previous item on the same level in this tree view"
+#~ msgstr "Nenhum item anterior no mesmo nível nesta vista de árvore"
+
+#~ msgid "Moves to the last item on the same level within current subtree."
+#~ msgstr "Move-se para o último item no mesmo nível na subárvore atual."
+
+#~ msgid "Moves to the first item on the same level within current subtree."
+#~ msgstr ""
+#~ "Move-se para o primeiro item no mesmo nível dentro da subárvore atual."
+
+#~ msgid "Speak parent item."
+#~ msgstr "Falar o item pai."
+
+#~ msgid "No parent item in this tree view"
+#~ msgstr "Nenhum item pai nesta vista em árvore"
+
+#~ msgid "Moves to the next child in tree view."
+#~ msgstr "Move-se para o filho seguinte na vista de árvore."
+
+#~ msgid "NO child"
+#~ msgstr "Sem objecto filho"
+
+#~ msgid "Moves to parent in tree view."
+#~ msgstr "Move-se para o pai na vista de árvore."
+
+#~ msgid "No parent"
+#~ msgstr "(Sem categoria principal)"

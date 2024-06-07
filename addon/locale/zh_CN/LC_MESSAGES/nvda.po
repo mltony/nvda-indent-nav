@@ -18,81 +18,63 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Poedit 3.4.4\n"
 
-#: addon\globalPlugins\indent_nav\__init__.py:111
 msgid "Laptop or legacy key map: NVDA+alt+arrows"
 msgstr "笔记本或旧版按键布局：NVDA+alt+箭头"
 
-#: addon\globalPlugins\indent_nav\__init__.py:112
 msgid "Alt+numPad"
 msgstr "Alt+数字键盘"
 
-#: addon\globalPlugins\indent_nav\__init__.py:113
 msgid ""
 "Numpad assigned to IndentNav in editables; numPad assigned to review cursor "
 "everywhere else"
 msgstr "数字键盘在可编辑区域作为缩进导航命令；在其他地方恢复对象文本查看命令"
 
-#: addon\globalPlugins\indent_nav\__init__.py:114
 msgid ""
 "Numpad assigned to IndentNav; review cursor commands remapped to alt+NumPad"
 msgstr "数字键盘在可编辑区域作为缩进导航命令；Alt+数字键盘作为对象文本查看命令"
 
 #. Translators: Title for the settings dialog
-#: addon\globalPlugins\indent_nav\__init__.py:472
 msgid "IndentNav settings"
 msgstr "缩进导航设置"
 
 #. Key map combo box
-#: addon\globalPlugins\indent_nav\__init__.py:481
 msgid "Keyboard shortcuts"
 msgstr "键盘快捷键"
 
 #. Checkbox enabled
-#: addon\globalPlugins\indent_nav\__init__.py:490
 msgid "Enable IndentNav"
 msgstr "启用缩进导航"
 
 #. Translators: volume of crackling slider
-#: addon\globalPlugins\indent_nav\__init__.py:496
 msgid "Crackling volume"
 msgstr "缩进跳转时的提示音音量"
 
 #. Translators: End of document chime volume
-#: addon\globalPlugins\indent_nav\__init__.py:507
 msgid "Volume of chime when no more sentences available"
 msgstr "没有句子时的提示音量"
 
 #. Checkboxes noNextTextMessageCheckbox
 #. Translators: Checkbox that controls spoken message when no next or previous text paragraph is available in the document
-#: addon\globalPlugins\indent_nav\__init__.py:517
 msgid ""
 "Speak message when no next paragraph containing text available in the "
 "document"
 msgstr "若文档中不再包含更多可用文本时进行语音提示"
 
 #. EditBox clutter regexp
-#: addon\globalPlugins\indent_nav\__init__.py:521
 msgid "Clutter regular expression"
 msgstr "自定义正则表达式"
 
 #. Checkboxes legacy VSCode
-#: addon\globalPlugins\indent_nav\__init__.py:526
 msgid "Use legacy mode in VSCode (not recommended)"
 msgstr "在 VSCode 中使用旧版模式（不推荐）"
 
-#: addon\globalPlugins\indent_nav\__init__.py:531
-#: addon\globalPlugins\indent_nav\__init__.py:1368
 msgid "&Install VSCode extension (recommended)"
 msgstr "安装 VSCode 辅助功能扩展（推荐）(&I)"
 
 #. Learn about VSCode Extension
-#: addon\globalPlugins\indent_nav\__init__.py:535
-#: addon\globalPlugins\indent_nav\__init__.py:1371
 msgid "&Learn more about VSCode accessibility extension"
 msgstr "了解有关 VSCode 辅助功能扩展的更多信息(&L)"
 
-#: addon\globalPlugins\indent_nav\__init__.py:542
-#: addon\globalPlugins\indent_nav\__init__.py:1393
 msgid ""
 "We will install accessibility extension in default VSCode instance on your "
 "system - the one found in %PATH% environment variable.\n"
@@ -111,78 +93,59 @@ msgstr ""
 "若安装成功，扩展将立即生效，无需重新启动 VSCode。\n"
 "您确定要继续吗？"
 
-#: addon\globalPlugins\indent_nav\__init__.py:548
-#: addon\globalPlugins\indent_nav\__init__.py:1399
 msgid "Confirmation"
 msgstr "确认"
 
-#: addon\globalPlugins\indent_nav\__init__.py:562
-#: addon\globalPlugins\indent_nav\__init__.py:633
 #, python-format
 msgid "Failed to compile regular expression: %s"
 msgstr "无法编译正则表达式：%s"
 
-#: addon\globalPlugins\indent_nav\__init__.py:563
 msgid "Regular expression error"
 msgstr "正则表达式错误"
 
-#: addon\globalPlugins\indent_nav\__init__.py:584
 msgid "Edit IndentNav QuickFind bookmark"
 msgstr "编辑 IndentNav 快捷书签"
 
 #. Translators: label for name
-#: addon\globalPlugins\indent_nav\__init__.py:598
 msgid "&Display name (optional)"
 msgstr "显示名称（可选）(&D)"
 
 #. Translators:  Custom keystroke button
-#: addon\globalPlugins\indent_nav\__init__.py:602
 msgid "&Keystroke"
 msgstr "按键(&C)"
 
 #. Translators: pattern
-#: addon\globalPlugins\indent_nav\__init__.py:607
 msgid "&Pattern"
 msgstr "模式(&P)"
 
 #. Translators: label for enabled checkbox
-#: addon\globalPlugins\indent_nav\__init__.py:611
 msgid "Bookmark enabled"
 msgstr "启用书签"
 
-#: addon\globalPlugins\indent_nav\__init__.py:628
 msgid "Pattern cannot be empty!"
 msgstr "模式不能为空！"
 
 #. Translators: This is an error message to let the user know that the pattern field is not valid.
-#: addon\globalPlugins\indent_nav\__init__.py:637
-#: addon\globalPlugins\indent_nav\__init__.py:643
 msgid "Bookmark entry error"
 msgstr "书签条目错误"
 
-#: addon\globalPlugins\indent_nav\__init__.py:642
 msgid "Please specify keystroke gesture."
 msgstr "请指定快捷键手势。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:657
 #, python-format
 msgid "&Keystroke: %s"
 msgstr "快捷键(&C)：%s"
 
-#: addon\globalPlugins\indent_nav\__init__.py:659
 msgid "Keystroke: None"
 msgstr "快捷键： 无"
 
-#: addon\globalPlugins\indent_nav\__init__.py:672
 msgid "Press desired keystroke now"
 msgstr "请按下需要设置的快捷键"
 
-#: addon\globalPlugins\indent_nav\__init__.py:679
 #, python-format
 msgid "Invalid keystroke %s: cannot overload essential  NVDA keystrokes!"
 msgstr "快捷键 %s 无效：无法覆盖必要的 NVDA 快捷键！"
 
-#: addon\globalPlugins\indent_nav\__init__.py:681
 #, python-format
 msgid ""
 "Invalid keystroke %s: Cannot use keystrokes with shift modifier for "
@@ -190,105 +153,79 @@ msgid ""
 msgstr "快捷键 %s 无效：无法使用带有 Shift 修饰键的快捷键！"
 
 #. Translators: Title for the settings dialog
-#: addon\globalPlugins\indent_nav\__init__.py:698
 msgid "IndentNav QuickFind bookmarks settings"
 msgstr "缩进导航快捷书签设置"
 
 #. bookmarks table
-#: addon\globalPlugins\indent_nav\__init__.py:707
 msgid "&QuickFind bookmarks"
 msgstr "快捷书签(&F)"
 
-#: addon\globalPlugins\indent_nav\__init__.py:716
 msgid "Name"
 msgstr "名称"
 
-#: addon\globalPlugins\indent_nav\__init__.py:717
-#: addon\globalPlugins\indent_nav\__init__.py:743
 msgid "Enabled"
 msgstr "启用"
 
-#: addon\globalPlugins\indent_nav\__init__.py:718
 msgid "Gesture"
 msgstr "快捷键"
 
-#: addon\globalPlugins\indent_nav\__init__.py:719
 msgid "Pattern"
 msgstr "模式"
 
 #. Buttons
-#: addon\globalPlugins\indent_nav\__init__.py:725
 msgid "&Add"
 msgstr "添加(&A)"
 
-#: addon\globalPlugins\indent_nav\__init__.py:727
 msgid "&Edit"
 msgstr "编辑(&E)"
 
-#: addon\globalPlugins\indent_nav\__init__.py:729
 msgid "&Remove"
 msgstr "移除(&R)"
 
-#: addon\globalPlugins\indent_nav\__init__.py:731
 msgid "Move &up"
 msgstr "上移(&U)"
 
-#: addon\globalPlugins\indent_nav\__init__.py:733
 msgid "Move &down"
 msgstr "下移(&D)"
 
-#: addon\globalPlugins\indent_nav\__init__.py:735
 msgid "&Sort"
 msgstr "排序(&S)"
 
-#: addon\globalPlugins\indent_nav\__init__.py:743
 msgid "Disabled"
 msgstr "已禁用"
 
 #. Add-on summary, usually the user visible name of the addon.
 #. Translators: Summary for this add-on
 #. to be shown on installation and add-on information found in Add-ons Manager.
-#: addon\globalPlugins\indent_nav\__init__.py:830
-#: addon\globalPlugins\indent_nav\__init__.py:1618
-#: addon\globalPlugins\indent_nav\__init__.py:2082 buildVars.py:23
 msgid "IndentNav"
 msgstr "缩进导航"
 
-#: addon\globalPlugins\indent_nav\__init__.py:877
 msgid "Toggle IndentNav"
 msgstr "开关缩进导航"
 
-#: addon\globalPlugins\indent_nav\__init__.py:884
 msgid "Please turn off num lock in order to toggle IndentNav"
 msgstr "请关闭数字锁定后再开关缩进导航"
 
-#: addon\globalPlugins\indent_nav\__init__.py:895
 msgid "Enabled IndentNav"
 msgstr "启用缩进导航"
 
-#: addon\globalPlugins\indent_nav\__init__.py:897
 msgid "Disabled IndentNav"
 msgstr "禁用缩进导航"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1358
 msgid ""
 "IndentNav requires VSCode accessibility extension to be installed in order "
 "to work correctly in VSCode."
 msgstr "缩进导航需要安装 VSCode 辅助功能扩展才能在 VSCode 中正常工作。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1362
 msgid "Please install VSCode extension"
 msgstr "请安装 VSCode 辅助功能扩展"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1374
 msgid "&Use VSCode in legacy mode without extension (not recommended)"
 msgstr "在传统模式下使用 VSCode，无需扩展（不推荐）(&U)"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1377
 msgid "&Cancel"
 msgstr "取消(&C)"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1412
 msgid ""
 "Please enable legacy support of VSCode in IndentNav settings.\n"
 "Please note that builtin VSCode accessibility provides access to only 500 "
@@ -301,29 +238,23 @@ msgstr ""
 "因此，在较大的文件中，IndentNav 则无法正常工作。\n"
 "请自行承担使用风险。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1417
 msgid "Information"
 msgstr "信息"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1643
 msgid ""
 "Moves to the next line with the same indentation level as the current line "
 "within the current indentation block."
 msgstr "跳转到下一个兄弟节点。"
 
 #. Translators: error message if next sibling couldn't be found (in editable control or in browser)
-#: addon\globalPlugins\indent_nav\__init__.py:1646
-#: addon\globalPlugins\indent_nav\__init__.py:1653
 msgid "No next line within indentation block"
 msgstr "没有下一个兄弟节点"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1650
 msgid ""
 "Moves to the next line with the same indentation level as the current line "
 "within the current indentation block and skipping over clutter."
 msgstr "跳过冗余到下一个兄弟节点。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1656
 msgid ""
 "Moves to the next line with the same indentation level as the current line "
 "potentially in the following indentation block."
@@ -331,36 +262,28 @@ msgstr "跳转到当前块之外的下一个兄弟节点。"
 
 #. Translators: error message if next sibling couldn't be found in editable control (forced command)
 #. Translators: error message if last sibling couldn't be found in editable control (forced command)
-#: addon\globalPlugins\indent_nav\__init__.py:1659
-#: addon\globalPlugins\indent_nav\__init__.py:1666
 msgid "No next line in the document"
 msgstr "文档内没有下一个兄弟节点"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1663
 msgid ""
 "Moves to the last line with the same indentation level as the current line "
 "within the current indentation block."
 msgstr "跳转到最后一个兄弟节点。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1669
 msgid ""
 "Moves to the previous line with the same indentation level as the current "
 "line within the current indentation block."
 msgstr "跳转到上一个兄弟节点。"
 
 #. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
-#: addon\globalPlugins\indent_nav\__init__.py:1672
-#: addon\globalPlugins\indent_nav\__init__.py:1678
 msgid "No previous line within indentation block"
 msgstr "没有上一个兄弟节点"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1675
 msgid ""
 "Moves to the previous line with the same indentation level as the current "
 "line within the current indentation block and skipping over clutter."
 msgstr "跳过冗余到上一个兄弟节点。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1682
 msgid ""
 "Moves to the previous line with the same indentation level as the current "
 "line potentially in the preceding indentation block."
@@ -368,223 +291,119 @@ msgstr "跳转到当前块之外的上一个兄弟节点。"
 
 #. Translators: error message if previous sibling couldn't be found in editable control (forced command)
 #. Translators: error message if first sibling couldn't be found in editable control (forced command)
-#: addon\globalPlugins\indent_nav\__init__.py:1685
-#: addon\globalPlugins\indent_nav\__init__.py:1691
 msgid "No previous line in the document"
 msgstr "文档内没有上一个兄弟节点"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1688
 msgid ""
 "Moves to the first line with the same indentation level as the current line "
 "within the current indentation block."
 msgstr "跳转到第一个兄弟节点。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1694
 msgid "Speak parent line."
 msgstr "朗读父行。"
 
 #. Translators: error message if parent couldn't be found (in editable control or in browser)
-#: addon\globalPlugins\indent_nav\__init__.py:1699
-#: addon\globalPlugins\indent_nav\__init__.py:1785
 msgid "No parent of indentation block"
 msgstr "往上没有父节点"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1776
+msgid "Cannot use IndentNav not in the main editor of VSCode"
+msgstr ""
+
 msgid ""
 "Moves to the next line with a greater indentation level than the current "
 "line within the current indentation block."
 msgstr "跳转到下一个子节点。"
 
 #. Translators: error message if a child couldn't be found (in editable control or in browser)
-#: addon\globalPlugins\indent_nav\__init__.py:1779
 msgid "No child block within indentation block"
 msgstr "往下没有子节点"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1782
 msgid ""
 "Moves to the previous line with a lesser indentation level than the current "
 "line within the current indentation block."
 msgstr "跳转到上一个父节点。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1788
 msgid ""
 "Moves to the previous line with a greater indentation level than the current "
 "line within the current indentation block."
 msgstr "跳转到上一个子节点。"
 
 #. Translators: error message if a previous child couldn't be found (in editable control)
-#: addon\globalPlugins\indent_nav\__init__.py:1791
 msgid "No previous child block within indentation block"
 msgstr "往上没有子节点"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1794
 msgid ""
 "Moves to the next line with a lesser indentation level than the current line "
 "within the current indentation block."
 msgstr "跳转到下一个父节点。"
 
 #. Translators: error message if previous parent couldn't be found (in editable control)
-#: addon\globalPlugins\indent_nav\__init__.py:1797
 msgid "No next parent of indentation block"
 msgstr "往下没有父节点"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1800
 msgid "Select current indentation block. Press twice to copy to clipboard."
 msgstr "选中当前缩进块。连按两次复制到剪贴板。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1802
 msgid "Indent block copied to clipboard. "
 msgstr "已复制缩进块到剪贴板。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1805
 msgid ""
 "Select current indentation block, as well as follwoing blocks of the same "
 "level. Press twice to copy to clipboard."
 msgstr "选中当前及其后续同级缩进块。连按两次复制到剪贴板。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1807
 msgid "Indent blocks copied to clipboard. "
 msgstr "已复制缩进块到剪贴板。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1825
 msgid "Nothing to select"
 msgstr "未选择文本"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1833
-#: addon\globalPlugins\indent_nav\__init__.py:1843
 msgid "No more indentation blocks!"
 msgstr "没有更多缩进块！"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1865
 msgid ""
 "Indent-paste. This will figure out indentation level in the current line and "
 "paste text from clipboard adjusting indentation level correspondingly."
 msgstr ""
 "缩进粘贴。自动计算当前行的缩进级别，匹配该缩进级别并粘贴剪贴板中的文本。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1872
 msgid "Some text selected! Cannot indent-paste."
 msgstr "已选中文本，无法缩进粘贴。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1883
 msgid "Cannot indent-paste: current line is not empty!"
 msgstr "当前行不为空，无法缩进粘贴！"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1910
 msgid "Pasted"
 msgstr "已粘贴"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1935
 msgid "Go back in history."
 msgstr "跳转到前一个历史。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1948
 msgid ")No previous line in history"
 msgstr "历史记录中没有上一行"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1950
 msgid "Go forward in history."
 msgstr "跳转到后一个历史。"
 
-#: addon\globalPlugins\indent_nav\__init__.py:1957
 msgid ")No next line in history"
 msgstr "历史记录中没有下一行"
 
-#: addon\globalPlugins\indent_nav\__init__.py:2009
 msgid "IndentNav QuickFind generic script"
 msgstr "快捷书签默认手势"
 
-#: addon\globalPlugins\indent_nav\__init__.py:2035
 msgid "Bookmark not found"
 msgstr "无书签"
 
-#: addon\globalPlugins\indent_nav\__init__.py:2069
 msgid "Speak current line"
 msgstr "朗读当前行"
 
-#: addon\globalPlugins\indent_nav\__init__.py:2085
-msgid "Moves to the next item on the same level within current subtree."
-msgstr "跳转到当前子树中的下一个兄弟节点。"
-
-#. Translators: error message if next sibling couldn't be found in Tree view
-#: addon\globalPlugins\indent_nav\__init__.py:2088
-#: addon\globalPlugins\indent_nav\__init__.py:2112
-msgid "No next item on the same level within this subtree"
-msgstr "当前子树向前没有兄弟节点。\\"
-
-#: addon\globalPlugins\indent_nav\__init__.py:2091
-msgid "Moves to the previous item on the same level within current subtree."
-msgstr "跳转到当前子树中的上一个兄弟节点。"
-
-#. Translators: error message if next sibling couldn't be found in Tree view
-#: addon\globalPlugins\indent_nav\__init__.py:2094
-#: addon\globalPlugins\indent_nav\__init__.py:2118
-msgid "No previous item on the same level within this subtree"
-msgstr "当前子树向后没有兄弟节点。\\"
-
-#: addon\globalPlugins\indent_nav\__init__.py:2097
-msgid "Moves to the next item on the same level."
-msgstr "跳转到下一个兄弟节点。"
-
-#. Translators: error message if next sibling couldn't be found in Tree view
-#: addon\globalPlugins\indent_nav\__init__.py:2100
-msgid "No next item on the same level in this tree view"
-msgstr "树视图中没有下一个兄弟节点"
-
-#: addon\globalPlugins\indent_nav\__init__.py:2103
-msgid "Moves to the previous item on the same level."
-msgstr "跳转到上一个兄弟节点。"
-
-#. Translators: error message if previous sibling couldn't be found in Tree view
-#: addon\globalPlugins\indent_nav\__init__.py:2106
-msgid "No previous item on the same level in this tree view"
-msgstr "树视图中没有上一个兄弟节点"
-
-#: addon\globalPlugins\indent_nav\__init__.py:2109
-msgid "Moves to the last item on the same level within current subtree."
-msgstr "跳转到当前子树中的最后一个节点。"
-
-#: addon\globalPlugins\indent_nav\__init__.py:2115
-msgid "Moves to the first item on the same level within current subtree."
-msgstr "跳转到当前子树中的第一个节点。"
-
-#: addon\globalPlugins\indent_nav\__init__.py:2121
-msgid "Speak parent item."
-msgstr "朗读负项。"
-
-#. Translators: error message if parent couldn't be found)
-#: addon\globalPlugins\indent_nav\__init__.py:2125
-msgid "No parent item in this tree view"
-msgstr "该树视图中没有父节点"
-
-#: addon\globalPlugins\indent_nav\__init__.py:2128
-msgid "Moves to the next child in tree view."
-msgstr "跳转到树视图中的下一个子节点。"
-
-#. Translators: error message if a child couldn't be found
-#: addon\globalPlugins\indent_nav\__init__.py:2131
-msgid "NO child"
-msgstr "没有子节点"
-
-#: addon\globalPlugins\indent_nav\__init__.py:2134
-msgid "Moves to parent in tree view."
-msgstr "跳转到树视图中的上一个父节点。"
-
-#. Translators: error message if parent couldn't be found
-#: addon\globalPlugins\indent_nav\__init__.py:2137
-msgid "No parent"
-msgstr "没有父节点"
-
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
-#: buildVars.py:26
+#, fuzzy
 msgid ""
 "Indentation Navigation addon.\n"
 "It allows NVDA users to navigate by indentation level or offset of lines or "
 "paragraphs.\n"
-"In browsers it allows to quickly find paragraphs with the same offset from "
-"the left edge of the screen, such as first level comments in a hierarchical "
-"tree of comments.\n"
 "Also while editing source code in many programming languages, it allows to "
 "jump between the lines of the same indentation level, as well as quickly "
 "find lines with greater or lesser indentation level."
@@ -595,3 +414,51 @@ msgstr ""
 "有层级结构的帖子评论区，您可以仅导航同级的评论。\n"
 "此外，在编程开发中，该插件可以用来快速在相同缩进级别的行之间跳转，以及快速跳"
 "转到具有更大或更小缩进级别的行。"
+
+#~ msgid "Moves to the next item on the same level within current subtree."
+#~ msgstr "跳转到当前子树中的下一个兄弟节点。"
+
+#~ msgid "No next item on the same level within this subtree"
+#~ msgstr "当前子树向前没有兄弟节点。\\"
+
+#~ msgid "Moves to the previous item on the same level within current subtree."
+#~ msgstr "跳转到当前子树中的上一个兄弟节点。"
+
+#~ msgid "No previous item on the same level within this subtree"
+#~ msgstr "当前子树向后没有兄弟节点。\\"
+
+#~ msgid "Moves to the next item on the same level."
+#~ msgstr "跳转到下一个兄弟节点。"
+
+#~ msgid "No next item on the same level in this tree view"
+#~ msgstr "树视图中没有下一个兄弟节点"
+
+#~ msgid "Moves to the previous item on the same level."
+#~ msgstr "跳转到上一个兄弟节点。"
+
+#~ msgid "No previous item on the same level in this tree view"
+#~ msgstr "树视图中没有上一个兄弟节点"
+
+#~ msgid "Moves to the last item on the same level within current subtree."
+#~ msgstr "跳转到当前子树中的最后一个节点。"
+
+#~ msgid "Moves to the first item on the same level within current subtree."
+#~ msgstr "跳转到当前子树中的第一个节点。"
+
+#~ msgid "Speak parent item."
+#~ msgstr "朗读负项。"
+
+#~ msgid "No parent item in this tree view"
+#~ msgstr "该树视图中没有父节点"
+
+#~ msgid "Moves to the next child in tree view."
+#~ msgstr "跳转到树视图中的下一个子节点。"
+
+#~ msgid "NO child"
+#~ msgstr "没有子节点"
+
+#~ msgid "Moves to parent in tree view."
+#~ msgstr "跳转到树视图中的上一个父节点。"
+
+#~ msgid "No parent"
+#~ msgstr "没有父节点"
