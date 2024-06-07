@@ -335,6 +335,9 @@ msgstr "Ana satırı duyur."
 msgid "No parent of indentation block"
 msgstr "Girinti bloğunda üst öğe yok"
 
+msgid "Cannot use IndentNav not in the main editor of VSCode"
+msgstr ""
+
 msgid ""
 "Moves to the next line with a greater indentation level than the current "
 "line within the current indentation block."
@@ -434,70 +437,13 @@ msgstr "Yer işareti bulunamadı"
 msgid "Speak current line"
 msgstr "Geçerli satırı duyur"
 
-msgid "Moves to the next item on the same level within current subtree."
-msgstr "Geçerli alt ağaçta aynı düzeydeki sonraki öğeye gider."
-
-#. Translators: error message if next sibling couldn't be found in Tree view
-msgid "No next item on the same level within this subtree"
-msgstr "Bu alt ağaçta aynı seviyede bir sonraki öğe yok"
-
-msgid "Moves to the previous item on the same level within current subtree."
-msgstr "Geçerli alt ağaçta aynı düzeydeki önceki öğeye gider."
-
-#. Translators: error message if next sibling couldn't be found in Tree view
-msgid "No previous item on the same level within this subtree"
-msgstr "Bu alt ağaçta aynı seviyede önceki öğe yok"
-
-msgid "Moves to the next item on the same level."
-msgstr "Aynı seviyedeki bir sonraki öğeye gider."
-
-#. Translators: error message if next sibling couldn't be found in Tree view
-msgid "No next item on the same level in this tree view"
-msgstr "Bu ağaç görünümünde aynı seviyede sonraki öğe yok"
-
-msgid "Moves to the previous item on the same level."
-msgstr "Aynı seviyedeki önceki öğeye gider."
-
-#. Translators: error message if previous sibling couldn't be found in Tree view
-msgid "No previous item on the same level in this tree view"
-msgstr "Bu ağaç görünümünde aynı seviyede önceki öğe yok"
-
-msgid "Moves to the last item on the same level within current subtree."
-msgstr "Geçerli alt ağaçta aynı düzeydeki son öğeye gider."
-
-msgid "Moves to the first item on the same level within current subtree."
-msgstr "Geçerli alt ağaçta aynı düzeydeki ilk öğeye gider."
-
-msgid "Speak parent item."
-msgstr "Ana öğeyi duyur."
-
-#. Translators: error message if parent couldn't be found)
-msgid "No parent item in this tree view"
-msgstr "Bu ağaç görünümünde üst öğe yok"
-
-msgid "Moves to the next child in tree view."
-msgstr "Ağaç görünümünde bir sonraki alt öğeye gider."
-
-#. Translators: error message if a child couldn't be found
-msgid "NO child"
-msgstr "Alt öğe yok"
-
-msgid "Moves to parent in tree view."
-msgstr "Ağaç görünümünde üst öğeye gider."
-
-#. Translators: error message if parent couldn't be found
-msgid "No parent"
-msgstr "Üst öğe yok"
-
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+#, fuzzy
 msgid ""
 "Indentation Navigation addon.\n"
 "It allows NVDA users to navigate by indentation level or offset of lines or "
 "paragraphs.\n"
-"In browsers it allows to quickly find paragraphs with the same offset from "
-"the left edge of the screen, such as first level comments in a hierarchical "
-"tree of comments.\n"
 "Also while editing source code in many programming languages, it allows to "
 "jump between the lines of the same indentation level, as well as quickly "
 "find lines with greater or lesser indentation level."
@@ -511,3 +457,51 @@ msgstr ""
 "Ayrıca birçok programlama dilinde kaynak kodu düzenlerken, aynı girinti "
 "seviyesindeki satırlar arasında geçiş yapılmasına ve daha büyük veya daha az "
 "girinti seviyesine sahip satırların hızla bulunmasına olanak tanır."
+
+#~ msgid "Moves to the next item on the same level within current subtree."
+#~ msgstr "Geçerli alt ağaçta aynı düzeydeki sonraki öğeye gider."
+
+#~ msgid "No next item on the same level within this subtree"
+#~ msgstr "Bu alt ağaçta aynı seviyede bir sonraki öğe yok"
+
+#~ msgid "Moves to the previous item on the same level within current subtree."
+#~ msgstr "Geçerli alt ağaçta aynı düzeydeki önceki öğeye gider."
+
+#~ msgid "No previous item on the same level within this subtree"
+#~ msgstr "Bu alt ağaçta aynı seviyede önceki öğe yok"
+
+#~ msgid "Moves to the next item on the same level."
+#~ msgstr "Aynı seviyedeki bir sonraki öğeye gider."
+
+#~ msgid "No next item on the same level in this tree view"
+#~ msgstr "Bu ağaç görünümünde aynı seviyede sonraki öğe yok"
+
+#~ msgid "Moves to the previous item on the same level."
+#~ msgstr "Aynı seviyedeki önceki öğeye gider."
+
+#~ msgid "No previous item on the same level in this tree view"
+#~ msgstr "Bu ağaç görünümünde aynı seviyede önceki öğe yok"
+
+#~ msgid "Moves to the last item on the same level within current subtree."
+#~ msgstr "Geçerli alt ağaçta aynı düzeydeki son öğeye gider."
+
+#~ msgid "Moves to the first item on the same level within current subtree."
+#~ msgstr "Geçerli alt ağaçta aynı düzeydeki ilk öğeye gider."
+
+#~ msgid "Speak parent item."
+#~ msgstr "Ana öğeyi duyur."
+
+#~ msgid "No parent item in this tree view"
+#~ msgstr "Bu ağaç görünümünde üst öğe yok"
+
+#~ msgid "Moves to the next child in tree view."
+#~ msgstr "Ağaç görünümünde bir sonraki alt öğeye gider."
+
+#~ msgid "NO child"
+#~ msgstr "Alt öğe yok"
+
+#~ msgid "Moves to parent in tree view."
+#~ msgstr "Ağaç görünümünde üst öğeye gider."
+
+#~ msgid "No parent"
+#~ msgstr "Üst öğe yok"
