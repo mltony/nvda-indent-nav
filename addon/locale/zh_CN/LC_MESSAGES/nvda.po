@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: 'IndentNav' '2.0'\n"
 "Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
 "POT-Creation-Date: 2024-05-24 00:37+0800\n"
-"PO-Revision-Date: 2024-05-25 01:52+0800\n"
+"PO-Revision-Date: 2024-06-08 06:09+0800\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: zh_CN\n"
@@ -307,7 +307,7 @@ msgid "No parent of indentation block"
 msgstr "往上没有父节点"
 
 msgid "Cannot use IndentNav not in the main editor of VSCode"
-msgstr ""
+msgstr "不在 VSCode 主编辑器中无法使用缩进导航"
 
 msgid ""
 "Moves to the next line with a greater indentation level than the current "
@@ -399,7 +399,6 @@ msgstr "朗读当前行"
 
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
-#, fuzzy
 msgid ""
 "Indentation Navigation addon.\n"
 "It allows NVDA users to navigate by indentation level or offset of lines or "
