@@ -7,8 +7,9 @@ Einrückungsebene zu springen und schnell Zeilen mit größerer oder kleinerer
 Einrückungsebene zu finden.  Ähnliche Tastenkombinationen sind auch in
 Baumansichten möglich.
 
-Please note that tree navigation commands have been moved to [TreeNav
-add-on](https://github.com/mltony/nvda-tree-nav).
+Bitte beachten Sie, dass die Befehle zur Baumnavigation in die
+NVDA-Erweiterung [TreeNav](https://github.com/mltony/nvda-tree-nav)
+verschoben wurden.
 
 ## Download
 Bitte aus dem Store für NVDA-Erweiterungen  installieren
@@ -41,61 +42,63 @@ dem Ziffernblock zu konfigurieren, während dieser NVDA-Erweiterung
 läuft. Bitte deinstallieren Sie entweder sie es oder verwenden Sie eine
 alternative Tastaturbelegung in IndentNav.
 
-## Keystroke layouts
+## Layouts der Tastenbefehle
 
 IndentNav bietet drei eingebaute Tastenzuordnungen:
 
 * Legacy- oder Laptop-Layout: Dies ist für diejenigen, die IndentNav V1.x
   benutzt haben und keine neuen Layouts lernen wollen oder für
   Laptop-Tastaturen, die keine Zifferntasten haben.
-* Alt+numpad layout.
-* Numpad keys layout. There are two modes of dealing with review cursor
-  keystroke conflict:
+* Alt+Nummernblock-Layout.
+* Layout der Nummernblock-Tasten. Es gibt zwei Möglichkeiten, mit Konflikten
+  bei der Überprüfung der Cursor-Tasten umzugehen:
 
     * Verwenden Sie den Nummernblock für IndentNav in Eingabefeldern und den
       NVDA-Cursor überall sonst. Wenn Sie ihn in Dateien zum Bearbeiten
       trotzdem verwenden müssen, können Sie IndentNav vorübergehend
       deaktivieren, indem Sie die Tastenkombination `Alt+Nummernblock-Taste`
       drücken.
-    * Remap review cursor commands to alt+numpad, thus avoiding keystroke
-      conflict.
+    * Die Befehle für den Cursor werden auf Alt+Nummernblock umgestellt,
+      wodurch Tastenkonflikte vermieden werden.
 
-Keystroke layout can be selected in IndentNav settings.
+Das Tasten-Layout kann in den IndentNav-Einstellungen ausgewählt werden.
 
-## Keystrokes
+## Tastenbefehle
 
-| Action | Legacy layout | `Alt+numpad` layout | Numpad layout | Description |
+| Aktion | Legacy-Layout | `Alt+Nummernblock`-Layout | Nummernblock-Layout | Beschreibung |
 | -- | -- | -- | -- | -- |
-| Toggle IndentNav | `alt+numLock` | `alt+numLock` | `alt+numLock` | This is useful when both NVDA and review cursor gestures are assigned to numPad. |
-| Jump to previous/next sibling | `NVDA+Alt+up/downArrow` | `alt+numPad8/numPad2` | `numPad8/numPad2` | Sibling is defined as a line with the same indentation level.<br>This command will not take cursor beyond current code block. |
-| Jump to previous/next sibling skipping over clutter | N/A | `control+alt+numPad8/numPad2` | `control+numPad8/numPad2` | You can configure clutter regular expression in settings. |
-| Jump to first/last sibling | `NVDA+Alt+shift+up/downArrow` | `alt+numPad4/numPad6` | `numPad4/numPad6` | Sibling is defined as a line with the same indentation level.<br>This command will not take cursor beyond current code block. |
-| Jump to previous/last sibling potentially outside of current block | `NVDA+control+Alt+up/downArrow` | `control+alt+numPad4/numPad6` | `control+numPad4/numPad6` | This command allows you to jump to a sibling in another block. |
-| Jump to previous/next parent | `NVDA+Alt+leftArrow`,<br>`NVDA+alt+control+leftArrow` | `alt+numPad7/numPad1` | `numPad7/numPad1` | Parent is defined as a line with lower indentation level. |
-| Jump to previous/next child | `NVDA+Alt+control+rightArrow`,<br>`NVDA+alt+rightArrow` | `alt+numPad9/numPad3` | `numPad9/numPad3` | Child is defined as a line with greater indentation level.<br>This command will not take cursor beyond current code block. |
-| Select current block | `NVDA+control+i` | `control+alt+numPad7` | `control+numPad7` | Selects current line plus all following lines having strictly greater indentation level.<br>Press repeatedly to select multiple blocks. |
-| Select current block and all following blocks on the same indentation level | `NVDA+alt+i` | `control+alt+numPad9` | `control+numPad9` | Selects current line plus all following lines having  greater or equal indentation level. |
-| Indent-paste | `NVDA+v` | `NVDA+v` | `NVDA+v` | When you need to paste a block of code to a place with different indentation level, this command will adjust indentation level before pasting. |
-| Go back/forward in history | N/A | `control+alt+numPad1/numPad3` | `control+numPad1/numPad3` | IndentNav keeps a history of lines which you visited via IndentNav commands. |
-| Speak current line | N/A | `alt+numPad5` | `numPad5` | This is really a review cursor command remapped for convenience. |
-| Speak parent line | `NVDA+i` | N/A | N/A | |
+| IndentNav umschalten | `Alt+Nummernblock` | `Alt+Nummernblock` | `Alt+Nummernblock` | Dies ist nützlich, wenn sowohl NVDA- als auch Tastenbefehle für Cursor dem Nummernblock zugewiesen sind. |
+| Jump to previous/next sibling | `NVDA+Alt+Pfeiltasten nach oben/unten` | `Alt+Nummernblock-Taste 8/2` | `Nummernblock-Taste 8/2` | Sibling is defined as a line with the same indentation level.<br>This command will not take cursor beyond current code block. |
+| Jump to previous/next sibling skipping over clutter | Keine | `Strg+Alt+Nummernblock-Taste 8/2` | `Strg+Nummernblock-Taste 8/2` | You can configure clutter regular expression in settings. |
+| Jump to first/last sibling | `NVDA+Alt+Umschalt+Pfeiltasten nach oben/unten` | `Alt+Nummernblock-Taste 4/6` | `Nummernblock-Taste 4/6` | Sibling is defined as a line with the same indentation level.<br>This command will not take cursor beyond current code block. |
+| Jump to previous/last sibling potentially outside of current block | `NVDA+Strg+Alt+Pfeiltasten nach oben/unten` | `Strg+Alt+Nummernblock-Taste 4/6` | `Strg+Nummernblock-Taste 4/6` | This command allows you to jump to a sibling in another block. |
+| Jump to previous/next parent | `NVDA+Alt+Pfeiltaste nach links`,<br>`NVDA+Alt+Strg+Pfeiltaste nach links` | `Alt+Nummernblock-Taste 7/1` | `Nummernblock-Taste 7/1` | Parent is defined as a line with lower indentation level. |
+| Jump to previous/next child | `NVDA+Alt+Strg+Pfeiltaste nach rechts`,<br>`NVDA+Alt+Pfeiltaste nach rechts` | `Alt+Nummernblock-Taste 9/3` | `Nummernblock-Taste 9/3` | Child is defined as a line with greater indentation level.<br>This command will not take cursor beyond current code block. |
+| Select current block | `NVDA+Strg+I` | `Strg+Alt+Nummernblock-Taste 7` | `Strg+Nummernblock-Taste 7` | Selects current line plus all following lines having strictly greater indentation level.<br>Press repeatedly to select multiple blocks. |
+| Select current block and all following blocks on the same indentation level | `NVDA+Alt+I` | `Strg+Alt+Nummernblock-Taste 9` | `Strg+Nummernblock-Taste 9` | Selects current line plus all following lines having  greater or equal indentation level. |
+| Indent-paste | `NVDA+V` | `NVDA+V` | `NVDA+V` | When you need to paste a block of code to a place with different indentation level, this command will adjust indentation level before pasting. |
+| Weiter/Zurück im Verlauf | N/A | `Strg+Alt+Nummernblock-Taste 1/3` | `Strg+Nummernblock-Taste 1/3` | IndentNav speichert einen Verlauf der Zeilen, die Sie mit IndentNav-Befehlen besucht haben. |
+| Aktuelle Zeile mitteilen | Keine | `Alt+Nummernblock-Taste 5` | `Nummernblock-Taste 5` | Dies ist in Wirklichkeit ein Cursor-Befehl, der der Einfachheit halber neu zugeordnet wurde. |
+| Übergeordnete Zeile mitteilen | `NVDA+I` | Keine | Keine | |
 
 ## Weitere Features
 
 ### Lesezeichen für die Schnellsuche
 
-IndentNav allows you to configure any number of bookmarks that you can
-easily jump to. A bookmark is defined by a regular expression and a custom
-keystroke to jump to a match. Press `shift+` keystroke to find previous
-occurrence.
+Mit IndentNav können Sie eine beliebige Anzahl von Lesezeichen
+konfigurieren, zu denen Sie einfach springen können. Ein Lesezeichen wird
+durch einen regulären Ausdruck und eine benutzerdefinierte Tastenkombination
+definiert, um zu einer Übereinstimmung zu springen. Drücken Sie die
+Tastenkombination "Umschalt+", um das vorherige Vorkommen zu finden.
 
-### Crackling:
+### Knack-Geräusche:
 
-When jumping over many lines of code, IndentNav will try to quickly play
-indentation levels as tones of the lines skipped over. This feature is only
-enabled when report indentation as tones is turned on in NVDA
-settings. Crackling volume can be adjusted or disabled in IndentNav
-settings.
+Beim Überspringen vieler Code-Zeilen versucht IndentNav, die
+Einrückungsebenen schnell als Töne der übersprungenen Zeilen
+wiederzugeben. Diese Funktion ist nur aktiviert, wenn in den
+NVDA-Einstellungen die Option Einrückung als Töne wiedergeben aktiviert
+ist. Die Lautstärke des Knackens kann in den IndentNav-Einstellungen
+angepasst oder deaktiviert werden.
 
 ## Quellcode
 
