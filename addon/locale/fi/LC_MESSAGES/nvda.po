@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: IndentNav\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2018-11-23 09:05+1000\n"
-"PO-Revision-Date: 2022-05-30 16:28+0200\n"
+"PO-Revision-Date: 2024-08-06 20:51+0300\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: Jani Kinnunen <jani.kinnunen@wippies.fi>\n"
 "Language: fi\n"
@@ -16,12 +16,431 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 1.6.11\n"
+"X-Generator: Poedit 3.4.4\n"
+"X-Poedit-Bookmarks: -1,14,-1,-1,-1,-1,-1,-1,-1,-1\n"
+
+msgid "Laptop or legacy key map: NVDA+alt+arrows"
+msgstr "Kannettavan tai vanha näppäinkartta: NVDA+Alt+nuolet"
+
+msgid "Alt+numPad"
+msgstr "Alt+laskinnäppäimistö"
+
+msgid ""
+"Numpad assigned to IndentNav in editables; numPad assigned to review cursor "
+"everywhere else"
+msgstr ""
+"Laskinnäppäimistö varattu Sisennysnavigoinnille muokattavissa kentissä, "
+"muualla tarkastelukohdistimelle"
+
+msgid ""
+"Numpad assigned to IndentNav; review cursor commands remapped to alt+NumPad"
+msgstr ""
+"Laskinnäppäimistö varattu Sisennysnavigoinnille, tarkastelukohdistimen "
+"komennot uudelleenmääritetty Alt+laskinnäppäimistöön"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav settings"
+msgstr "Sisennysnavigoinnin asetukset"
+
+#. Key map combo box
+msgid "Keyboard shortcuts"
+msgstr "Pikanäppäimet"
+
+#. Checkbox enabled
+msgid "Enable IndentNav"
+msgstr "Ota Sisennysnavigointi käyttöön"
+
+#. Translators: volume of crackling slider
+msgid "Crackling volume"
+msgstr "Merkkiäänen voimakkuus"
+
+#. Translators: End of document chime volume
+msgid "Volume of chime when no more sentences available"
+msgstr "Merkkiäänen voimakkuus, kun lauseita ei ole enempää"
+
+#. Checkboxes noNextTextMessageCheckbox
+#. Translators: Checkbox that controls spoken message when no next or previous text paragraph is available in the document
+msgid ""
+"Speak message when no next paragraph containing text available in the "
+"document"
+msgstr ""
+"Puhu ilmoitus, kun asiakirjassa ei ole enempää tekstiä sisältäviä kappaleita"
+
+#. EditBox clutter regexp
+msgid "Clutter regular expression"
+msgstr "Sotkun sääntölauseke"
+
+#. Checkboxes legacy VSCode
+msgid "Use legacy mode in VSCode (not recommended)"
+msgstr "Käytä vanhaa tilaa VSCodessa (ei suositella)"
+
+msgid "&Install VSCode extension (recommended)"
+msgstr "&Asenna VSCoden laajennus (suositellaan)"
+
+#. Learn about VSCode Extension
+msgid "&Learn more about VSCode accessibility extension"
+msgstr "&Lisätietoja VSCoden saavutettavuuslaajennuksesta"
+
+msgid ""
+"We will install accessibility extension in default VSCode instance on your "
+"system - the one found in %PATH% environment variable.\n"
+"If you have multiple instances or a custom version of VSCode, such as VSCode "
+"Insiders, you would need to install accessibility extension manually.\n"
+"Please review output of command to make sure installation is successful.\n"
+"If successful, the extension would be launched right away and there is no "
+"need to restart VSCode.\n"
+"Are you sure you want to proceed?"
+msgstr ""
+"Saavutettavuuslaajennus asennetaan järjestelmäsi oletusarvoiseen VSCode-"
+"esiintymään - siihen, joka löytyy %PATH%-ympäristömuuttujasta.\n"
+"Mikäli sinulla on useita esiintymiä tai mukautettu versio VSCodesta\n"
+", kuten VSCode Insiders, sinun täytyy asentaa saavutettavuuslaajennus "
+"manuaalisesti.\n"
+"Tarkista komennon tulos varmistaaksesi, että asennus onnistui.\n"
+"Jos asennus onnistui, laajennus käynnistyy heti, eikä VSCodea tarvitse "
+"käynnistää uudelleen.\n"
+"Haluatko varmasti jatkaa?"
+
+msgid "Confirmation"
+msgstr "Vahvistus"
+
+#, python-format
+msgid "Failed to compile regular expression: %s"
+msgstr "Sääntölausekkeen kääntäminen epäonnistui: %s"
+
+msgid "Regular expression error"
+msgstr "Virhe sääntölausekkeessa"
+
+msgid "Edit IndentNav QuickFind bookmark"
+msgstr "Muokkaa Sisennysnavigoinnin pikahaun kirjanmerkkiä"
+
+#. Translators: label for name
+msgid "&Display name (optional)"
+msgstr "&Näyttönimi (valinnainen)"
+
+#. Translators:  Custom keystroke button
+msgid "&Keystroke"
+msgstr "&Näppäinyhdistelmä"
+
+#. Translators: pattern
+msgid "&Pattern"
+msgstr "&Hakulauseke"
+
+#. Translators: label for enabled checkbox
+msgid "Bookmark enabled"
+msgstr "Kirjanmerkki käytössä"
+
+msgid "Pattern cannot be empty!"
+msgstr "Hakulauseke ei voi olla tyhjä."
+
+#. Translators: This is an error message to let the user know that the pattern field is not valid.
+msgid "Bookmark entry error"
+msgstr "Virhe lisättäessä kirjanmerkkiä"
+
+msgid "Please specify keystroke gesture."
+msgstr "Määritä näppäinyhdistelmä."
+
+#, python-format
+msgid "&Keystroke: %s"
+msgstr "&Näppäinyhdistelmä: %s"
+
+msgid "Keystroke: None"
+msgstr "Näppäinyhdistelmä: Ei mitään"
+
+msgid "Press desired keystroke now"
+msgstr "Paina nyt haluttua näppäinyhdistelmää"
+
+#, python-format
+msgid "Invalid keystroke %s: cannot overload essential  NVDA keystrokes!"
+msgstr ""
+"Virheellinen näppäinyhdistelmä %s: NVDA:n olennaisia "
+"oletusnäppäinyhdistelmiä ei voi ylikuormittaa."
+
+#, python-format
+msgid ""
+"Invalid keystroke %s: Cannot use keystrokes with shift modifier for "
+"quickFind bookmarks!"
+msgstr ""
+"Virheellinen näppäinyhdistelmä %s: Pikahaun kirjanmerkeissä ei voi käyttää "
+"Vaihto-muokkausnäppäimellisiä näppäinyhdistelmiä."
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav QuickFind bookmarks settings"
+msgstr "Sisennysnavigoinnin pikahakukirjanmerkkien asetukset"
+
+#. bookmarks table
+msgid "&QuickFind bookmarks"
+msgstr "&Pikahaun kirjanmerkit"
+
+msgid "Name"
+msgstr "Nimi"
+
+msgid "Enabled"
+msgstr "Käytössä"
+
+msgid "Gesture"
+msgstr "Näppäinkomento"
+
+msgid "Pattern"
+msgstr "Hakulauseke"
+
+#. Buttons
+msgid "&Add"
+msgstr "&Lisää"
+
+msgid "&Edit"
+msgstr "&Muokkaa"
+
+msgid "&Remove"
+msgstr "Po&ista"
+
+msgid "Move &up"
+msgstr "Siirrä &ylös"
+
+msgid "Move &down"
+msgstr "Siirrä &alas"
+
+msgid "&Sort"
+msgstr "La&jittele"
+
+msgid "Disabled"
+msgstr "Ei käytössä"
 
 #. Add-on summary, usually the user visible name of the addon.
-#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#. Translators: Summary for this add-on
+#. to be shown on installation and add-on information found in Add-ons Manager.
 msgid "IndentNav"
 msgstr "Sisennysnavigointi"
+
+msgid "Toggle IndentNav"
+msgstr "Ota Sisennysnavigointi käyttöön tai poista se käytöstä"
+
+msgid "Please turn off num lock in order to toggle IndentNav"
+msgstr "Poista Num Lock käytöstä voidaksesi vaihtaa Sisennysnavigoinnin tilaa"
+
+msgid "Enabled IndentNav"
+msgstr "Sisennysnavigointi otettu käyttöön"
+
+msgid "Disabled IndentNav"
+msgstr "Sisennysnavigointi poistettu käytöstä"
+
+msgid ""
+"IndentNav requires VSCode accessibility extension to be installed in order "
+"to work correctly in VSCode."
+msgstr ""
+"Sisennysnavigointi edellyttää VSCode-saavutettavuuslaajennuksen asentamista, "
+"jotta se toimisi oikein VSCodessa."
+
+msgid "Please install VSCode extension"
+msgstr "Asenna VSCode-laajennus"
+
+msgid "&Use VSCode in legacy mode without extension (not recommended)"
+msgstr "&Käytä VSCodea vanhassa tilassa ilman laajennusta (ei suositella)"
+
+msgid "&Cancel"
+msgstr "&Peruuta"
+
+msgid ""
+"Please enable legacy support of VSCode in IndentNav settings.\n"
+"Please note that builtin VSCode accessibility provides access to only 500 "
+"lines of code.\n"
+"As a result, in larger files IndentNav will not work correctly.\n"
+"Please use it at your own risk."
+msgstr ""
+"Ota käyttöön vanha VSCoden tuki Sisennysnavigoinnin asetuksissa.\n"
+"Huomaa, että VSCoden sisäänrakennettu saavutettavuustuki antaa pääsyn vain "
+"500 koodiriviin.\n"
+"Tämän seurauksena Sisennysnavigointi ei toimi oikein suurissa tiedostoissa.\n"
+"Käytä sitä omalla vastuullasi."
+
+msgid "Information"
+msgstr "Tietoja"
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+"Siirtyy nykyisessä sisennyslohkossa seuraavalle riville samalla "
+"sisennystasolla kuin nykyinen rivi."
+
+#. Translators: error message if next sibling couldn't be found (in editable control or in browser)
+msgid "No next line within indentation block"
+msgstr "Ei seuraavaa riviä sisennyslohkossa"
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"within the current indentation block and skipping over clutter."
+msgstr ""
+"Siirtyy nykyisessä sisennyslohkossa seuraavalle riville samalla "
+"sisennystasolla kuin nykyinen rivi ja ohittaa sotkun."
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"potentially in the following indentation block."
+msgstr ""
+"Siirtyy seuraavalle riville samalla sisennystasolla kuin nykyinen rivi "
+"mahdollisesti seuraavassa sisennyslohkossa."
+
+#. Translators: error message if next sibling couldn't be found in editable control (forced command)
+#. Translators: error message if last sibling couldn't be found in editable control (forced command)
+msgid "No next line in the document"
+msgstr "Ei enempää rivejä asiakirjassa"
+
+msgid ""
+"Moves to the last line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+"Siirtää nykyisessä sisennyslohkossa viimeiselle riville, jolla on sama "
+"sisennystaso kuin nykyisellä rivillä."
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line within the current indentation block."
+msgstr ""
+"Siirtää nykyisessä sisennyslohkossa edelliselle riville, jolla on sama "
+"sisennystaso kuin nykyisellä rivillä."
+
+#. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
+msgid "No previous line within indentation block"
+msgstr "Sisennyslohkossa ei edellistä riviä"
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line within the current indentation block and skipping over clutter."
+msgstr ""
+"Siirtää nykyisessä sisennyslohkossa edelliselle riville, jolla on sama "
+"sisennystaso kuin nykyisellä rivillä sekä ohittaa epäolennaisuudet."
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line potentially in the preceding indentation block."
+msgstr ""
+"Siirtää mahdollisesti edellisessä sisennyslohkossa edelliselle riville, "
+"jolla on sama sisennystaso kuin nykyisellä rivillä."
+
+#. Translators: error message if previous sibling couldn't be found in editable control (forced command)
+#. Translators: error message if first sibling couldn't be found in editable control (forced command)
+msgid "No previous line in the document"
+msgstr "Dokumentissa ei edellistä riviä"
+
+msgid ""
+"Moves to the first line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+"Siirtää nykyisessä sisennyslohkossa ensimmäiselle riville, jolla on sama "
+"sisennystaso kuin nykyisellä rivillä."
+
+msgid "Speak parent line."
+msgstr "Puhu ylempi rivi."
+
+#. Translators: error message if parent couldn't be found (in editable control or in browser)
+msgid "No parent of indentation block"
+msgstr "Ei ylempää sisennyslohkon tasoa"
+
+msgid "Cannot use IndentNav not in the main editor of VSCode"
+msgstr ""
+"Sisennysnavigointia ei voi käyttää, koska kohdistus ei ole VSCoden "
+"pääeditorissa"
+
+msgid ""
+"Moves to the next line with a greater indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+"Siirtää nykyisessä sisennyslohkossa seuraavalle riville, jolla on suurempi "
+"sisennystaso kuin nykyisellä rivillä."
+
+#. Translators: error message if a child couldn't be found (in editable control or in browser)
+msgid "No child block within indentation block"
+msgstr "Sisennyslohkossa ei alempaa tasoa"
+
+msgid ""
+"Moves to the previous line with a lesser indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+"Siirtää nykyisessä sisennyslohkossa edelliselle riville, jolla on pienempi "
+"sisennystaso kuin nykyisellä rivillä."
+
+msgid ""
+"Moves to the previous line with a greater indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+"Siirtää nykyisessä sisennyslohkossa edelliselle riville, jolla on suurempi "
+"sisennystaso kuin nykyisellä rivillä."
+
+#. Translators: error message if a previous child couldn't be found (in editable control)
+msgid "No previous child block within indentation block"
+msgstr "Sisennyslohkossa ei edellistä alempaa tasoa"
+
+msgid ""
+"Moves to the next line with a lesser indentation level than the current line "
+"within the current indentation block."
+msgstr ""
+"Siirtää nykyisessä sisennyslohkossa seuraavalle riville, jolla on pienempi "
+"sisennystaso kuin nykyisellä rivillä."
+
+#. Translators: error message if previous parent couldn't be found (in editable control)
+msgid "No next parent of indentation block"
+msgstr "Ei seuraavaa ylempää sisennyslohkon tasoa"
+
+msgid "Select current indentation block. Press twice to copy to clipboard."
+msgstr ""
+"Valitse nykyinen sisennyslohko. Kopioi leikepöydälle painamalla kahdesti."
+
+msgid "Indent block copied to clipboard. "
+msgstr "Sisennyslohko kopioitu leikepöydälle."
+
+msgid ""
+"Select current indentation block, as well as follwoing blocks of the same "
+"level. Press twice to copy to clipboard."
+msgstr ""
+"Valitse nykyinen sisennyslohko sekä seuraavat saman tason lohkot. Kopioi "
+"leikepöydälle painamalla kahdesti."
+
+msgid "Indent blocks copied to clipboard. "
+msgstr "Sisennyslohkot kopioitu leikepöydälle."
+
+msgid "Nothing to select"
+msgstr "Ei valittavaa"
+
+msgid "No more indentation blocks!"
+msgstr "Ei enempää sisennyslohkoja."
+
+msgid ""
+"Indent-paste. This will figure out indentation level in the current line and "
+"paste text from clipboard adjusting indentation level correspondingly."
+msgstr ""
+"Sisennysliittäminen. Tämä määrittää nykyisen rivin sisennystason ja liittää "
+"kopioidun tekstin leikepöydältä säätäen vastaavasti sisennystason."
+
+msgid "Some text selected! Cannot indent-paste."
+msgstr "Tekstiä valittuna. Ei voi sisennysliittää."
+
+msgid "Cannot indent-paste: current line is not empty!"
+msgstr "Ei voi sisennysliittää: nykyinen rivi ei ole tyhjä."
+
+msgid "Pasted"
+msgstr "Liitetty"
+
+msgid "Go back in history."
+msgstr "Siirrä taaksepäin historiassa."
+
+msgid ")No previous line in history"
+msgstr "Historiassa ei edellistä riviä"
+
+msgid "Go forward in history."
+msgstr "Siirrä eteenpäin historiassa."
+
+msgid ")No next line in history"
+msgstr "Historiassa ei seuraavaa riviä"
+
+msgid "IndentNav QuickFind generic script"
+msgstr "Sisennysnavigoinnin pikahaun yleisskripti"
+
+msgid "Bookmark not found"
+msgstr "Kirjanmerkkiä ei löydy"
+
+msgid "Speak current line"
+msgstr "Puhu nykyinen rivi"
 
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
@@ -29,9 +448,6 @@ msgid ""
 "Indentation Navigation addon.\n"
 "It allows NVDA users to navigate by indentation level or offset of lines or "
 "paragraphs.\n"
-"In browsers it allows to quickly find paragraphs with the same offset from "
-"the left edge of the screen, such as first level comments in a hierarchical "
-"tree of comments.\n"
 "Also while editing source code in many programming languages, it allows to "
 "jump between the lines of the same indentation level, as well as quickly "
 "find lines with greater or lesser indentation level."
@@ -39,9 +455,6 @@ msgstr ""
 "Sisennysnavigoinnin lisäosa.\n"
 "Sen avulla NVDA:n käyttäjät voivat siirtyä sisennystason, rivipoikkeamien "
 "tai kappaleiden mukaan.\n"
-"Selaimissa on mahdollista etsiä nopeasti kappaleita, jotka alkavat ruudun "
-"vasemmasta reunasta katsottuna samasta kohdasta, kuten esim. ensimmäisen "
-"tason kommentit hierarkkisessa kommenttipuussa.\n"
 "Lisäksi se mahdollistaa useiden ohjelmointikielien lähdekoodia muokattaessa "
 "siirtymisen samalla sisennystasolla olevien rivien välillä sekä sellaisten "
 "rivien nopean etsimisen, joilla on suurempi tai pienempi sisennystaso."
