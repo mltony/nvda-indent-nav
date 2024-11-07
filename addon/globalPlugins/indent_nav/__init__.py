@@ -348,6 +348,13 @@ def updateKeyMaps():
 
 config.post_configProfileSwitch .register(updateKeyMaps)
 
+def getControlVGesture():
+    try:
+        return keyboardHandler.KeyboardInputGesture.fromName("Control+v")
+    except LookupError:
+        # This happens if vk code for letter V fails to resolve, when current keyboard layout is for example Russian
+        # vk code for V key is 86
+        return keyboardHandler.KeyboardInputGesture(modifiers={(winUser.VK_CONTROL, False)}, vkCode=86, scanCode=0, isExtended=False)
 
 def initConfiguration():
     clutterRegex = (
@@ -1933,7 +1940,7 @@ class EditableIndentNav(NVDAObject):
             api.copyToClip(text)
             line.updateSelection()
             time.sleep(0.1)
-            keyboardHandler.KeyboardInputGesture.fromName("Control+v").send()
+            getControlVGesture().send()
             core.callLater(100, ui.message, _("Pasted"))
         finally:
             core.callLater(100, api.copyToClip, clipboardBackup)
