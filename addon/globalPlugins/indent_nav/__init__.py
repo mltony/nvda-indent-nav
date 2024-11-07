@@ -360,22 +360,27 @@ def initConfiguration():
     clutterRegex = (
         r"^\s*(" +
         "|".join([
-          # Python
+          # (not only) Python
             # ) : #comment
                 r"\)\s*:?\s*(#.*)?",
             # ) -> type :
-                r"""\)\s*->[\s\w.,\[\]|"']*:""",
+                r"""\)\s*->[\s\w.,\[\]|"']*:?""",
             # ), # comment
             # ], # comment
             # }, # comment
-            # Also allows // comment; also allows semicolon;
-                r"[\])}]\s*[,;]?\s*((#|//).*)?",
+            # Also allows // comment; also allows colon or semicolon;
+                r"[\])}]\s*[,:;]?\s*((#|//).*)?",
             # { // comment
                 r"[{]\s*((#|//).*)?",
             # # comment
                 r"#.*",
             # from? import
+            # import ...
                 r"(^from\s+[\w\s.]+\s+|^)import\s+.*",
+            # from ... \
+                r"from\s+[\w\s.]+\s*" + "\\\\",
+            # @annotations
+                r"@.*",
           # C++
             # ) { // comment
                 r"\)\s*[{;]?\s*(//.*)?",
@@ -383,6 +388,16 @@ def initConfiguration():
                 r"//.*",
             # #include
                 r"^#include.*",
+            # /* comment
+                r"/\*.*",
+          # PHP
+            # ): void {
+                r"\):.*",
+            # <<__Memoize>>
+                r"<<.*>>",
+          # other
+            # importThrift
+                r"importThrift\b.*",
         ])
         + r")\s*$"
     )
