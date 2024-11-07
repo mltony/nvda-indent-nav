@@ -211,11 +211,7 @@ GC_KEY_MAPS_SOURCE = [
 def normalizeKb(s):
     if s is None:
         return None
-    SHIFT_SUFFIX = '+shift'
-    if s.endswith(SHIFT_SUFFIX):
-        s = s[:-len(SHIFT_SUFFIX)]
-        s = "shift+" + s
-    return keyboardHandler.KeyboardInputGesture.fromName(s).normalizedIdentifiers[-1]
+    return inputCore.normalizeGestureIdentifier(f"kb:{s}")
 
 def makeIndentNavKeyMaps():
     result = {
@@ -449,12 +445,12 @@ def reloadBookmarks():
     gestures = {
         **gestures,
         **{
-            keyboardHandler.KeyboardInputGesture.fromName(keystroke).normalizedIdentifiers[-1]: QF
+            inputCore.normalizeGestureIdentifier(f"kb:{keystroke}"): QF
             for keystroke, bookmark in globalBookmarks.items()
             if bookmark.enabled
         },
         **{
-            keyboardHandler.KeyboardInputGesture.fromName("shift+" + keystroke).normalizedIdentifiers[-1]: QF
+            inputCore.normalizeGestureIdentifier(f"kb:shift+{keystroke}"): QF
             for keystroke, bookmark in globalBookmarks.items()
             if bookmark.enabled
         },
