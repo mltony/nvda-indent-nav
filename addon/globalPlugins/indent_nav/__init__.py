@@ -2019,11 +2019,16 @@ class EditableIndentNav(NVDAObject):
     def isVscodeApp(self):
         try:
             if self.treeInterceptor is not None:
-                return False
-        except NameError:
+                if not self.treeInterceptor.passThrough:
+                    # Browse mode is active; disable enhanced text info
+                    return False
+        except (AttributeError, NameError):
+            pass
+        try:
+            productName = self.appModule.productName or ""
+            return productName.startswith("Visual Studio Code")
+        except (AttributeError, NameError):
             return False
-        productName = self.appModule.productName or ""
-        return productName.startswith("Visual Studio Code")
 
     def getPiper(self):
         try:
