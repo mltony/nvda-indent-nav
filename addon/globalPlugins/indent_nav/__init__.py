@@ -433,6 +433,8 @@ class QuickFindBookmark:
     keystroke: str
     pattern: str
     enabled: bool = True
+    id: int = 0
+    parentId: int = 0
 
     def getDisplayName(self):
         return self.name or self.keystroke
@@ -448,6 +450,29 @@ def saveBookmarks(bookmarks):
         'bookmarks': items,
     }))
 
+def getNextBookmarkId():
+    usedIds = set([bookmark.id for bookmark in globalBookmarks.values()])
+    for i in range(1, 10**10):
+        if i not in usedIds:
+            return i
+    raise RuntimeError
+
+def getBookmarkById(id):
+    for bookmark in globalBookmarks.values():
+        if bookmark.id == id:
+            return bookmark
+    return IndexError
+
+def getAllParentBookmarks(bookmark):
+    result = []
+    for __ in range(1000):
+        parentId = bookmark.parentId
+        if parentId == 0:
+            return result
+        bookmark = getBookmarkById(parentId)
+        result.append(bookmark)
+    raise RuntimeError("Infinite loop")
+
 globalBookmarks = {}
 def reloadBookmarks():
     global globalBookmarks
@@ -456,6 +481,9 @@ def reloadBookmarks():
         bookmark.keystroke: bookmark
         for bookmark in bookmarks
     }
+    for k, bookmark in globalBookmarks.items():
+        if bookmark.id == 0:
+            bookmark.id = getNextBookmarkId()
     cls = EditableIndentNav
     gestures = getattr(cls, f"_{cls.__name__}__gestures")
     QF = "quickFind"
@@ -631,6 +659,24 @@ class EditBookmarkDialog(wx.Dialog):
         enabledText = _("Bookmark enabled")
         self.enabledCheckBox=sHelper.addItem(wx.CheckBox(self,label=enabledText))
         self.enabledCheckBox.SetValue(self.bookmark.enabled)
+      # Parent combo box
+        label=_("Parent bookmark (optional; searching for this bookmark will never cross parent boundary):")
+        self.parentOptionIds = [bookmark.id for bookmark in globalBookmarks.values() if bookmark.id != self.bookmark.id]
+        self.parentOptionNames = [getBookmarkById(id).getDisplayName() for id in self.parentOptionIds]
+        self.parentOptionIds.insert(0, 0)
+        self.parentOptionNames.insert(0, _("None"))
+        self.parentCategory=guiHelper.LabeledControlHelper(
+            self,
+            label,
+            wx.Choice,
+            choices=self.parentOptionNames,
+        )
+        try:
+            optionIndex = self.parentOptionIds.index(self.bookmark.parentId)
+        except ValueError:
+            optionIndex = 0
+        self.parentCategory.control.SetSelection(optionIndex)
+
       #  OK/cancel buttons
         sHelper.addDialogDismissButtons(self.CreateButtonSizer(wx.OK|wx.CANCEL))
 
@@ -668,6 +714,8 @@ class EditBookmarkDialog(wx.Dialog):
             name=self.commentTextCtrl.Value,
             pattern=pattern,
             keystroke=self.keystroke,
+            id=self.bookmark.id or getNextBookmarkId(),
+            parentId=self.parentOptionIds[self.parentCategory.control.GetSelection()],
         )
         return bookmark
 
@@ -805,11 +853,16 @@ class QuickFindSettingsDialog(SettingsPanel):
 
     def OnRemoveClick(self,evt):
         bookmarks = list(self.bookmarks)
+        deletedIds = []
         index=self.bookmarksList.GetFirstSelected()
         while index>=0:
             self.bookmarksList.DeleteItem(index)
+            deletedIds.append(bookmarks[index].id)
             del bookmarks[index]
             index=self.bookmarksList.GetNextSelected(index)
+        for bookmark in bookmarkss:
+            if bookmark.parentId in deletedIds:
+                bookmark.parentId = 0
         self.bookmarksList.SetFocus()
 
     def OnMoveClick(self,evt, increment):
@@ -2086,6 +2139,23 @@ class EditableIndentNav(NVDAObject):
         match = matches[0 if direction > 0 else -1]
         startIndex = match.start()
         endIndex = match.end()
+        parents = getAllParentBookmarks(bookmark)
+        if len(parents) > 0:
+            parentPattern = "|".join(parent.pattern for parent in parents)
+            parentMatches = list(re.finditer(parentPattern, text, re.MULTILINE))
+            if len(parentMatches) > 0:
+                parentMatch = parentMatches[0 if direction > 0 else -1]
+                parentStartIndex = parentMatch.start()
+                parentEndIndex = parentMatch.end()
+                outOfBounds = (
+                    (parentStartIndex <= startIndex)
+                    if direction > 0 else
+                    (parentEndIndex >= endIndex)
+                )
+                if outOfBounds:
+                    self.endOfDocument(_("Bookmark not found within bounds"))
+                    return
+
         compoundMode = False
         if isinstance(info, CompoundTextInfo):
             if info._start == info._end and  isinstance(info._start, OffsetsTextInfo):
