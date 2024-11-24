@@ -56,6 +56,8 @@ Keystroke layout can be selected in IndentNav settings.
 
 IndentNav allows you to configure any number of bookmarks that you can easily jump to. A bookmark is defined by a regular expression and a custom keystroke to jump to a match. Press `shift+` keystroke to find previous occurrence.
 
+For each bookmark you can also set up a parent bookmark. In this case, when you search for a child bookmark, the cursor will never cross parent bookmark. For example, it makes sense to mark class definition bookmark to be a parent of function definition bookmark, as this way searching for functions will never take you outside of current class.
+
 ### Crackling:
 
 When jumping over many lines of code, IndentNav will try to quickly play indentation levels as tones of the lines skipped over. This feature is only enabled when report indentation as tones is turned on in NVDA settings. Crackling volume can be adjusted or disabled in IndentNav settings.
