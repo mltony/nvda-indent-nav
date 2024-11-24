@@ -1139,7 +1139,6 @@ class VSCodePiper(threading.Thread):
         super().__init__(name=f"IndentNav Piper thread for pid={pid}")
         self.pid = pid
         pipeName = r"\\.\pipe\VSCodeIndentNavBridge" + str(pid)
-        #log.error(f"asdf {pipeName}")
         self.f = open(pipeName, 'rb+', buffering=0)
         self.inputQueue  = queue.Queue()
         self.closed = False
@@ -1166,12 +1165,10 @@ class VSCodePiper(threading.Thread):
                         },
                     ))
                     return
-                #log.error(f"asdf received {len(messageBytes)} bytes")
                 buffer += messageBytes
                 if messageLength == -1 and len(buffer) >= 4:
                     messageLength = struct.unpack('I', buffer[:4])[0]
                     buffer = buffer[4:]
-                    #log.error(f"asdf len={messageLength}")
                 if messageLength != -1 and len(buffer) >= messageLength:
                     s = buffer[:messageLength].decode('utf-8')
                     buffer = buffer[messageLength:]
@@ -1279,17 +1276,13 @@ def updatePipers():
             except ValueError:
                 continue
             piperPids.append(pid)
-    #log.error(f"asdf piperPids={piperPids}")
     pidsToRemove = []
     for pid, piper in namedPipesCache.items():
         if pid not in piperPids or piper.closed:
             piper.join()
             pidsToRemove.append(pid)
-            #log.error(f"asdf Killing piper for pid={pid}")
     namedPipesCache = {k: v for k, v in namedPipesCache.items() if k in pidsToRemove}
-    #log.error(f"asdf namedPipesCache={list(namedPipesCache.keys())}")
     for pid in [pid for pid in piperPids if pid not in namedPipesCache]:
-        #log.error(f"asdf opening piper for pid={pid}")
         try:
             namedPipesCache[pid] = VSCodePiper(pid)
         except FileNotFoundError:
@@ -1319,7 +1312,6 @@ def findActivePiper():
         try:
             response = q.get(True, waitTime)
             n -= 1
-            #log.error(f"asdf {response.response}")
             if response.response["result"]["focused"]:
                 return response.pid
         except queue.Empty:
