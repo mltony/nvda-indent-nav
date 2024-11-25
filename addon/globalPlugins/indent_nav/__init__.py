@@ -1718,6 +1718,10 @@ class EditableIndentNav(NVDAObject):
             return 0
         indent = speech.splitTextIndentation(s)[0]
         return len(indent.replace("\t", " " * 4))
+    
+    def getIndentLevels(self, s):
+        lines = s.splitlines()
+        return [self.getIndentLevel(line) for line in lines]
 
     def isReportIndentWithTones(self):
         if BUILD_YEAR >= 2023:
@@ -2155,7 +2159,11 @@ class EditableIndentNav(NVDAObject):
                 if outOfBounds:
                     self.endOfDocument(_("Bookmark not found within bounds"))
                     return
-
+        
+        crackleText = text[:endIndex] if direction > 0 else text[startIndex:]
+        crackleIndents = self.getIndentLevels(crackleText)
+        if len(crackleIndents) > 0:
+            crackleIndents = crackleIndents[1:] if direction > 0 else crackleIndents[:0:-1]
         compoundMode = False
         if isinstance(info, CompoundTextInfo):
             if info._start == info._end and  isinstance(info._start, OffsetsTextInfo):
@@ -2183,6 +2191,8 @@ class EditableIndentNav(NVDAObject):
         unit = textInfos.UNIT_LINE if isinstance(lineInfo, VsWpfTextViewTextInfo) else textInfos.UNIT_PARAGRAPH
         lineInfo.expand(unit)
         lineInfo.setEndPoint(selectionInfo, 'startToStart')
+        if len(crackleIndents) > 0:
+            self.crackle(crackleIndents)
         speech.speakTextInfo(lineInfo, unit=unit, reason=controlTypes.OutputReason.CARET)
 
     @script(description=_("Speak current line"), gestures=['kb:NVDA+Control+l'])
