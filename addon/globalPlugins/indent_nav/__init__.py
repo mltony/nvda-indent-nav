@@ -1099,8 +1099,10 @@ class FastLineManagerV2:
         self.lineIndex = newIndex
         return increment
 
-    def getText(self):
-        return self.lines[self.lineIndex]
+    def getText(self, line=None):
+        if line is None:
+            line = self.lineIndex
+        return self.lines[line]
 
     def getLine(self):
         return self.lineIndex
@@ -1720,7 +1722,10 @@ class EditableIndentNav(NVDAObject):
         return len(indent.replace("\t", " " * 4))
     
     def getIndentLevels(self, s):
-        lines = s.splitlines()
+        if isinstance(s, str):
+            lines = s.splitlines()
+        else:
+            lines = s
         return [self.getIndentLevel(line) for line in lines]
 
     def isReportIndentWithTones(self):
@@ -2035,11 +2040,20 @@ class EditableIndentNav(NVDAObject):
         lines, index = self.getHistory()
         if index > 0:
             with self.getLineManager() as lm:
-                currentLineIndex = lm.lineIndex
+                currentLineIndex = lm.getLine()
                 if currentLineIndex == lines[index]:
                     index -= 1
                 self.historyIndex = index
                 lineNumber = lines[index]
+                curLine = currentLineIndex
+                direction = 1 if lineNumber >= curLine else -1
+                lines = [lm.getText(i) for i in range(curLine, lineNumber, direction)]
+                if len(lines) >= 2:
+                    indentLevels = self.getIndentLevels(lines[1:])
+                    self.crackle(indentLevels)
+                textInfo = lm.updateCaret(lineNumber)
+                speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
+
                 textInfo = lm.updateCaret(lineNumber)
                 speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
         else:
@@ -2056,6 +2070,12 @@ class EditableIndentNav(NVDAObject):
             return
         self.historyIndex = index
         with self.getLineManager() as lm:
+                curLine = lm.getLine()
+                direction = 1 if lineNumber >= curLine else -1
+                lines = [lm.getText(i) for i in range(curLine, lineNumber, direction)]
+                if len(lines) >= 2:
+                    indentLevels = self.getIndentLevels(lines[1:])
+                    self.crackle(indentLevels)
                 textInfo = lm.updateCaret(lineNumber)
                 speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
 
