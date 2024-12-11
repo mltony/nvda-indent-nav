@@ -1707,6 +1707,28 @@ def moveToCodepointOffset(
             info.setEndPoint(tmpInfo, which="endToEnd")
     raise RuntimeError("Infinite loop during binary search.")
 
+def ephemeralCopyToClip(text: str):
+    """
+    Copies string to clipboard without leaving an entry in clipboard history.
+    """
+    with winUser.openClipboard(gui.mainFrame.Handle):
+        winUser.emptyClipboard()
+        winUser.setClipboardData(winUser.CF_UNICODETEXT, text)
+        ephemeralFormat = ctypes.windll.user32.RegisterClipboardFormatW("ExcludeClipboardContentFromMonitorProcessing")
+        ctypes.windll.user32.SetClipboardData(ephemeralFormat,None)
+
+class BackupClipboard:
+    def __init__(self, text):
+        self.backup = api.getClipData()
+        self.text = text
+    def __enter__(self):
+        ephemeralCopyToClip(self.text)
+        return self
+    def __exit__(self, *args, **kwargs):
+        core.callLater(300, self.restore)
+    def restore(self):
+        ephemeralCopyToClip(self.backup)
+
 class EditableIndentNav(NVDAObject):
     scriptCategory = _("IndentNav")
     beeper = Beeper()
@@ -1968,51 +1990,48 @@ class EditableIndentNav(NVDAObject):
     @script(description=_("Indent-paste. This will figure out indentation level in the current line and paste text from clipboard adjusting indentation level correspondingly."), gestures=['kb:NVDA+V'])
     def script_indentPaste(self, gesture):
         clipboardBackup = api.getClipData()
-        try:
-            focus = api.getFocusObject()
-            selection = focus.makeTextInfo(textInfos.POSITION_SELECTION)
-            if len(selection.text) != 0:
-                ui.message(_("Some text selected! Cannot indent-paste."))
-                return
-            line = focus.makeTextInfo(textInfos.POSITION_CARET)
-            line.collapse()
-            line.expand(textInfos.UNIT_LINE)
-            # Make sure line doesn't include newline characters
-            while len(line.text) > 0 and line.text[-1] in "\r\n":
-                if 0 == line.move(textInfos.UNIT_CHARACTER, -1, "end"):
-                    break
-            lineLevel = self.getIndentLevel(line.text.rstrip("\r\n") + "a")
-            if not isBlank(line.text):
-                ui.message(_("Cannot indent-paste: current line is not empty!"))
-                return
-            text = clipboardBackup
-            textLevel = min([
-                self.getIndentLevel(s)
+        focus = api.getFocusObject()
+        selection = focus.makeTextInfo(textInfos.POSITION_SELECTION)
+        if len(selection.text) != 0:
+            ui.message(_("Some text selected! Cannot indent-paste."))
+            return
+        line = focus.makeTextInfo(textInfos.POSITION_CARET)
+        line.collapse()
+        line.expand(textInfos.UNIT_LINE)
+        # Make sure line doesn't include newline characters
+        while len(line.text) > 0 and line.text[-1] in "\r\n":
+            if 0 == line.move(textInfos.UNIT_CHARACTER, -1, "end"):
+                break
+        lineLevel = self.getIndentLevel(line.text.rstrip("\r\n") + "a")
+        if not isBlank(line.text):
+            ui.message(_("Cannot indent-paste: current line is not empty!"))
+            return
+        text = clipboardBackup
+        textLevel = min([
+            self.getIndentLevel(s)
+            for s in text.splitlines()
+            if not isBlank(s)
+        ])
+        useTabs = '\t' in text or '\t' in line.text
+        delta = lineLevel - textLevel
+        text = text.replace("\t", " "*4)
+        if delta > 0:
+            text = "\n".join([
+                " "*delta + s
                 for s in text.splitlines()
-                if not isBlank(s)
             ])
-            useTabs = '\t' in text or '\t' in line.text
-            delta = lineLevel - textLevel
-            text = text.replace("\t", " "*4)
-            if delta > 0:
-                text = "\n".join([
-                    " "*delta + s
-                    for s in text.splitlines()
-                ])
-            elif delta < 0:
-                text = "\n".join([
-                    s[min(-delta, len(s)):]
-                    for s in text.splitlines()
-                ])
-            if useTabs:
-                text = text.replace(" "*4, "\t")
-            api.copyToClip(text)
+        elif delta < 0:
+            text = "\n".join([
+                s[min(-delta, len(s)):]
+                for s in text.splitlines()
+            ])
+        if useTabs:
+            text = text.replace(" "*4, "\t")
+        with BackupClipboard(text):
             line.updateSelection()
             time.sleep(0.1)
             getControlVGesture().send()
-            core.callLater(100, ui.message, _("Pasted"))
-        finally:
-            core.callLater(100, api.copyToClip, clipboardBackup)
+        core.callLater(100, ui.message, _("Pasted"))
 
     def getHistory(self):
         try:
