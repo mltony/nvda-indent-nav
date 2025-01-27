@@ -3,27 +3,448 @@
 # This file is distributed under the same license as the NVDA package.
 # Ângelo Abrantes <ampa4374@gmail.com>, 2018.
 # Tiago Melo Casal <tcasal@intervox.nce.ufrj.br>, 2021.
+# Josevan Barbosa Fernandes <josevanfernandes@yahoo.com.br>, 2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: IndentNav\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2018-11-23 09:05+1000\n"
-"PO-Revision-Date: 2021-07-03 15:58-0300\n"
-"Last-Translator: Tiago Melo Casal <tcasal@intervox.nce.ufrj.br>\n"
+"PO-Revision-Date: 2024-12-26 20:36-0300\n"
+"Last-Translator: Josevan Fernandes <josevanfernandes@yahoo.com.br>\n"
 "Language-Team: NVDA Brazilian Portuguese translation team (Equipe de "
 "tradução do NVDA para Português Brasileiro) <clever97@gmail.com>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.6.11\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
+msgid "Laptop or legacy key map: NVDA+alt+arrows"
+msgstr "Mapa de teclas do laptop ou legado: NVDA+alt+setas"
+
+msgid "Alt+numPad"
+msgstr "Alt+numPad"
+
+msgid ""
+"Numpad assigned to IndentNav in editables; numPad assigned to review cursor "
+"everywhere else"
+msgstr ""
+"Numpad atribuído ao IndentNav em editáveis; numPad atribuído ao cursor de "
+"revisão em todos os outros lugares"
+
+msgid ""
+"Numpad assigned to IndentNav; review cursor commands remapped to alt+NumPad"
+msgstr ""
+"Numpad atribuído a IndentNav; comandos do cursor de revisão remapeados para "
+"alt+NumPad"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav settings"
+msgstr "Configurações do IndentNav"
+
+#. Key map combo box
+msgid "Keyboard shortcuts"
+msgstr "Atalhos de teclado"
+
+#. Checkbox enabled
+msgid "Enable IndentNav"
+msgstr "Ativar IndentNavIndentNav — Navegação por Recuo"
+
+#. Translators: volume of crackling slider
+msgid "Crackling volume"
+msgstr "Volume crepitante"
+
+#. Translators: End of document chime volume
+msgid "Volume of chime when no more sentences available"
+msgstr "Volume do sinal sonoro quando não há mais frases disponíveis"
+
+#. Checkboxes noNextTextMessageCheckbox
+#. Translators: Checkbox that controls spoken message when no next or previous text paragraph is available in the document
+msgid ""
+"Speak message when no next paragraph containing text available in the "
+"document"
+msgstr ""
+"Falar mensagem quando não houver próximo parágrafo contendo texto disponível "
+"no documento"
+
+#. EditBox clutter regexp
+msgid "Clutter regular expression"
+msgstr "Expressão regular Clutter"
+
+#. Checkboxes legacy VSCode
+msgid "Use legacy mode in VSCode (not recommended)"
+msgstr "Usar o modo legado no VSCode (não recomendado)"
+
+msgid "&Install VSCode extension (recommended)"
+msgstr "&Instale a extensão VSCode (recomendado)"
+
+#. Learn about VSCode Extension
+msgid "&Learn more about VSCode accessibility extension"
+msgstr "&Saiba mais sobre a extensão de acessibilidade VSCode"
+
+msgid ""
+"We will install accessibility extension in default VSCode instance on your "
+"system - the one found in %PATH% environment variable.\n"
+"If you have multiple instances or a custom version of VSCode, such as VSCode "
+"Insiders, you would need to install accessibility extension manually.\n"
+"Please review output of command to make sure installation is successful.\n"
+"If successful, the extension would be launched right away and there is no "
+"need to restart VSCode.\n"
+"Are you sure you want to proceed?"
+msgstr ""
+"Instalaremos a extensão de acessibilidade na instância padrão do VSCode em "
+"seu sistema - a que se encontra na variável de ambiente %PATH%.\n"
+"Se você tiver várias instâncias ou uma versão personalizada do VSCode, como "
+"o VSCode Insiders, será necessário instalar a extensão de acessibilidade "
+"manualmente.\n"
+"Revise a saída do comando para ter certeza de que a instalação foi bem-"
+"sucedida.\n"
+"Se for bem-sucedida, a extensão será iniciada imediatamente e não haverá "
+"necessidade de reiniciar o VSCode.\n"
+"Tem certeza de que deseja continuar?"
+
+msgid "Confirmation"
+msgstr "Confirmação"
+
+#, python-format
+msgid "Failed to compile regular expression: %s"
+msgstr "Falha ao compilar a expressão regular: %s"
+
+msgid "Regular expression error"
+msgstr "Erro de expressão regular"
+
+msgid "Edit IndentNav QuickFind bookmark"
+msgstr "Editar o marcador IndentNav BuscaRápida"
+
+#. Translators: label for name
+msgid "&Display name (optional)"
+msgstr "&Nome da tela (opcional)"
+
+#. Translators:  Custom keystroke button
+msgid "&Keystroke"
+msgstr "&Toco de tecla"
+
+#. Translators: pattern
+msgid "&Pattern"
+msgstr "&Padrão"
+
+#. Translators: label for enabled checkbox
+msgid "Bookmark enabled"
+msgstr "Marcador Ativado"
+
+msgid "Pattern cannot be empty!"
+msgstr "O padrão não pode estar vazio!"
+
+#. Translators: This is an error message to let the user know that the pattern field is not valid.
+msgid "Bookmark entry error"
+msgstr "Erro na entrada do marcador"
+
+msgid "Please specify keystroke gesture."
+msgstr "Especifique o gesto de pressionamento de tecla."
+
+#, python-format
+msgid "&Keystroke: %s"
+msgstr "&Trocateclas: %s"
+
+msgid "Keystroke: None"
+msgstr "Pressionamento de tecla: Nenhum"
+
+msgid "Press desired keystroke now"
+msgstr "Pressione a combinação de tecla desejado agora"
+
+#, python-format
+msgid "Invalid keystroke %s: cannot overload essential  NVDA keystrokes!"
+msgstr ""
+"Tecla inválida %s: não é possível sobrecarregar as teclas essenciais do NVDA!"
+
+#, python-format
+msgid ""
+"Invalid keystroke %s: Cannot use keystrokes with shift modifier for "
+"quickFind bookmarks!"
+msgstr ""
+"Toque de tecla inválido %s: Não é possível usar pressionamentos de tecla com "
+"o modificador shift para os marcadores do quickFind!"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav QuickFind bookmarks settings"
+msgstr "Configurações dos marcadores do IndentNav BuscaRápida"
+
+#. bookmarks table
+msgid "&QuickFind bookmarks"
+msgstr "Marcadores &BuscaRápida"
+
+msgid "Name"
+msgstr "Nome"
+
+msgid "Enabled"
+msgstr "Ativado"
+
+msgid "Gesture"
+msgstr "Gesto"
+
+msgid "Pattern"
+msgstr "Padrão"
+
+#. Buttons
+msgid "&Add"
+msgstr "&Adicionar"
+
+msgid "&Edit"
+msgstr "&Editar"
+
+msgid "&Remove"
+msgstr "&Remover"
+
+msgid "Move &up"
+msgstr "Mover&subir"
+
+msgid "Move &down"
+msgstr "Mover&baixo"
+
+msgid "&Sort"
+msgstr "&Classificar"
+
+msgid "Disabled"
+msgstr "Desativado"
+
 #. Add-on summary, usually the user visible name of the addon.
-#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#. Translators: Summary for this add-on
+#. to be shown on installation and add-on information found in Add-ons Manager.
 msgid "IndentNav"
 msgstr "IndentNav — Navegação por Recuo"
+
+msgid "Toggle IndentNav"
+msgstr "Alternar IndentNav"
+
+msgid "Please turn off num lock in order to toggle IndentNav"
+msgstr "Desative o bloqueio numérico para ativar o IndentNav"
+
+msgid "Enabled IndentNav"
+msgstr "Ativado IndentNavIndentNav — Navegação por Recuo"
+
+msgid "Disabled IndentNav"
+msgstr "IndentNav desativado"
+
+msgid ""
+"IndentNav requires VSCode accessibility extension to be installed in order "
+"to work correctly in VSCode."
+msgstr ""
+"O IndentNav requer a instalação da extensão de acessibilidade do VSCode para "
+"funcionar corretamente no VSCode."
+
+msgid "Please install VSCode extension"
+msgstr "Instale a extensão VSCode"
+
+msgid "&Use VSCode in legacy mode without extension (not recommended)"
+msgstr "&Use o VSCode no modo legado sem extensão (não recomendado)"
+
+msgid "&Cancel"
+msgstr "&Cancelar"
+
+msgid ""
+"Please enable legacy support of VSCode in IndentNav settings.\n"
+"Please note that builtin VSCode accessibility provides access to only 500 "
+"lines of code.\n"
+"As a result, in larger files IndentNav will not work correctly.\n"
+"Please use it at your own risk."
+msgstr ""
+"Ative o suporte herdado do VSCode nas configurações do IndentNav.\n"
+"Observe que a acessibilidade VSCode integrada fornece acesso a apenas 500 "
+"linhas de código.\n"
+"Como resultado, em arquivos maiores, o IndentNav não funcionará "
+"corretamente.\n"
+"Use-o por sua própria conta e risco."
+
+msgid "Information"
+msgstr "Informações"
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+"Passa para a próxima linha com o mesmo nível de recuo que a linha atual "
+"dentro do bloco de recuo atual."
+
+#. Translators: error message if next sibling couldn't be found (in editable control or in browser)
+msgid "No next line within indentation block"
+msgstr "Nenhuma linha seguinte dentro do bloco de recuo"
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"within the current indentation block and skipping over clutter."
+msgstr ""
+"Passa para a próxima linha com o mesmo nível de recuo que a linha atual, "
+"dentro do bloco de recuo atual e ignorando a desordem."
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"potentially in the following indentation block."
+msgstr ""
+"Passa para a próxima linha com o mesmo nível de recuo da linha atual, "
+"potencialmente no bloco de recuo seguinte."
+
+#. Translators: error message if next sibling couldn't be found in editable control (forced command)
+#. Translators: error message if last sibling couldn't be found in editable control (forced command)
+msgid "No next line in the document"
+msgstr "Não há linha seguinte no documento"
+
+msgid ""
+"Moves to the last line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+"Move para a última linha com o mesmo nível de recuo que a linha atual dentro "
+"do bloco de recuo atual."
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line within the current indentation block."
+msgstr ""
+"Move para a linha anterior com o mesmo nível de recuo que a linha atual "
+"dentro do bloco de recuo atual."
+
+#. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
+msgid "No previous line within indentation block"
+msgstr "Nenhuma linha anterior dentro do bloco de recuo"
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line within the current indentation block and skipping over clutter."
+msgstr ""
+"Passa para a linha anterior com o mesmo nível de recuo da linha atual, "
+"dentro do bloco de recuo atual e ignorando a desordem."
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line potentially in the preceding indentation block."
+msgstr ""
+"Move-se para a linha anterior com o mesmo nível de recuo da linha atual, "
+"potencialmente no bloco de recuo anterior."
+
+#. Translators: error message if previous sibling couldn't be found in editable control (forced command)
+#. Translators: error message if first sibling couldn't be found in editable control (forced command)
+msgid "No previous line in the document"
+msgstr "Nenhuma linha anterior no documento"
+
+msgid ""
+"Moves to the first line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+"Move para a primeira linha com o mesmo nível de recuo que a linha atual "
+"dentro do bloco de recuo atual."
+
+msgid "Speak parent line."
+msgstr "Fale a linha dos pais."
+
+#. Translators: error message if parent couldn't be found (in editable control or in browser)
+msgid "No parent of indentation block"
+msgstr "Nenhum pai de bloco de indentação"
+
+msgid "Cannot use IndentNav not in the main editor of VSCode"
+msgstr "Não é possível usar o IndentNav no editor principal do VSCode"
+
+msgid ""
+"Moves to the next line with a greater indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+"Move para a próxima linha com um nível de recuo maior do que a linha atual "
+"dentro do bloco de recuo atual."
+
+#. Translators: error message if a child couldn't be found (in editable control or in browser)
+msgid "No child block within indentation block"
+msgstr "Nenhum bloco filho dentro do bloco de recuo"
+
+msgid ""
+"Moves to the previous line with a lesser indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+"Move para a linha anterior com um nível de recuo menor do que a linha atual "
+"dentro do bloco de recuo atual."
+
+msgid ""
+"Moves to the previous line with a greater indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+"Move para a linha anterior com um nível de recuo maior do que a linha atual "
+"dentro do bloco de recuo atual."
+
+#. Translators: error message if a previous child couldn't be found (in editable control)
+msgid "No previous child block within indentation block"
+msgstr "Nenhum bloco filho anterior dentro do bloco de recuo"
+
+msgid ""
+"Moves to the next line with a lesser indentation level than the current line "
+"within the current indentation block."
+msgstr ""
+"Move para a próxima linha com um nível de recuo menor que o da linha atual "
+"dentro do bloco de recuo atual."
+
+#. Translators: error message if previous parent couldn't be found (in editable control)
+msgid "No next parent of indentation block"
+msgstr "Nenhum pai seguinte do bloco de recuo"
+
+msgid "Select current indentation block. Press twice to copy to clipboard."
+msgstr ""
+"Selecione o bloco de recuo atual. Pressione duas vezes para copiar para a "
+"área de transferência."
+
+msgid "Indent block copied to clipboard. "
+msgstr "Indentação do bloco copiado para a área de transferência. "
+
+msgid ""
+"Select current indentation block, as well as follwoing blocks of the same "
+"level. Press twice to copy to clipboard."
+msgstr ""
+"Selecione o bloco de recuo atual, bem como os blocos seguintes do mesmo "
+"nível. Pressione duas vezes para copiar para a área de transferência."
+
+msgid "Indent blocks copied to clipboard. "
+msgstr "Indentação de blocos copiados para a área de transferência. "
+
+msgid "Nothing to select"
+msgstr "Nada para selecionar"
+
+msgid "No more indentation blocks!"
+msgstr "Não há mais blocos de recuo!"
+
+msgid ""
+"Indent-paste. This will figure out indentation level in the current line and "
+"paste text from clipboard adjusting indentation level correspondingly."
+msgstr ""
+"Colar recuo. Isso descobrirá o nível de recuo na linha atual e colará o "
+"texto da área de transferência, ajustando o nível de recuo de forma "
+"correspondente."
+
+msgid "Some text selected! Cannot indent-paste."
+msgstr "Algum texto selecionado! Não é possível colar com recuo."
+
+msgid "Cannot indent-paste: current line is not empty!"
+msgstr "Não é possível colar com recuo: a linha atual não está vazia!"
+
+msgid "Pasted"
+msgstr "Colado"
+
+msgid "Go back in history."
+msgstr "Volte para o histórico."
+
+msgid ")No previous line in history"
+msgstr ")Nenhuma linha anterior no histórico"
+
+msgid "Go forward in history."
+msgstr "Avance no histórico."
+
+msgid ")No next line in history"
+msgstr ")Nenhuma linha seguinte no histórico"
+
+msgid "IndentNav QuickFind generic script"
+msgstr "Script genérico IndentNav BuscaRápida"
+
+msgid "Bookmark not found"
+msgstr "Marcador não encontrado"
+
+msgid "Speak current line"
+msgstr "Falar a linha atual"
 
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
@@ -31,19 +452,13 @@ msgid ""
 "Indentation Navigation addon.\n"
 "It allows NVDA users to navigate by indentation level or offset of lines or "
 "paragraphs.\n"
-"In browsers it allows to quickly find paragraphs with the same offset from "
-"the left edge of the screen, such as first level comments in a hierarchical "
-"tree of comments.\n"
 "Also while editing source code in many programming languages, it allows to "
 "jump between the lines of the same indentation level, as well as quickly "
 "find lines with greater or lesser indentation level."
 msgstr ""
-"Complemento de Navegação por Recuo (indentação).\n"
-"Permite aos usuários do NVDA navegar por nível de recuo — endentação — ou "
+"Add-on Indentation Navigation.\n"
+"Ele permite que os usuários do NVDA naveguem por nível de recuo ou "
 "deslocamento de linhas ou parágrafos.\n"
-"Em navegadores, permite localizar rapidamente os parágrafos com o mesmo "
-"deslocamento da borda esquerda da tela, como comentários de primeiro nível "
-"em uma árvore hierárquica de comentários.\n"
-"Além disso, ao editar o código fonte em muitas linguagens de programação, "
-"permite saltar entre as linhas do mesmo nível de recuo, bem como encontrar "
-"rapidamente linhas com maior ou menor nível de recuo."
+"Além disso, ao editar o código-fonte em muitas linguagens de programação, "
+"ele permite saltar entre as linhas do mesmo nível de indentação, bem como "
+"localizar rapidamente linhas com nível de indentação maior ou menor."

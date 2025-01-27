@@ -1,8 +1,10 @@
 # IndentNav #
 
-* Autor: Tony Malykh
-* Baixe a [versão estável][1]
-
+Esse complemento permite que os usuários do NVDA naveguem pelo nível de
+recuo das linhas.  Ao editar o código-fonte em muitas linguagens de
+programação, ele permite saltar entre as linhas do mesmo nível de recuo, bem
+como localizar rapidamente linhas com nível de recuo maior ou menor.  Ele
+também fornece pressionamentos de teclas semelhantes em exibições de árvore.
 Esse complemento permite que os usuários do NVDA naveguem por nível de recuo
 (indentação) ou deslocamento de linhas ou parágrafos. Nos navegadores,
 permite localizar rapidamente parágrafos com o mesmo deslocamento da borda
@@ -12,65 +14,94 @@ linguagens de programação, ele permite saltar entre as linhas do mesmo nível
 de recuo (indentação), além de encontrar rapidamente linhas com maior ou
 menor nível de recuo (endentação).
 
-## Uso em navegadores
-O IndentNav pode ser usado para navegar por deslocamento a partir da borda
-esquerda da tela. Em particular, você pode pressionar NVDA+Alt+Seta Para
-Baixo ou Seta Para Cima para pular para o parágrafo seguinte ou anterior que
-possui o mesmo deslocamento. Por exemplo, isso pode ser útil ao navegar por
-árvores hierárquicas de comentários (ex: no reddit.com) para alternar entre
-comentários de primeiro nível e pular todos os comentários de nível
-superior.
+Observe que os comandos de navegação em árvore foram movidos para [TreeNav
+add-on] (https://github.com/mltony/nvda-tree-nav).
 
-Estritamente falando, o IndentNav pode ser usado em qualquer aplicativo,
-para o qual o NVDA forneça um objeto interceptador em árvore.
+## Baixar
+Instale a partir da loja de complementos do NVDA
 
-Teclas:
+## Observação sobre a compatibilidade com o VSCode
 
-* NVDA+Alt+Seta Para Cima ou Seta Para Baixo: Pula para o parágrafo anterior
-  ou seguinte com o mesmo deslocamento.
-* NVDA+alt+Seta Esquerda: Pula para o parágrafo anterior com menor
-  deslocamento.
-* NVDA+Alt+Seta Direita: Pula para o próximo parágrafo com maior
-  deslocamento.
+A acessibilidade integrada do VSCode é muito limitada: a partir de 2024, ela
+expõe apenas 500 linhas de código por meio da API de acessibilidade, o que
+faz com que o IndentNav funcione incorretamente no VSCode.
 
-## Uso em editores de texto
-O IndentNav também pode ser útil para editar código fonte em muitas
-linguagens de programação. Linguagens como o Python exigem que o
-código-fonte seja recuado (indentado) adequadamente, enquanto em muitas
-outras linguagens de programação é altamente recomendável. Com o IndentNav,
-pode pressionar NVDA+Alt+Seta Para Baixo ou Seta Para Cima para pular para a
-linha seguinte ou anterior com o mesmo nível de recuo. Também pode
-pressionar NVDA+Alt+Seta Esquerda para pular para uma linha pai, que é uma
-linha anterior com menor nível de recuo. Em Python, pode encontrar
-facilmente a definição da função atual ou a definição da classe. Também pode
-pressionar NVDA+Alt+Seta Direita para ir para o primeiro filho da linha
-atual, que é a próxima linha com maior nível de recuo.
+Por padrão, o IndentNav não funcionará com o VSCode e, quando você tentar
+usá-lo, precisará selecionar entre duas opções:
 
-Se o seu NVDA estiver definido para expressar o recuo da linha como tons, o
-IndentNav reproduzirá rapidamente os tons de todas as linhas puladas. Caso
-contrário, Ele apenas estalará para indicar aproximadamente o número de
-linhas puladas.
+* Instale a extensão VSCode ([página da
+  extensão](https://marketplace.visualstudio.com/items?itemName=TonyMalykh.nvda-indent-nav-accessibility))([código-fonte](https://github.com/mltony/vscode-nvda-indent-nav-accessibility))
+  - maneira recomendada. Depois de instalar a extensão, o NVDA poderá
+  acessar o documento inteiro, independentemente do tamanho dele.
+* Continue usando o VSCode no modo legado - ative esse modo nas
+  configurações do IndentNav. Isso não é recomendado, pois o NVDA verá
+  apenas 500 linhas do documento e informará erroneamente a falta de
+  irmãos/pais.
 
-Teclas:
+## Problemas de compatibilidade
 
-* NVDA+Alt+Seta Para Cima ou Seta Para Baixo: Pula para a linha anterior ou
-  seguinte com o mesmo nível de recuo (endentação) no bloco de recuo atual.
-* NVDA+Alt+Control+Seta Para Cima ou Seta Para Baixo: Pular à força para a
-  linha anterior ou seguinte com o mesmo nível de recuo. Este comando irá
-  pular para outros blocos de recuo (como outras funções do Python), se
-  necessário.
-* NVDA+alt+Seta Esquerda: Pula para pai - que é a linha anterior com menor
-  nível de recuo.
-* NVDA+Alt+Seta Direita: Pula para o primeiro filho - que é a próxima linha
-  com maior nível de recuo dentro do mesmo bloco de recuo.
+O IndentNav tem problemas de compatibilidade conhecidos com o [complemento
+Character Information]
+(https://addons.nvda-project.org/addons/charInfo.en.html). Atualmente, é
+impossível configurar o IndentNav e o cursor de revisão no teclado numérico
+enquanto esse complemento estiver em execução. Desinstale esse complemento
+ou use um mapa de teclas alternativo no IndentNav.
 
-## Histórico de lançamentos
-* [v1.2](https://github.com/mltony/nvda-indent-nav/raw/master/releases/IndentNav-1.2.nvda-addon)
-  * Adicionado suporte para internacionalização.
-  * Adicionado cabeçalhos GPL nos arquivos de origem.
-  * Pequenas correções.
-* [v1.1](https://github.com/mltony/nvda-indent-nav/raw/master/releases/IndentNav-1.1.nvda-addon)
-  * Versão inicial.
+## Layouts de teclas
+
+O IndentNav oferece 3 mapeamentos de teclas incorporados:
+
+* Layout legado ou de laptop: para pessoas que estavam usando o IndentNav
+  v1.x e não querem aprender novos layouts ou para teclados de laptop que
+  não têm numpads.
+* Layout Alt+numpad.
+* Layout das teclas do Numpad. Há dois modos de lidar com o conflito de
+  pressionamento de tecla do cursor de revisão:
+
+    * Use o teclado numérico para o IndentNav em editáveis e o cursor de
+      revisão em todos os outros lugares. Se você ainda precisar usar o
+      cursor de revisão em editáveis, poderá desativar temporariamente o
+      IndentNav pressionando `alt+numLock`.
+    * Remapear os comandos do cursor de revisão para alt+numpad, evitando
+      assim conflitos de teclas.
+
+O layout do pressionamento de tecla pode ser selecionado nas configurações
+do IndentNav.
+
+## Pressionamento de teclas
+
+| Ação | Legado layout | `Alt+numpad` layout | Numpad layout | Descrição |
+| -- | -- | -- | -- | -- |
+| Alternar IndentNav | `alt+numLock` | `alt+numLock` | `alt+numLock` | Isso é útil quando ambos NVDA e os gestos de revisão do cursor são atribuídos ao numPad. |
+| Ir para o anterior/irmão seguinte | `NVDA+Alt+cima/baixo` | `alt+numPad8/numPad2` | `numPad8/numPad2` | Irmão é definido como uma linha com o mesmo nível de recuo.<br>Esse comando não levará o cursor para além do bloco de código atual. |
+| Ir para o anterior/irmão seguinte pulando a bagunça | N/A | `control+alt+numPad8/numPad2` | `control+numPad8/numPad2` | Você pode configurar a expressão regular de desordem nas configurações. |
+| Ir para o primeiro/último irmão | `NVDA+Alt+shift+cima/baixo` | `alt+numPad4/numPad6` | `numPad4/numPad6` | Irmão é definido como uma linha com o mesmo nível de recuo.<br>Esse comando não levará o cursor para além do bloco de código atual. |
+| Ir para o anterior/último irmão potencialmente fora do bloco atual | `NVDA+control+Alt+cima/baixo` | `control+alt+numPad4/numPad6` | `control+numPad4/numPad6` | Esse comando permite que você pule para um irmão em outro bloco. |
+| Ir para o anterior/próximo pai | `NVDA+Alt+esquerda`,<br>`NVDA+alt+control+esquerda` | `alt+numPad7/numPad1` | `numPad7/numPad1` | O pai é definido como uma linha com nível de recuo inferior. |
+| Pular para o filho anterior/seguinte | `NVDA+Alt+control+direita`,<br>`NVDA+alt+direita` | `alt+numPad9/numPad3` | `numPad9/numPad3` | A criança é definida como uma linha com grande
+
+## Outros recursos
+
+### Marcadores buscaRápida
+
+O IndentNav permite configurar qualquer número de marcadores para os quais
+você pode saltar facilmente. Um marcador é definido por uma expressão
+regular e um pressionamento de tecla personalizado para saltar para uma
+correspondência. Pressione a tecla `shift+` para localizar a ocorrência
+anterior.
+
+### Crackling:
+
+Ao pular muitas linhas de código, o IndentNav tentará reproduzir rapidamente
+os níveis de recuo como tons das linhas puladas. Esse recurso só é ativado
+quando a indicação de recuo como tons está ativada nas configurações do
+NVDA. O volume de crepitação pode ser ajustado ou desativado nas
+configurações do IndentNav.
+
+## Código-fonte
+
+O código-fonte está disponível em
+<http://github.com/mltony/nvda-indent-nav>.
 
 [[!tag dev stable]]
 
