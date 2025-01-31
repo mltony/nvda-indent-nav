@@ -129,6 +129,15 @@ msgstr "&Шаблон"
 msgid "Bookmark enabled"
 msgstr "Закладка включена"
 
+#. Parent combo box
+msgid ""
+"Parent bookmark (optional; searching for this bookmark will never cross "
+"parent boundary):"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
 msgid "Pattern cannot be empty!"
 msgstr "Шаблон не может быть пустым!"
 
@@ -439,6 +448,10 @@ msgid "IndentNav QuickFind generic script"
 msgstr "Универсальный скрипт быстрого поиска"
 
 msgid "Bookmark not found"
+msgstr "Закладка не найдена"
+
+#, fuzzy
+msgid "Bookmark not found within bounds"
 msgstr "Закладка не найдена"
 
 msgid "Speak current line"

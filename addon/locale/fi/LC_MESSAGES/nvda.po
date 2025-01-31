@@ -130,6 +130,15 @@ msgstr "&Hakulauseke"
 msgid "Bookmark enabled"
 msgstr "Kirjanmerkki käytössä"
 
+#. Parent combo box
+msgid ""
+"Parent bookmark (optional; searching for this bookmark will never cross "
+"parent boundary):"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
 msgid "Pattern cannot be empty!"
 msgstr "Hakulauseke ei voi olla tyhjä."
 
@@ -437,6 +446,10 @@ msgid "IndentNav QuickFind generic script"
 msgstr "Sisennysnavigoinnin pikahaun yleisskripti"
 
 msgid "Bookmark not found"
+msgstr "Kirjanmerkkiä ei löydy"
+
+#, fuzzy
+msgid "Bookmark not found within bounds"
 msgstr "Kirjanmerkkiä ei löydy"
 
 msgid "Speak current line"

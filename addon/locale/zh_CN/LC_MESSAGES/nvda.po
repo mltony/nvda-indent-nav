@@ -122,6 +122,15 @@ msgstr "模式(&P)"
 msgid "Bookmark enabled"
 msgstr "启用书签"
 
+#. Parent combo box
+msgid ""
+"Parent bookmark (optional; searching for this bookmark will never cross "
+"parent boundary):"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
 msgid "Pattern cannot be empty!"
 msgstr "模式不能为空！"
 
@@ -392,6 +401,10 @@ msgid "IndentNav QuickFind generic script"
 msgstr "快捷书签默认手势"
 
 msgid "Bookmark not found"
+msgstr "无书签"
+
+#, fuzzy
+msgid "Bookmark not found within bounds"
 msgstr "无书签"
 
 msgid "Speak current line"

@@ -128,6 +128,15 @@ msgstr "&Kalıp"
 msgid "Bookmark enabled"
 msgstr "Yer işareti etkin"
 
+#. Parent combo box
+msgid ""
+"Parent bookmark (optional; searching for this bookmark will never cross "
+"parent boundary):"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
 msgid "Pattern cannot be empty!"
 msgstr "Kalıp boş olamaz!"
 
@@ -432,6 +441,10 @@ msgid "IndentNav QuickFind generic script"
 msgstr "Girinti Dolaşımı Hızlı Bul genel komutları"
 
 msgid "Bookmark not found"
+msgstr "Yer işareti bulunamadı"
+
+#, fuzzy
+msgid "Bookmark not found within bounds"
 msgstr "Yer işareti bulunamadı"
 
 msgid "Speak current line"

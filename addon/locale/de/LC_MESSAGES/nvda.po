@@ -129,6 +129,15 @@ msgstr "&Muster"
 msgid "Bookmark enabled"
 msgstr "Lesezeichen eingeschaltet"
 
+#. Parent combo box
+msgid ""
+"Parent bookmark (optional; searching for this bookmark will never cross "
+"parent boundary):"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
 msgid "Pattern cannot be empty!"
 msgstr "Das Muster darf nicht leer sein!"
 
@@ -447,6 +456,10 @@ msgid "IndentNav QuickFind generic script"
 msgstr "IndentNav-QuickFind-Skript"
 
 msgid "Bookmark not found"
+msgstr "Lesezeichen nicht gefunden"
+
+#, fuzzy
+msgid "Bookmark not found within bounds"
 msgstr "Lesezeichen nicht gefunden"
 
 msgid "Speak current line"

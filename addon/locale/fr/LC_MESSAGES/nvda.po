@@ -132,6 +132,15 @@ msgstr "&Modèle"
 msgid "Bookmark enabled"
 msgstr "Signet activé"
 
+#. Parent combo box
+msgid ""
+"Parent bookmark (optional; searching for this bookmark will never cross "
+"parent boundary):"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
 msgid "Pattern cannot be empty!"
 msgstr "Le modèle ne peut pas être vide !"
 
@@ -442,6 +451,10 @@ msgid "IndentNav QuickFind generic script"
 msgstr "Script générique de Recherche rapide IndentNav"
 
 msgid "Bookmark not found"
+msgstr "Signet introuvable"
+
+#, fuzzy
+msgid "Bookmark not found within bounds"
 msgstr "Signet introuvable"
 
 msgid "Speak current line"

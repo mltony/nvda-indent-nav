@@ -131,6 +131,15 @@ msgstr "&Образец"
 msgid "Bookmark enabled"
 msgstr "Отметката е включена"
 
+#. Parent combo box
+msgid ""
+"Parent bookmark (optional; searching for this bookmark will never cross "
+"parent boundary):"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
 msgid "Pattern cannot be empty!"
 msgstr "Шаблонът не може да бъде празен!"
 
@@ -440,6 +449,10 @@ msgid "IndentNav QuickFind generic script"
 msgstr "Общ скрипт за бързо намиране при навигиране по отстъпи"
 
 msgid "Bookmark not found"
+msgstr "Отметката не е намерена"
+
+#, fuzzy
+msgid "Bookmark not found within bounds"
 msgstr "Отметката не е намерена"
 
 msgid "Speak current line"

@@ -130,6 +130,15 @@ msgstr "&Patrón"
 msgid "Bookmark enabled"
 msgstr "Marcador activado"
 
+#. Parent combo box
+msgid ""
+"Parent bookmark (optional; searching for this bookmark will never cross "
+"parent boundary):"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
 msgid "Pattern cannot be empty!"
 msgstr "¡El patrón no puede estar vacío!"
 
@@ -437,6 +446,10 @@ msgid "IndentNav QuickFind generic script"
 msgstr "Script genérico de búsqueda rápida de IndentNav"
 
 msgid "Bookmark not found"
+msgstr "Marcador no encontrado"
+
+#, fuzzy
+msgid "Bookmark not found within bounds"
 msgstr "Marcador no encontrado"
 
 msgid "Speak current line"
