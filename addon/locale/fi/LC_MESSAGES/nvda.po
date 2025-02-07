@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: IndentNav\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2018-11-23 09:05+1000\n"
-"PO-Revision-Date: 2024-08-06 20:51+0300\n"
+"PO-Revision-Date: 2025-02-04 03:01+0200\n"
 "Last-Translator: Jani Kinnunen <janikinnunen340@gmail.com>\n"
 "Language-Team: Jani Kinnunen <jani.kinnunen@wippies.fi>\n"
 "Language: fi\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 "X-Poedit-Bookmarks: -1,14,-1,-1,-1,-1,-1,-1,-1,-1\n"
 
 msgid "Laptop or legacy key map: NVDA+alt+arrows"
@@ -68,7 +68,7 @@ msgstr ""
 
 #. EditBox clutter regexp
 msgid "Clutter regular expression"
-msgstr "Sotkun sääntölauseke"
+msgstr "Sotkun säännöllinen lauseke"
 
 #. Checkboxes legacy VSCode
 msgid "Use legacy mode in VSCode (not recommended)"
@@ -91,7 +91,7 @@ msgid ""
 "need to restart VSCode.\n"
 "Are you sure you want to proceed?"
 msgstr ""
-"Saavutettavuuslaajennus asennetaan järjestelmäsi oletusarvoiseen VSCode-"
+"Esteettömyyslaajennus asennetaan järjestelmäsi oletusarvoiseen VSCode-"
 "esiintymään - siihen, joka löytyy %PATH%-ympäristömuuttujasta.\n"
 "Mikäli sinulla on useita esiintymiä tai mukautettu versio VSCodesta\n"
 ", kuten VSCode Insiders, sinun täytyy asentaa saavutettavuuslaajennus "
@@ -106,10 +106,10 @@ msgstr "Vahvistus"
 
 #, python-format
 msgid "Failed to compile regular expression: %s"
-msgstr "Sääntölausekkeen kääntäminen epäonnistui: %s"
+msgstr "Säännöllisen lausekkeen kääntäminen epäonnistui: %s"
 
 msgid "Regular expression error"
-msgstr "Virhe sääntölausekkeessa"
+msgstr "Virhe säännnöllisessä lausekkeessa"
 
 msgid "Edit IndentNav QuickFind bookmark"
 msgstr "Muokkaa Sisennysnavigoinnin pikahaun kirjanmerkkiä"
@@ -135,9 +135,11 @@ msgid ""
 "Parent bookmark (optional; searching for this bookmark will never cross "
 "parent boundary):"
 msgstr ""
+"Ylätason kirjanmerkki (valinnainen; tämän kirjanmerkin etsiminen ei koskaan "
+"ylitä ylätason rajaa):"
 
 msgid "None"
-msgstr ""
+msgstr "Ei mitään"
 
 msgid "Pattern cannot be empty!"
 msgstr "Hakulauseke ei voi olla tyhjä."
@@ -162,16 +164,16 @@ msgstr "Paina nyt haluttua näppäinyhdistelmää"
 #, python-format
 msgid "Invalid keystroke %s: cannot overload essential  NVDA keystrokes!"
 msgstr ""
-"Virheellinen näppäinyhdistelmä %s: NVDA:n olennaisia "
-"oletusnäppäinyhdistelmiä ei voi ylikuormittaa."
+"Virheellinen näppäinyhdistelmä %s: NVDA:n olennaisia näppäinkomentoja ei voi "
+"korvata."
 
 #, python-format
 msgid ""
 "Invalid keystroke %s: Cannot use keystrokes with shift modifier for "
 "quickFind bookmarks!"
 msgstr ""
-"Virheellinen näppäinyhdistelmä %s: Pikahaun kirjanmerkeissä ei voi käyttää "
-"Vaihto-muokkausnäppäimellisiä näppäinyhdistelmiä."
+"Virheellinen näppäinyhdistelmä %s: pikahaun kirjanmerkkien "
+"näppäinkomennoissa ei voi käyttää Vaihto-muokkausnäppäintä."
 
 #. Translators: Title for the settings dialog
 msgid "IndentNav QuickFind bookmarks settings"
@@ -340,7 +342,7 @@ msgstr ""
 "sisennystaso kuin nykyisellä rivillä."
 
 msgid "Speak parent line."
-msgstr "Puhu ylempi rivi."
+msgstr "Puhu ylätason rivi."
 
 #. Translators: error message if parent couldn't be found (in editable control or in browser)
 msgid "No parent of indentation block"
@@ -412,20 +414,20 @@ msgid "Nothing to select"
 msgstr "Ei valittavaa"
 
 msgid "No more indentation blocks!"
-msgstr "Ei enempää sisennyslohkoja."
+msgstr "Ei enempää sisennyslohkoja!"
 
 msgid ""
 "Indent-paste. This will figure out indentation level in the current line and "
 "paste text from clipboard adjusting indentation level correspondingly."
 msgstr ""
-"Sisennysliittäminen. Tämä määrittää nykyisen rivin sisennystason ja liittää "
+"Liitä sisennys. Tämä määrittää nykyisen rivin sisennystason ja liittää "
 "kopioidun tekstin leikepöydältä säätäen vastaavasti sisennystason."
 
 msgid "Some text selected! Cannot indent-paste."
-msgstr "Tekstiä valittuna. Ei voi sisennysliittää."
+msgstr "Tekstiä valittuna. Sisennystä ei voi liittää."
 
 msgid "Cannot indent-paste: current line is not empty!"
-msgstr "Ei voi sisennysliittää: nykyinen rivi ei ole tyhjä."
+msgstr "Sisennystä ei voi liittää: nykyinen rivi ei ole tyhjä."
 
 msgid "Pasted"
 msgstr "Liitetty"
@@ -448,9 +450,8 @@ msgstr "Sisennysnavigoinnin pikahaun yleisskripti"
 msgid "Bookmark not found"
 msgstr "Kirjanmerkkiä ei löydy"
 
-#, fuzzy
 msgid "Bookmark not found within bounds"
-msgstr "Kirjanmerkkiä ei löydy"
+msgstr "Kirjanmerkkiä ei löydy määritetyltä alueelta"
 
 msgid "Speak current line"
 msgstr "Puhu nykyinen rivi"

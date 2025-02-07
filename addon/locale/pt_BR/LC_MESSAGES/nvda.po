@@ -1,16 +1,16 @@
 # Brazilian Portuguese translation of IndentNav add-on.
-# Copyright (C) 2021 NVDA Contributors.
+# Copyright (C) 2021-2025 NVDA Contributors.
 # This file is distributed under the same license as the NVDA package.
 # Ângelo Abrantes <ampa4374@gmail.com>, 2018.
 # Tiago Melo Casal <tcasal@intervox.nce.ufrj.br>, 2021.
-# Josevan Barbosa Fernandes <josevanfernandes@yahoo.com.br>, 2024.
+# Josevan Barbosa Fernandes <josevanfernandes@yahoo.com.br>, 2024-2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: IndentNav\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2018-11-23 09:05+1000\n"
-"PO-Revision-Date: 2024-12-26 20:36-0300\n"
+"PO-Revision-Date: 2025-01-31 19:19-0300\n"
 "Last-Translator: Josevan Fernandes <josevanfernandes@yahoo.com.br>\n"
 "Language-Team: NVDA Brazilian Portuguese translation team (Equipe de "
 "tradução do NVDA para Português Brasileiro) <clever97@gmail.com>\n"
@@ -139,9 +139,11 @@ msgid ""
 "Parent bookmark (optional; searching for this bookmark will never cross "
 "parent boundary):"
 msgstr ""
+"Marcador pai (opcional; a busca por esse marcador nunca ultrapassará o "
+"limite pai):"
 
 msgid "None"
-msgstr ""
+msgstr "Nenhum"
 
 msgid "Pattern cannot be empty!"
 msgstr "O padrão não pode estar vazio!"
@@ -452,9 +454,8 @@ msgstr "Script genérico IndentNav BuscaRápida"
 msgid "Bookmark not found"
 msgstr "Marcador não encontrado"
 
-#, fuzzy
 msgid "Bookmark not found within bounds"
-msgstr "Marcador não encontrado"
+msgstr "Marcador não encontrado dentro dos limites"
 
 msgid "Speak current line"
 msgstr "Falar a linha atual"
