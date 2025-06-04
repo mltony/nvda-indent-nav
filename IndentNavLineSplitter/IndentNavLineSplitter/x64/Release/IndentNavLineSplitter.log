@@ -1,4 +1,0 @@
-﻿     Creating library H:\mltony\nvda-indent-nav\IndentNavLineSplitter\x64\Release\IndentNavLineSplitter.lib and object H:\mltony\nvda-indent-nav\IndentNavLineSplitter\x64\Release\IndentNavLineSplitter.exp
-dllmain.obj : error LNK2001: unresolved external symbol __imp_PyUnicode_FromString
-dllmain.obj : error LNK2001: unresolved external symbol __imp_PyModule_Create2
-H:\mltony\nvda-indent-nav\IndentNavLineSplitter\x64\Release\IndentNavLineSplitter.dll : fatal error LNK1120: 2 unresolved externals
