@@ -1,0 +1,57 @@
+# Ignore build artifacts
+/build/
+/Debug/
+/Release/
+/x64/
+/x86/
+/ipch/
+/*.obj
+/*.lib
+/*.exp
+/*.dll
+/*.pdb
+/*.idb
+/*.ilk
+/*.log
+
+# Ignore Python extension outputs
+*.pyd
+*.cppbuild
+*.pyc
+__pycache__/
+
+# Ignore VS-generated files
+*.suo
+*.user
+*.VC.db
+*.VC.opendb
+*.ncb
+*.aps
+*.opensdf
+*.sdf
+
+# Ignore CMake and Ninja (if used)
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+build.ninja
+rules.ninja
+
+# Ignore temporary files
+*.tmp
+*.log
+*.tlog
+
+# Ignore backup files
+*~
+*.bak
+*.old
+
+# Ignore Python virtual environments
+.venv/
+env/
+venv/
+
+# Ignore GitHub's default VisualStudio template (optional)
+.vs/

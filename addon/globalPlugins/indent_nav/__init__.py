@@ -1062,12 +1062,21 @@ class VSCodeNotMainEditorException(Exception):
     pass
 
 
+INDENTATION_CHARACTERS = {
+    ' ': 1,
+    u"\xa0": 1, # non-breaking space
+    '\t': 4,
+}
+NEWLINE_CHARACTERS = frozenset(("\n", "\r"))
+
+
 class FastLineManagerV2:
     def __init__(self, obj, selectionMode=False):
         self.obj = obj
         self.selectionMode = selectionMode
 
     def __enter__(self):
+        t_1 = time.time()
         legacyVSCode = getConfig("legacyVSCode")
         document = self.obj.makeEnhancedTextInfo(textInfos.POSITION_ALL, allowPlainTextInfoInVSCode=legacyVSCode)
         if not self.selectionMode:
@@ -1081,12 +1090,22 @@ class FastLineManagerV2:
         pretext = self.originalCaret.copy()
         pretext.collapse()
         pretext.setEndPoint(document, "startToStart")
-        self.lineIndex = len(self.splitlines(pretext.text)[0]) - 1
+        t0 = time.time()
+        self.lineIndex = len(self.splitlines(pretext.text)) - 1
+        #self.lineIndex = len(splitLinesNew(pretext.text)) - 1
         self.originalLineIndex = self.lineIndex
-        self.lines, self.offsets = self.splitlines(document.text)
-        self.nLines = len(self.lines)
+        self.documentText = document.text
+        self.offsets = self.splitlines(self.documentText)
+        #self.lines = []
+        #self.offsets = splitLinesNew(document.text)
+        t1 = time.time();dt = int(1000*(t1-t0))
+        log.warn(f"splitlines {dt} ms")
+        self.nLines = len(self.offsets)
         self.originalCaret.expand(textInfos.UNIT_LINE)
         self.document = document
+        t2 = time.time(); dt = int(1000*(t2-t_1))
+        log.warn(f"__enter__ {dt} ms")
+
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -1102,7 +1121,31 @@ class FastLineManagerV2:
     def getText(self, line=None):
         if line is None:
             line = self.lineIndex
-        return self.lines[line]
+        startOffset = self.offsets[line]
+        try:
+            endOffset = self.offsets[line + 1]
+        except IndexError:
+            endOffset = len(self.documentText)
+        return self.documentText[startOffset:endOffset]
+    
+    def getLineIndentationLevel(self, lineIndex=None, indentationCharacters=INDENTATION_CHARACTERS):
+        if lineIndex is None:
+            lineIndex = self.lineIndex
+        startOffset = self.offsets[lineIndex]
+        try:
+            endOffset = self.offsets[lineIndex + 1]
+        except IndexError:
+            endOffset = len(self.documentText)
+        level = 0
+        for i in range(startOffset, endOffset):
+            c=self.documentText[i]
+            try:
+                level += indentationCharacters[c]
+            except KeyError:
+                return (0, True) if c in NEWLINE_CHARACTERS else (level, False)
+        # If we didn't see non-blank characters in the string, the indentation level is 0
+        return (0, True)
+
 
     def getLine(self):
         return self.lineIndex
@@ -1133,7 +1176,7 @@ class FastLineManagerV2:
                 textInfo = outerTextInfo._start
         if isinstance(textInfo, OffsetsTextInfo):
             encoding = textInfo.encoding
-            converter = textUtils.getOffsetConverter(encoding)(self.document.text)
+            converter = textUtils.getOffsetConverter(encoding)(self.documentText)
             nativeOffset = converter.strToEncodedOffsets(self.offsets[line])
             textInfo._startOffset = textInfo._endOffset = nativeOffset
             textInfo.expand(textInfos.UNIT_LINE)
@@ -1153,17 +1196,47 @@ class FastLineManagerV2:
             outerTextInfo._start = outerTextInfo._end = textInfo
             return outerTextInfo
         return textInfo
+        
+    def splitlines(self, s):
+        try:
+            return self.splitlinesNative(s)
+        except (ImportError, ModuleNotFoundError, SystemError):
+            return self.splitlinesPython(s)
 
     NEWLINE_REGEX = re.compile(r"\r?\n|\r", )
-    def splitlines(self, s):
-        lines = []
+    def splitlinesPython(self, s):
+        #lines = []
         offsets = [0]
         for m in  self.NEWLINE_REGEX.finditer(s):
-            lines.append(s[offsets[-1]:m.start(0)])
+            #lines.append(s[offsets[-1]:m.start(0)])
             offsets.append(m.end(0))
-        lines.append(s[offsets[-1]:])
-        return lines, offsets
+        #lines.append(s[offsets[-1]:])
+        #return lines, offsets
+        return offsets
+        
+    def splitlinesNative(self, s):
+        from . import IndentNavLineSplitter
+        return IndentNavLineSplitter.find_line_offsets(s)
 
+    
+def splitLinesSlow(s):
+    result = [0]
+    n = len(s)
+    i = 0
+    while i < n:
+        if s[i] == '\r':
+            try:
+                if s[i+1] == '\n':
+                    i += 1
+            except KeyError:
+                pass
+            result.append(i+1)
+        elif s[i] == '\n':
+            result.append(i+1)
+        i += 1
+    return result
+    
+    
 def installVSCodeExtension():
     cmd = f'cmd /k code --install-extension TonyMalykh.nvda-indent-nav-accessibility'
     def doInstall():
@@ -1837,16 +1910,20 @@ class EditableIndentNav(NVDAObject):
         @param moveCount: perform move operation this many times.
         """
         focus = api.getFocusObject()
+        t0 = time.time()
         self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount, excludeFilterRegex=excludeFilterRegex)
+        t1 = time.time(); dt = int(1000*(t1-t0))
+        log.warn(f"moveInEditable {dt} ms")
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1, excludeFilterRegex=None):
         try:
             with self.getLineManager() as lm:
                 self.addHistory(lm.lineIndex)
                 # Get the current indentation level
-                text = lm.getText()
-                indentationLevel = self.getIndentLevel(text)
-                onEmptyLine = isBlank(text)
+                #text = lm.getText()
+                #indentationLevel = self.getIndentLevel(text)
+                indentationLevel, onEmptyLine = lm.getLineIndentationLevel()
+                #onEmptyLine = isBlank(text)
 
                 # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with the same indentation level
                 found = False
@@ -1855,11 +1932,12 @@ class EditableIndentNav(NVDAObject):
                     result = lm.move(increment)
                     if result == 0:
                         break
-                    text = lm.getText()
-                    newIndentation = self.getIndentLevel(text)
+                    #text = lm.getText()
+                    #newIndentation = self.getIndentLevel(text)
+                    newIndentation, newIsBlank = lm.getLineIndentationLevel()
 
                     # Skip over empty lines if we didn't start on one.
-                    if not onEmptyLine and isBlank(text):
+                    if not onEmptyLine and newIsBlank:
                         continue
 
                     if op(newIndentation, indentationLevel):
@@ -1957,10 +2035,11 @@ class EditableIndentNav(NVDAObject):
                     if not selectMultiple and count >= 1:
                         core.callLater(100, self.endOfDocument, _("No more indentation blocks!"))
                     break
-                text = lm.getText()
-                newIndentation = self.getIndentLevel(text)
+                #text = lm.getText()
+                #newIndentation = self.getIndentLevel(text)
+                newIndentation, newIsBlank = lm.getLineIndentationLevel()
 
-                if  isBlank(text):
+                if  newIsBlank:
                     continue
 
                 if newIndentation < indentationLevel:
@@ -2066,10 +2145,11 @@ class EditableIndentNav(NVDAObject):
                 lineNumber = lines[index]
                 curLine = currentLineIndex
                 direction = 1 if lineNumber >= curLine else -1
-                lines = [lm.getText(i) for i in range(curLine, lineNumber, direction)]
-                if len(lines) >= 2:
-                    indentLevels = self.getIndentLevels(lines[1:])
-                    self.crackle(indentLevels)
+                #lines = [lm.getText(i) for i in range(curLine, lineNumber, direction)]
+                indentLevels = [lm.getLineIndentationLevel(i)[0] for i in range(curLine, lineNumber, direction)]
+                if len(indentLevels) >= 2:
+                    #indentLevels = self.getIndentLevels(lines[1:])
+                    self.crackle(indentLevels[1:])
                 textInfo = lm.updateCaret(lineNumber)
                 speech.speakTextInfo(textInfo, unit=textInfos.UNIT_LINE)
 
@@ -2114,7 +2194,7 @@ class EditableIndentNav(NVDAObject):
             pass
         try:
             productName = self.appModule.productName or ""
-            return productName.startswith("Visual Studio Code") or productName.startswith("Cursor")
+            return productName.startswith("Visual Studio Code")
         except (AttributeError, NameError):
             return False
 
@@ -2238,8 +2318,12 @@ class EditableIndentNav(NVDAObject):
     def script_speakCurrentLine(self, gesture):
         return globalCommands.commands.script_review_currentLine(gesture)
         
-    #@script(description=_("Debug"), gestures=['kb:control+shift+nvda'])
+    @script(description=_("Debug"), gestures=['kb:control+shift+z'])
     def script_debug(self, gesture):
+        from . import IndentNavLineSplitter
+        ui.message(str(IndentNavLineSplitter.find_line_offsets("a\nb\r\nc\rd")))
+        tones.beep(500, 50)
+        return
         with self.getLineManager() as lm:
             api.lm = lm
             tones.beep(500, 50)
