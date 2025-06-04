@@ -2225,6 +2225,10 @@ class EditableIndentNav(NVDAObject):
         if len(parents) > 0:
             parentPattern = "|".join(parent.pattern for parent in parents)
             parentMatches = list(re.finditer(parentPattern, text, re.MULTILINE))
+            if len(parentMatches) > 0 and direction > 0 and parentMatches[0].start() == 0:
+                # When going forward and the cursor is at class definition,
+                # don't make it blocking to find child bookmarks within the class.
+                parentMatches = parentMatches[1:]
             if len(parentMatches) > 0:
                 parentMatch = parentMatches[0 if direction > 0 else -1]
                 parentStartIndex = parentMatch.start()
