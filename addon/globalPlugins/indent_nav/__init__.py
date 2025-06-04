@@ -1076,7 +1076,6 @@ class FastLineManagerV2:
         self.selectionMode = selectionMode
 
     def __enter__(self):
-        t_1 = time.time()
         legacyVSCode = getConfig("legacyVSCode")
         document = self.obj.makeEnhancedTextInfo(textInfos.POSITION_ALL, allowPlainTextInfoInVSCode=legacyVSCode)
         if not self.selectionMode:
@@ -1090,22 +1089,14 @@ class FastLineManagerV2:
         pretext = self.originalCaret.copy()
         pretext.collapse()
         pretext.setEndPoint(document, "startToStart")
-        t0 = time.time()
         self.lineIndex = len(self.splitlines(pretext.text)) - 1
         #self.lineIndex = len(splitLinesNew(pretext.text)) - 1
         self.originalLineIndex = self.lineIndex
         self.documentText = document.text
         self.offsets = self.splitlines(self.documentText)
-        #self.lines = []
-        #self.offsets = splitLinesNew(document.text)
-        t1 = time.time();dt = int(1000*(t1-t0))
-        log.warn(f"splitlines {dt} ms")
         self.nLines = len(self.offsets)
         self.originalCaret.expand(textInfos.UNIT_LINE)
         self.document = document
-        t2 = time.time(); dt = int(1000*(t2-t_1))
-        log.warn(f"__enter__ {dt} ms")
-
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
@@ -1145,7 +1136,6 @@ class FastLineManagerV2:
                 return (0, True) if c in NEWLINE_CHARACTERS else (level, False)
         # If we didn't see non-blank characters in the string, the indentation level is 0
         return (0, True)
-
 
     def getLine(self):
         return self.lineIndex
@@ -1205,38 +1195,16 @@ class FastLineManagerV2:
 
     NEWLINE_REGEX = re.compile(r"\r?\n|\r", )
     def splitlinesPython(self, s):
-        #lines = []
         offsets = [0]
         for m in  self.NEWLINE_REGEX.finditer(s):
-            #lines.append(s[offsets[-1]:m.start(0)])
             offsets.append(m.end(0))
-        #lines.append(s[offsets[-1]:])
-        #return lines, offsets
         return offsets
-        
+
     def splitlinesNative(self, s):
         from . import IndentNavLineSplitter
         return IndentNavLineSplitter.find_line_offsets(s)
 
-    
-def splitLinesSlow(s):
-    result = [0]
-    n = len(s)
-    i = 0
-    while i < n:
-        if s[i] == '\r':
-            try:
-                if s[i+1] == '\n':
-                    i += 1
-            except KeyError:
-                pass
-            result.append(i+1)
-        elif s[i] == '\n':
-            result.append(i+1)
-        i += 1
-    return result
-    
-    
+
 def installVSCodeExtension():
     cmd = f'cmd /k code --install-extension TonyMalykh.nvda-indent-nav-accessibility'
     def doInstall():
@@ -1920,11 +1888,7 @@ class EditableIndentNav(NVDAObject):
             with self.getLineManager() as lm:
                 self.addHistory(lm.lineIndex)
                 # Get the current indentation level
-                #text = lm.getText()
-                #indentationLevel = self.getIndentLevel(text)
                 indentationLevel, onEmptyLine = lm.getLineIndentationLevel()
-                #onEmptyLine = isBlank(text)
-
                 # Scan each line until we hit the end of the indentation block, the end of the edit area, or find a line with the same indentation level
                 found = False
                 indentLevels = []
@@ -1932,16 +1896,13 @@ class EditableIndentNav(NVDAObject):
                     result = lm.move(increment)
                     if result == 0:
                         break
-                    #text = lm.getText()
-                    #newIndentation = self.getIndentLevel(text)
                     newIndentation, newIsBlank = lm.getLineIndentationLevel()
-
                     # Skip over empty lines if we didn't start on one.
                     if not onEmptyLine and newIsBlank:
                         continue
 
                     if op(newIndentation, indentationLevel):
-                        if excludeFilterRegex is  None or not excludeFilterRegex.match(text):
+                        if excludeFilterRegex is  None or not excludeFilterRegex.match(lm.getText()):
                             # Found it
                             found = True
                             indentationLevel = newIndentation
@@ -2035,8 +1996,6 @@ class EditableIndentNav(NVDAObject):
                     if not selectMultiple and count >= 1:
                         core.callLater(100, self.endOfDocument, _("No more indentation blocks!"))
                     break
-                #text = lm.getText()
-                #newIndentation = self.getIndentLevel(text)
                 newIndentation, newIsBlank = lm.getLineIndentationLevel()
 
                 if  newIsBlank:
@@ -2318,7 +2277,7 @@ class EditableIndentNav(NVDAObject):
     def script_speakCurrentLine(self, gesture):
         return globalCommands.commands.script_review_currentLine(gesture)
         
-    @script(description=_("Debug"), gestures=['kb:control+shift+z'])
+    #@script(description=_("Debug"), gestures=['kb:control+shift+z'])
     def script_debug(self, gesture):
         from . import IndentNavLineSplitter
         ui.message(str(IndentNavLineSplitter.find_line_offsets("a\nb\r\nc\rd")))
