@@ -413,6 +413,7 @@ def initConfiguration():
         "clutterRegex" : f"string( default='{clutterRegex}')",
         "quickFind" : f"string( default='{defaultQuickFind}')",
         "enabled" : "boolean( default=True)",
+        "cursorSkipsSpacesAndTabs" : "boolean( default=True)",
     }
     config.conf.spec["indentnav"] = confspec
 
@@ -538,6 +539,10 @@ class SettingsDialog(SettingsPanel):
         label = _("Enable IndentNav")
         self.enabledCheckbox = sHelper.addItem(wx.CheckBox(self, label=label))
         self.enabledCheckbox.Value = getConfig("enabled")
+      # Checkbox cursorSkipsSpacesAndTabs
+        label = _("Put cursor on the first non-blank character in the string instead of the first character")
+        self.cursorSkipsSpacesAndTabsCheckbox = sHelper.addItem(wx.CheckBox(self, label=label))
+        self.cursorSkipsSpacesAndTabsCheckbox.Value = getConfig("cursorSkipsSpacesAndTabs")
       # crackleVolumeSlider
         sizer=wx.BoxSizer(wx.HORIZONTAL)
         # Translators: volume of crackling slider
@@ -620,6 +625,7 @@ class SettingsDialog(SettingsPanel):
         setConfig("clutterRegex", clutterRegex)
         config.conf["indentnav"]["indentNavKeyMap"] = self.keyMapComboBox.GetSelection()
         config.conf["indentnav"]["enabled"] = self.enabledCheckbox.Value
+        config.conf["indentnav"]["cursorSkipsSpacesAndTabs"] = self.cursorSkipsSpacesAndTabsCheckbox.Value
         config.conf["indentnav"]["crackleVolume"] = self.crackleVolumeSlider.Value
         config.conf["indentnav"]["noNextTextChimeVolume"] = self.noNextTextChimeVolumeSlider.Value
         config.conf["indentnav"]["noNextTextMessage"] = self.noNextTextMessageCheckbox.Value
@@ -1067,6 +1073,7 @@ INDENTATION_CHARACTERS = {
     u"\xa0": 1, # non-breaking space
     '\t': 4,
 }
+INDENTATION_CHARACTERS_STR = "".join(INDENTATION_CHARACTERS.keys())
 NEWLINE_CHARACTERS = frozenset(("\n", "\r"))
 
 
@@ -1144,6 +1151,13 @@ class FastLineManagerV2:
         line = self.getTextInfo(line)
         caret = line.copy()
         caret.collapse()
+        if getConfig("cursorSkipsSpacesAndTabs"):
+            lineInfo = line
+            text = lineInfo.text
+            strippedText = text.lstrip(INDENTATION_CHARACTERS_STR)
+            offset = len(text) - len(strippedText)
+            if offset > 0:
+                caret = lineInfo.moveToCodepointOffset(offset)
         caret.updateCaret()
         return line
 
@@ -1155,6 +1169,9 @@ class FastLineManagerV2:
         return textInfos.UNIT_PARAGRAPH
 
     def getTextInfo(self, line=None):
+        lineInfo = self.getTextInfoImpl(line)
+        return lineInfo
+    def getTextInfoImpl(self, line=None):
         if line is None:
             line = self.lineIndex
         textInfo = self.document.copy()
@@ -1878,10 +1895,7 @@ class EditableIndentNav(NVDAObject):
         @param moveCount: perform move operation this many times.
         """
         focus = api.getFocusObject()
-        t0 = time.time()
         self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount, excludeFilterRegex=excludeFilterRegex)
-        t1 = time.time(); dt = int(1000*(t1-t0))
-        log.warn(f"moveInEditable {dt} ms")
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1, excludeFilterRegex=None):
         try:
