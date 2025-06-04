@@ -27,7 +27,7 @@ addon_info = {
 It allows NVDA users to navigate by indentation level or offset of lines or paragraphs.
 Also while editing source code in many programming languages, it allows to jump between the lines of the same indentation level, as well as quickly find lines with greater or lesser indentation level."""),
 	# version
-	"addon_version": "2.2.5",
+	"addon_version": "2.2.6",
 	# Author(s)
 	"addon_author": "Tony Malykh <anton.malykh@gmail.com>",
 	# URL for the add-on documentation support
@@ -39,7 +39,7 @@ Also while editing source code in many programming languages, it allows to jump 
 	# Minimum NVDA version supported (e.g. "2018.3.0", minor version is optional)
 	"addon_minimumNVDAVersion": "2019.2.0",
 	# Last NVDA version supported/tested (e.g. "2018.4.0", ideally more recent than minimum version)
-	"addon_lastTestedNVDAVersion": "2024.1.0",
+	"addon_lastTestedNVDAVersion": "2025.1",
 	# Add-on update channel (default is None, denoting stable releases,
 	# and for development releases, use "dev".)
 	# Do not change unless you know what you are doing!
