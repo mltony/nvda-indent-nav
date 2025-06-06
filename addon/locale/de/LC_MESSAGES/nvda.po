@@ -48,6 +48,12 @@ msgstr "Tastaturkurzbefehle"
 msgid "Enable IndentNav"
 msgstr "IndentNav einschalten"
 
+#. Checkbox cursorSkipsSpacesAndTabs
+msgid ""
+"Put cursor on the first non-blank character in the string instead of the "
+"first character"
+msgstr ""
+
 #. Translators: volume of crackling slider
 msgid "Crackling volume"
 msgstr "Lautstärke der Knack-Geräusche"

@@ -49,6 +49,12 @@ msgstr "Сочетания клавиш"
 msgid "Enable IndentNav"
 msgstr "Включить навигацию по отступам"
 
+#. Checkbox cursorSkipsSpacesAndTabs
+msgid ""
+"Put cursor on the first non-blank character in the string instead of the "
+"first character"
+msgstr ""
+
 #. Translators: volume of crackling slider
 msgid "Crackling volume"
 msgstr "Громкость сигнала"

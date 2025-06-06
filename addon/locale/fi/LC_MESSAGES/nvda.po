@@ -50,6 +50,12 @@ msgstr "Pikanäppäimet"
 msgid "Enable IndentNav"
 msgstr "Ota Sisennysnavigointi käyttöön"
 
+#. Checkbox cursorSkipsSpacesAndTabs
+msgid ""
+"Put cursor on the first non-blank character in the string instead of the "
+"first character"
+msgstr ""
+
 #. Translators: volume of crackling slider
 msgid "Crackling volume"
 msgstr "Merkkiäänen voimakkuus"

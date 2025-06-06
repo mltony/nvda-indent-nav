@@ -49,6 +49,12 @@ msgstr "Klavye kısayolları"
 msgid "Enable IndentNav"
 msgstr "Girinti Dolaşımı'nı Etkinleştir"
 
+#. Checkbox cursorSkipsSpacesAndTabs
+msgid ""
+"Put cursor on the first non-blank character in the string instead of the "
+"first character"
+msgstr ""
+
 #. Translators: volume of crackling slider
 msgid "Crackling volume"
 msgstr "Çatırdayan ses seviyesi"
