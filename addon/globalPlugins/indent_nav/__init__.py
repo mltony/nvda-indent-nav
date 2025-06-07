@@ -64,6 +64,7 @@ import wx
 import dataclasses
 from . import textUtils
 import bisect
+import weakref
 
 try:
     ROLE_EDITABLETEXT = controlTypes.ROLE_EDITABLETEXT
@@ -1097,8 +1098,10 @@ class FastLineManagerV2:
     def __init__(self, obj, selectionMode=False):
         self.obj = obj
         self.selectionMode = selectionMode
+        self.cacheClause = VSCoderPiperCacheClause()
 
     def __enter__(self):
+        self.cacheClause.__enter__()
         legacyVSCode = getConfig("legacyVSCode")
         document = self.obj.makeEnhancedTextInfo(textInfos.POSITION_ALL, allowPlainTextInfoInVSCode=legacyVSCode)
         if not self.selectionMode:
@@ -1122,7 +1125,7 @@ class FastLineManagerV2:
         return self
 
     def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
+        self.cacheClause.__exit__(exc_type, exc_val, exc_tb)
 
     def move(self, increment):
         newIndex = self.lineIndex + increment
@@ -1324,10 +1327,13 @@ class VSCodePiper(threading.Thread):
         return self.get()
 
     def call(self, command, **kwargs):
+        t0 = time.time()
         result = self.callImpl({
             **{"command": command},
             **kwargs,
         })
+        t1 = time.time(); dt = int(1000*(t1-t0))
+        log.warn(f"call {command} {dt} ms")
         try:
             return result["result"]
         except KeyError:
@@ -1451,6 +1457,14 @@ def getPiperForFocus():
     return None
 
 
+VSCodePiperContentCache = None
+class VSCoderPiperCacheClause:
+    def __enter__(self):
+        global VSCodePiperContentCache
+        VSCodePiperContentCache = weakref.WeakKeyDictionary()
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        global VSCodePiperContentCache
+        VSCodePiperContentCache = None
 
 class VSCodeTextInfo(NVDAObjectTextInfo):
     encoding = textUtils.WCHAR_ENCODING # empirically verified
@@ -1458,14 +1472,25 @@ class VSCodeTextInfo(NVDAObjectTextInfo):
     def __init__(self,obj,position):
         obj = obj or position.obj
         self.piper = obj.piper
-        #self.strongObj = obj # to prevent obj from being gc'd
         super().__init__(obj, position)
+        self.ensureCache()
+        
+    def ensureCache(self):
+        try:
+            self.content = VSCodePiperContentCache[self.piper]
+        except KeyError:
+            self.content = VSCodePiperContentCache[self.piper] = self.piper.getStoryText()
+        except TypeError as e:
+            log.exception("Error: for some reason VSCode content cache is not initialized.", e)
+            raise e
 
     def _getStoryLength(self):
-        return self.piper.getStoryLength()
+        self.ensureCache()
+        return len(self.content)
 
     def _getStoryText(self):
-        return self.piper.getStoryText()
+        self.ensureCache()
+        return self.content
 
     def _getCaretOffset(self):
         return self.piper.getCaretOffset()
@@ -1475,11 +1500,14 @@ class VSCodeTextInfo(NVDAObjectTextInfo):
 
     def _getSelectionOffsets(self):
         return self.piper.getSelectionOffsets()
+
     def updateSelection(self):
         self.piper.setSelectionOffsets(self._startOffset, self._endOffset)
 
     def copy(self):
-        return VSCodeTextInfo(None, self)
+        result = VSCodeTextInfo(None, self)
+        result.content = self.content
+        return result
 
 
 class VSCodeRequestDialog(wx.Dialog):
@@ -1897,6 +1925,7 @@ class EditableIndentNav(NVDAObject):
         self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount, excludeFilterRegex=excludeFilterRegex)
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1, excludeFilterRegex=None):
+        log.warn(f"moveInEditable")
         try:
             with self.getLineManager() as lm:
                 self.addHistory(lm.lineIndex)
@@ -2221,74 +2250,75 @@ class EditableIndentNav(NVDAObject):
         self.doQuickFind(bookmark, -1 if shift else 1)
 
     def doQuickFind(self, bookmark, direction):
-        caretInfo = self.makeEnhancedTextInfo(textInfos.POSITION_SELECTION)
-        caretInfo.collapse(end=(direction > 0))
-        info = self.makeEnhancedTextInfo(textInfos.POSITION_ALL)
-        info.setEndPoint(caretInfo, 'startToStart' if direction > 0 else 'endToEnd')
-        text = info.text
-        text = re.sub(r'\r(?!\n)', '\n', text)
-        matches = list(re.finditer(bookmark.pattern, text, re.MULTILINE))
-        if len(matches) == 0:
-            self.endOfDocument(_("Bookmark not found"))
-            return
-        match = matches[0 if direction > 0 else -1]
-        startIndex = match.start()
-        endIndex = match.end()
-        parents = getAllParentBookmarks(bookmark)
-        if len(parents) > 0:
-            parentPattern = "|".join(parent.pattern for parent in parents)
-            parentMatches = list(re.finditer(parentPattern, text, re.MULTILINE))
-            if len(parentMatches) > 0 and direction > 0 and parentMatches[0].start() == 0:
-                # When going forward and the cursor is at class definition,
-                # don't make it blocking to find child bookmarks within the class.
-                parentMatches = parentMatches[1:]
-            if len(parentMatches) > 0:
-                parentMatch = parentMatches[0 if direction > 0 else -1]
-                parentStartIndex = parentMatch.start()
-                parentEndIndex = parentMatch.end()
-                outOfBounds = (
-                    (parentStartIndex <= startIndex)
-                    if direction > 0 else
-                    (parentEndIndex >= endIndex)
-                )
-                if outOfBounds:
-                    self.endOfDocument(_("Bookmark not found within bounds"))
-                    return
-        
-        crackleText = text[:endIndex] if direction > 0 else text[startIndex:]
-        crackleIndents = self.getIndentLevels(crackleText)
-        if len(crackleIndents) > 0:
-            crackleIndents = crackleIndents[1:] if direction > 0 else crackleIndents[:0:-1]
-        compoundMode = False
-        if isinstance(info, CompoundTextInfo):
-            if info._start == info._end and  isinstance(info._start, OffsetsTextInfo):
-                compoundMode = True
-                outerTextInfo = info
-                info = outerTextInfo._start
-        if isinstance(info, OffsetsTextInfo):
-            converter = textUtils.getOffsetConverter(info.encoding)(text)
-            startOffset, endOffset = converter.strToEncodedOffsets(startIndex, endIndex)
-            selectionInfo = info.copy()
-            selectionInfo.collapse()
-            selectionInfo._startOffset += startOffset
-            selectionInfo._endOffset += endOffset
-        else:
-            startInfo = moveToCodepointOffset(info, startIndex)
-            endInfo = moveToCodepointOffset(info, endIndex)
-            selectionInfo = startInfo.copy()
-            selectionInfo.setEndPoint(endInfo, 'endToEnd')
-        if compoundMode:
-            outerTextInfo = outerTextInfo.copy()
-            outerTextInfo._start = outerTextInfo._end = selectionInfo
-            selectionInfo = outerTextInfo
-        selectionInfo.updateSelection()
-        lineInfo = selectionInfo.copy()
-        unit = textInfos.UNIT_LINE if isinstance(lineInfo, VsWpfTextViewTextInfo) else textInfos.UNIT_PARAGRAPH
-        lineInfo.expand(unit)
-        lineInfo.setEndPoint(selectionInfo, 'startToStart')
-        if len(crackleIndents) > 0:
-            self.crackle(crackleIndents)
-        speech.speakTextInfo(lineInfo, unit=unit, reason=controlTypes.OutputReason.CARET)
+        with VSCoderPiperCacheClause():
+            caretInfo = self.makeEnhancedTextInfo(textInfos.POSITION_SELECTION)
+            caretInfo.collapse(end=(direction > 0))
+            info = self.makeEnhancedTextInfo(textInfos.POSITION_ALL)
+            info.setEndPoint(caretInfo, 'startToStart' if direction > 0 else 'endToEnd')
+            text = info.text
+            text = re.sub(r'\r(?!\n)', '\n', text)
+            matches = list(re.finditer(bookmark.pattern, text, re.MULTILINE))
+            if len(matches) == 0:
+                self.endOfDocument(_("Bookmark not found"))
+                return
+            match = matches[0 if direction > 0 else -1]
+            startIndex = match.start()
+            endIndex = match.end()
+            parents = getAllParentBookmarks(bookmark)
+            if len(parents) > 0:
+                parentPattern = "|".join(parent.pattern for parent in parents)
+                parentMatches = list(re.finditer(parentPattern, text, re.MULTILINE))
+                if len(parentMatches) > 0 and direction > 0 and parentMatches[0].start() == 0:
+                    # When going forward and the cursor is at class definition,
+                    # don't make it blocking to find child bookmarks within the class.
+                    parentMatches = parentMatches[1:]
+                if len(parentMatches) > 0:
+                    parentMatch = parentMatches[0 if direction > 0 else -1]
+                    parentStartIndex = parentMatch.start()
+                    parentEndIndex = parentMatch.end()
+                    outOfBounds = (
+                        (parentStartIndex <= startIndex)
+                        if direction > 0 else
+                        (parentEndIndex >= endIndex)
+                    )
+                    if outOfBounds:
+                        self.endOfDocument(_("Bookmark not found within bounds"))
+                        return
+            
+            crackleText = text[:endIndex] if direction > 0 else text[startIndex:]
+            crackleIndents = self.getIndentLevels(crackleText)
+            if len(crackleIndents) > 0:
+                crackleIndents = crackleIndents[1:] if direction > 0 else crackleIndents[:0:-1]
+            compoundMode = False
+            if isinstance(info, CompoundTextInfo):
+                if info._start == info._end and  isinstance(info._start, OffsetsTextInfo):
+                    compoundMode = True
+                    outerTextInfo = info
+                    info = outerTextInfo._start
+            if isinstance(info, OffsetsTextInfo):
+                converter = textUtils.getOffsetConverter(info.encoding)(text)
+                startOffset, endOffset = converter.strToEncodedOffsets(startIndex, endIndex)
+                selectionInfo = info.copy()
+                selectionInfo.collapse()
+                selectionInfo._startOffset += startOffset
+                selectionInfo._endOffset += endOffset
+            else:
+                startInfo = moveToCodepointOffset(info, startIndex)
+                endInfo = moveToCodepointOffset(info, endIndex)
+                selectionInfo = startInfo.copy()
+                selectionInfo.setEndPoint(endInfo, 'endToEnd')
+            if compoundMode:
+                outerTextInfo = outerTextInfo.copy()
+                outerTextInfo._start = outerTextInfo._end = selectionInfo
+                selectionInfo = outerTextInfo
+            selectionInfo.updateSelection()
+            lineInfo = selectionInfo.copy()
+            unit = textInfos.UNIT_LINE if isinstance(lineInfo, VsWpfTextViewTextInfo) else textInfos.UNIT_PARAGRAPH
+            lineInfo.expand(unit)
+            lineInfo.setEndPoint(selectionInfo, 'startToStart')
+            if len(crackleIndents) > 0:
+                self.crackle(crackleIndents)
+            speech.speakTextInfo(lineInfo, unit=unit, reason=controlTypes.OutputReason.CARET)
 
     @script(description=_("Speak current line"), gestures=['kb:NVDA+Control+l'])
     def script_speakCurrentLine(self, gesture):
