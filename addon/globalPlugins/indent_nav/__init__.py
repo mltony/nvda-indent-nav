@@ -1327,13 +1327,10 @@ class VSCodePiper(threading.Thread):
         return self.get()
 
     def call(self, command, **kwargs):
-        t0 = time.time()
         result = self.callImpl({
             **{"command": command},
             **kwargs,
         })
-        t1 = time.time(); dt = int(1000*(t1-t0))
-        log.warn(f"call {command} {dt} ms")
         try:
             return result["result"]
         except KeyError:
@@ -1925,7 +1922,6 @@ class EditableIndentNav(NVDAObject):
         self.moveInEditable(increment, errorMessages[0], unbounded, op, speakOnly=speakOnly, moveCount=moveCount, excludeFilterRegex=excludeFilterRegex)
 
     def moveInEditable(self, increment, errorMessage, unbounded=False, op=operator.eq, speakOnly=False, moveCount=1, excludeFilterRegex=None):
-        log.warn(f"moveInEditable")
         try:
             with self.getLineManager() as lm:
                 self.addHistory(lm.lineIndex)
