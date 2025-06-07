@@ -63,6 +63,7 @@ import winUser
 import wx
 import dataclasses
 from . import textUtils
+import bisect
 
 try:
     ROLE_EDITABLETEXT = controlTypes.ROLE_EDITABLETEXT
@@ -424,7 +425,22 @@ def getConfig(key):
 def setConfig(key, value):
     config.conf["indentnav"][key] = value
 
+NEWLINE_REGEX = re.compile(r"\r?\n|\r", )
+def splitlinesPython(s):
+    offsets = [0]
+    for m in  NEWLINE_REGEX.finditer(s):
+        offsets.append(m.end(0))
+    return offsets
 
+def loadLineSplitter():
+    try:
+        from . import IndentNavLineSplitter
+        return IndentNavLineSplitter.find_line_offsets
+    except Exception as e:
+        log.exception("Warning: failed to load native IndentNav line splitter module. Falling back to Python implementation. IndentNav scripts will be slower.", e)
+        return splitlinesPython
+
+lineSplitter = loadLineSplitter()
 addonHandler.initTranslation()
 initConfiguration()
 
@@ -1096,11 +1112,10 @@ class FastLineManagerV2:
         pretext = self.originalCaret.copy()
         pretext.collapse()
         pretext.setEndPoint(document, "startToStart")
-        self.lineIndex = len(self.splitlines(pretext.text)) - 1
-        #self.lineIndex = len(splitLinesNew(pretext.text)) - 1
-        self.originalLineIndex = self.lineIndex
         self.documentText = document.text
-        self.offsets = self.splitlines(self.documentText)
+        self.offsets = lineSplitter(self.documentText)
+        self.lineIndex = bisect.bisect_right(self.offsets, len(pretext.text)) - 1
+        self.originalLineIndex = self.lineIndex
         self.nLines = len(self.offsets)
         self.originalCaret.expand(textInfos.UNIT_LINE)
         self.document = document
@@ -1171,6 +1186,7 @@ class FastLineManagerV2:
     def getTextInfo(self, line=None):
         lineInfo = self.getTextInfoImpl(line)
         return lineInfo
+
     def getTextInfoImpl(self, line=None):
         if line is None:
             line = self.lineIndex
@@ -1203,23 +1219,6 @@ class FastLineManagerV2:
             outerTextInfo._start = outerTextInfo._end = textInfo
             return outerTextInfo
         return textInfo
-        
-    def splitlines(self, s):
-        try:
-            return self.splitlinesNative(s)
-        except (ImportError, ModuleNotFoundError, SystemError):
-            return self.splitlinesPython(s)
-
-    NEWLINE_REGEX = re.compile(r"\r?\n|\r", )
-    def splitlinesPython(self, s):
-        offsets = [0]
-        for m in  self.NEWLINE_REGEX.finditer(s):
-            offsets.append(m.end(0))
-        return offsets
-
-    def splitlinesNative(self, s):
-        from . import IndentNavLineSplitter
-        return IndentNavLineSplitter.find_line_offsets(s)
 
 
 def installVSCodeExtension():
