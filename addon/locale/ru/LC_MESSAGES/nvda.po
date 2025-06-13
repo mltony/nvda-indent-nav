@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: IndentNav 1.1\n"
 "Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
 "POT-Creation-Date: 2018-11-23 09:05+1000\n"
-"PO-Revision-Date: 2025-02-01 23:32+0300\n"
+"PO-Revision-Date: 2025-06-10 21:54+0300\n"
 "Last-Translator: Ruslan Kolodyazhni <rupelodn@gmail.com>\n"
 "Language-Team: \n"
 "Language: ru\n"
@@ -54,6 +54,7 @@ msgid ""
 "Put cursor on the first non-blank character in the string instead of the "
 "first character"
 msgstr ""
+"Поместить курсор на первый непустотный символ в строке вместо первого символа"
 
 #. Translators: volume of crackling slider
 msgid "Crackling volume"
@@ -481,57 +482,3 @@ msgstr ""
 "программирования дополнение позволяет переключаться между строками с "
 "одинаковым уровнем отступа, а также быстро находить строки с большим или "
 "меньшим уровнем отступа."
-
-#~ msgid "Moves to the next item on the same level within current subtree."
-#~ msgstr ""
-#~ "Переходит к следующему элементу на том же уровне в текущем поддереве."
-
-#~ msgid "No next item on the same level within this subtree"
-#~ msgstr "В этом поддереве нет следующего элемента на том же уровне"
-
-#~ msgid "Moves to the previous item on the same level within current subtree."
-#~ msgstr ""
-#~ "Переходит к предыдущему элементу на том же уровне в текущем поддереве."
-
-#~ msgid "No previous item on the same level within this subtree"
-#~ msgstr "В этом поддереве нет предыдущего элемента на том же уровне"
-
-#~ msgid "Moves to the next item on the same level."
-#~ msgstr "Переходит к следующему элементу на том же уровне."
-
-#~ msgid "No next item on the same level in this tree view"
-#~ msgstr ""
-#~ "В этом древовидном представлении нет следующего элемента на том же уровне"
-
-#~ msgid "Moves to the previous item on the same level."
-#~ msgstr "Переходит к предыдущему элементу на том же уровне."
-
-#~ msgid "No previous item on the same level in this tree view"
-#~ msgstr ""
-#~ "В этом древовидном представлении нет предыдущего элемента на том же уровне"
-
-#~ msgid "Moves to the last item on the same level within current subtree."
-#~ msgstr ""
-#~ "Переходит к  последнему элементу на том же уровне в текущем поддереве."
-
-#~ msgid "Moves to the first item on the same level within current subtree."
-#~ msgstr "Переходит к  первому элементу на том же уровне в текущем поддереве."
-
-#~ msgid "Speak parent item."
-#~ msgstr "Читать родительский элемент."
-
-#~ msgid "No parent item in this tree view"
-#~ msgstr "В этом древовидном представлении нет родительского элемента"
-
-#~ msgid "Moves to the next child in tree view."
-#~ msgstr ""
-#~ "Переходит к следующему дочернему элементу в древовидном представлении."
-
-#~ msgid "NO child"
-#~ msgstr "Нет дочерних элементов"
-
-#~ msgid "Moves to parent in tree view."
-#~ msgstr "Перемещается к родительскому элементу в древовидном представлении."
-
-#~ msgid "No parent"
-#~ msgstr "Нет родительских элементов"
