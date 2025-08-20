@@ -2192,7 +2192,7 @@ class EditableIndentNav(NVDAObject):
         try:
             productName = self.appModule.productName or ""
             return productName.startswith("Visual Studio Code")
-        except (AttributeError, NameError):
+        except (AttributeError, NameError, RuntimeError):
             return False
 
     def getPiper(self):
