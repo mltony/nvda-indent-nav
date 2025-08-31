@@ -5,33 +5,584 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: 'IndentNav' '1.11'\n"
-"Report-Msgid-Bugs-To: 'nvda-translations@groups.io'\n"
-"POT-Creation-Date: 2021-02-17 13:12+0200\n"
-"PO-Revision-Date: 2021-02-17 13:36+0200\n"
+"Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
+"POT-Creation-Date: 2025-08-25 05:11+0000\n"
+"PO-Revision-Date: 2025-08-25 15:14+0300\n"
+"Last-Translator: Oleksandr Gryshchenko <grisov.nvaccess@mailnull.com>\n"
 "Language-Team: Ukrainian Language Team\n"
+"Language: uk_UA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.4.2\n"
-"Last-Translator: Oleksandr Gryshchenko <grisov.nvaccess@mailnull.com>\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
-"Language: uk_UA\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<12 || n%100>14) ? 1 : 2);\n"
+"X-Generator: Poedit 3.7\n"
+
+#: addon/globalPlugins/indent_nav/__init__.py:113
+msgid "Laptop or legacy key map: NVDA+alt+arrows"
+msgstr "Розкладка клавіатури для ноутбука або застаріла: NVDA+alt+стрілочки"
+
+#: addon/globalPlugins/indent_nav/__init__.py:114
+msgid "Alt+numPad"
+msgstr "Alt+Цифровий блок"
+
+#: addon/globalPlugins/indent_nav/__init__.py:115
+msgid ""
+"Numpad assigned to IndentNav in editables; numPad assigned to review cursor "
+"everywhere else"
+msgstr ""
+"У редагованих полях цифровий блок призначений для навігації за відступами; У "
+"іншому випадку цифровий блок керує навігаційним курсором"
+
+#: addon/globalPlugins/indent_nav/__init__.py:116
+msgid ""
+"Numpad assigned to IndentNav; review cursor commands remapped to alt+NumPad"
+msgstr ""
+"Цифровий блок призначений для навігації за відступами; керування курсором "
+"перепризначено на Alt+Цифровий блок"
+
+# Слово "Налаштування" (Settings) пропущено навмисно, оскільки воно зайве у цьому рядку. Цей рядок відображається на панелі категорій у вікні налаштувань NVDA.
+#. Translators: Title for the settings dialog
+#: addon/globalPlugins/indent_nav/__init__.py:538
+msgid "IndentNav settings"
+msgstr "Навігація за відступами"
+
+#. Key map combo box
+#: addon/globalPlugins/indent_nav/__init__.py:547
+msgid "Keyboard shortcuts"
+msgstr "Скорочення клавіатури"
+
+#. Checkbox enabled
+#: addon/globalPlugins/indent_nav/__init__.py:556
+msgid "Enable IndentNav"
+msgstr "Увімкнути навігацію за відступами"
+
+#. Checkbox cursorSkipsSpacesAndTabs
+#: addon/globalPlugins/indent_nav/__init__.py:560
+msgid ""
+"Put cursor on the first non-blank character in the string instead of the "
+"first character"
+msgstr ""
+"Поміщати курсор на перший непустий символ у рядку замість першого символу"
+
+#. Translators: volume of crackling slider
+#: addon/globalPlugins/indent_nav/__init__.py:566
+msgid "Crackling volume"
+msgstr "Гучність тріску"
+
+#. Translators: End of document chime volume
+#: addon/globalPlugins/indent_nav/__init__.py:577
+msgid "Volume of chime when no more sentences available"
+msgstr "Гучність сигналу, коли більше немає доступних речень"
+
+#. Checkboxes noNextTextMessageCheckbox
+#. Translators: Checkbox that controls spoken message when no next or previous text paragraph is available in the document
+#: addon/globalPlugins/indent_nav/__init__.py:587
+msgid ""
+"Speak message when no next paragraph containing text available in the "
+"document"
+msgstr ""
+"Промовляти повідомлення, коли в документі немає наступного абзацу, що "
+"містить текст"
+
+#. EditBox clutter regexp
+#: addon/globalPlugins/indent_nav/__init__.py:591
+msgid "Clutter regular expression"
+msgstr "Регулярний вираз зайвого"
+
+#. Checkboxes legacy VSCode
+#: addon/globalPlugins/indent_nav/__init__.py:596
+msgid "Use legacy mode in VSCode (not recommended)"
+msgstr "Використовувати старий режим у VSCode (не рекомендовано)"
+
+#: addon/globalPlugins/indent_nav/__init__.py:601
+#: addon/globalPlugins/indent_nav/__init__.py:1522
+msgid "&Install VSCode extension (recommended)"
+msgstr "&Встановити розширення VSCode (рекомендовано)"
+
+#. Learn about VSCode Extension
+#: addon/globalPlugins/indent_nav/__init__.py:605
+#: addon/globalPlugins/indent_nav/__init__.py:1525
+msgid "&Learn more about VSCode accessibility extension"
+msgstr "&Дізнатися більше про розширення доступності VSCode"
+
+#: addon/globalPlugins/indent_nav/__init__.py:612
+#: addon/globalPlugins/indent_nav/__init__.py:1547
+msgid ""
+"We will install accessibility extension in default VSCode instance on your "
+"system - the one found in %PATH% environment variable.\n"
+"If you have multiple instances or a custom version of VSCode, such as VSCode "
+"Insiders, you would need to install accessibility extension manually.\n"
+"Please review output of command to make sure installation is successful.\n"
+"If successful, the extension would be launched right away and there is no "
+"need to restart VSCode.\n"
+"Are you sure you want to proceed?"
+msgstr ""
+"Ми встановимо розширення доступності в стандартному екземплярі VSCode на "
+"вашій системі — тому, що знаходиться в змінній середовища %PATH%.\n"
+"Якщо у вас є кілька екземплярів або спеціальна версія VSCode, така як VSCode "
+"Insiders, вам потрібно буде встановити розширення доступності вручну.\n"
+"Перегляньте результат виконання команди, щоб переконатися, що встановлення "
+"пройшло успішно.\n"
+"У разі успіху розширення запуститься відразу, і перезапускати VSCode не "
+"потрібно.\n"
+"Бажаєте продовжити?"
+
+#: addon/globalPlugins/indent_nav/__init__.py:618
+#: addon/globalPlugins/indent_nav/__init__.py:1553
+msgid "Confirmation"
+msgstr "Підтвердження"
+
+#: addon/globalPlugins/indent_nav/__init__.py:632
+#: addon/globalPlugins/indent_nav/__init__.py:722
+#, python-format
+msgid "Failed to compile regular expression: %s"
+msgstr "Не вдалося скомпілювати регулярний вираз: %s"
+
+#: addon/globalPlugins/indent_nav/__init__.py:633
+msgid "Regular expression error"
+msgstr "Помилка регулярного виразу"
+
+#: addon/globalPlugins/indent_nav/__init__.py:655
+msgid "Edit IndentNav QuickFind bookmark"
+msgstr "Редагувати закладки швидкого пошуку, навігації за відступами"
+
+#. Translators: label for name
+#: addon/globalPlugins/indent_nav/__init__.py:669
+msgid "&Display name (optional)"
+msgstr "Відображувана &назва (не обов'язково)"
+
+#. Translators:  Custom keystroke button
+#: addon/globalPlugins/indent_nav/__init__.py:673
+msgid "&Keystroke"
+msgstr "Натиск &клавіші"
+
+#. Translators: pattern
+#: addon/globalPlugins/indent_nav/__init__.py:678
+msgid "&Pattern"
+msgstr "&Шаблон"
+
+#. Translators: label for enabled checkbox
+#: addon/globalPlugins/indent_nav/__init__.py:682
+msgid "Bookmark enabled"
+msgstr "Закладки увімкнено"
+
+#. Parent combo box
+#: addon/globalPlugins/indent_nav/__init__.py:686
+msgid ""
+"Parent bookmark (optional; searching for this bookmark will never cross "
+"parent boundary):"
+msgstr ""
+"Батьківська закладка (не обов'язково; пошук за цією закладкою ніколи не "
+"виходитиме за межі батьківського елемента):"
+
+#: addon/globalPlugins/indent_nav/__init__.py:690
+msgid "None"
+msgstr "Немає"
+
+#: addon/globalPlugins/indent_nav/__init__.py:717
+msgid "Pattern cannot be empty!"
+msgstr "Шаблон не може бути порожнім!"
+
+#. Translators: This is an error message to let the user know that the pattern field is not valid.
+#: addon/globalPlugins/indent_nav/__init__.py:726
+#: addon/globalPlugins/indent_nav/__init__.py:732
+msgid "Bookmark entry error"
+msgstr "Помилка запису закладки"
+
+#: addon/globalPlugins/indent_nav/__init__.py:731
+msgid "Please specify keystroke gesture."
+msgstr "Будь ласка, вкажіть клавішу жесту."
+
+#: addon/globalPlugins/indent_nav/__init__.py:748
+#, python-format
+msgid "&Keystroke: %s"
+msgstr "Натиск &клавіші: %s"
+
+#: addon/globalPlugins/indent_nav/__init__.py:750
+msgid "Keystroke: None"
+msgstr "Натискання клавіші: невказано"
+
+#: addon/globalPlugins/indent_nav/__init__.py:763
+msgid "Press desired keystroke now"
+msgstr "Натисніть потрібну клавішу зараз"
+
+#: addon/globalPlugins/indent_nav/__init__.py:770
+#, python-format
+msgid "Invalid keystroke %s: cannot overload essential  NVDA keystrokes!"
+msgstr ""
+"Недійсний натиск клавіші %s: не можна перевантажувати основні  клавіші NVDA!"
+
+#: addon/globalPlugins/indent_nav/__init__.py:772
+#, python-format
+msgid ""
+"Invalid keystroke %s: Cannot use keystrokes with shift modifier for "
+"quickFind bookmarks!"
+msgstr ""
+"Недійсний натиск клавіші %s: Не можна використовувати натискання клавіш із "
+"модифікатором Shift для закладок швидкого пошуку!"
+
+#. Translators: Title for the settings dialog
+#: addon/globalPlugins/indent_nav/__init__.py:789
+msgid "IndentNav QuickFind bookmarks settings"
+msgstr "Налаштування закладок швидкого пошуку, навігації за відступами"
+
+#. bookmarks table
+#: addon/globalPlugins/indent_nav/__init__.py:798
+msgid "&QuickFind bookmarks"
+msgstr "&Закладки швидкого пошуку"
+
+#: addon/globalPlugins/indent_nav/__init__.py:807
+msgid "Name"
+msgstr "Назва"
+
+#: addon/globalPlugins/indent_nav/__init__.py:808
+#: addon/globalPlugins/indent_nav/__init__.py:834
+msgid "Enabled"
+msgstr "Увімкнено"
+
+#: addon/globalPlugins/indent_nav/__init__.py:809
+msgid "Gesture"
+msgstr "Жест"
+
+#: addon/globalPlugins/indent_nav/__init__.py:810
+msgid "Pattern"
+msgstr "Шаблон"
+
+#. Buttons
+#: addon/globalPlugins/indent_nav/__init__.py:816
+msgid "&Add"
+msgstr "&Додати"
+
+#: addon/globalPlugins/indent_nav/__init__.py:818
+msgid "&Edit"
+msgstr "&Редагувати"
+
+#: addon/globalPlugins/indent_nav/__init__.py:820
+msgid "&Remove"
+msgstr "&Вилучити"
+
+#: addon/globalPlugins/indent_nav/__init__.py:822
+msgid "Move &up"
+msgstr "Перемістити &угору"
+
+#: addon/globalPlugins/indent_nav/__init__.py:824
+msgid "Move &down"
+msgstr "Перемістити в&низ"
+
+#: addon/globalPlugins/indent_nav/__init__.py:826
+msgid "&Sort"
+msgstr "&Сортувати"
+
+#: addon/globalPlugins/indent_nav/__init__.py:834
+msgid "Disabled"
+msgstr "Вимкнено"
 
 #. Add-on summary, usually the user visible name of the addon.
-#. Translators: Summary for this add-on to be shown on installation and add-on information.
+#. Translators: Summary for this add-on
+#. to be shown on installation and add-on information found in Add-ons Manager.
+#: addon/globalPlugins/indent_nav/__init__.py:926
+#: addon/globalPlugins/indent_nav/__init__.py:1815 buildVars.py:23
 msgid "IndentNav"
 msgstr "Навігація за відступами"
 
+#: addon/globalPlugins/indent_nav/__init__.py:974
+msgid "Toggle IndentNav"
+msgstr "Перемкнути навігацію за відступами"
+
+#: addon/globalPlugins/indent_nav/__init__.py:981
+msgid "Please turn off num lock in order to toggle IndentNav"
+msgstr "Будь ласка, вимкніть Num Lock, щоб увімкнути навігацію за відступами"
+
+#: addon/globalPlugins/indent_nav/__init__.py:992
+msgid "Enabled IndentNav"
+msgstr "Навігацію за відступами увімкнено"
+
+#: addon/globalPlugins/indent_nav/__init__.py:994
+msgid "Disabled IndentNav"
+msgstr "Навігацію за відступами вимкнено"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1512
+msgid ""
+"IndentNav requires VSCode accessibility extension to be installed in order "
+"to work correctly in VSCode."
+msgstr ""
+"Навігація за відступами вимагає встановлення розширення доступності VSCode "
+"для коректної роботи в VSCode."
+
+#: addon/globalPlugins/indent_nav/__init__.py:1516
+msgid "Please install VSCode extension"
+msgstr "Будь ласка, встановіть розширення VSCode"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1528
+msgid "&Use VSCode in legacy mode without extension (not recommended)"
+msgstr ""
+"&Використовувати VSCode у застарілому режимі, без розширення (не "
+"рекомендовано)"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1531
+msgid "&Cancel"
+msgstr "&Скасувати"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1566
+msgid ""
+"Please enable legacy support of VSCode in IndentNav settings.\n"
+"Please note that builtin VSCode accessibility provides access to only 500 "
+"lines of code.\n"
+"As a result, in larger files IndentNav will not work correctly.\n"
+"Please use it at your own risk."
+msgstr ""
+"Увімкніть підтримку старих версій VSCode в налаштуваннях IndentNav.\n"
+"Зверніть увагу, що вбудована функція доступності VSCode надає доступ лише до "
+"500 рядків коду.\n"
+"Як результат, у великих файлах IndentNav не працюватиме належним чином.\n"
+"Використовуйте цю функцію на власний ризик."
+
+#: addon/globalPlugins/indent_nav/__init__.py:1571
+msgid "Information"
+msgstr "Інформація"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1847
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+"Переходить до наступного рядка з тим самим рівнем відступу, що й поточний "
+"рядок у поточному блоці відступу."
+
+#. Translators: error message if next sibling couldn't be found (in editable control or in browser)
+#: addon/globalPlugins/indent_nav/__init__.py:1850
+#: addon/globalPlugins/indent_nav/__init__.py:1857
+msgid "No next line within indentation block"
+msgstr "Немає наступного рядка в блоці відступу"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1854
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"within the current indentation block and skipping over clutter."
+msgstr ""
+"Переходить до наступного рядка з тим самим рівнем відступу, що й поточний "
+"рядок у поточному блоці відступу, пропускаючи зайве."
+
+#: addon/globalPlugins/indent_nav/__init__.py:1860
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"potentially in the following indentation block."
+msgstr ""
+"Переходить до наступного рядка з тим самим рівнем відступу, що й поточний "
+"рядок, який потенційно може бути в наступному блоці відступу."
+
+#. Translators: error message if next sibling couldn't be found in editable control (forced command)
+#. Translators: error message if last sibling couldn't be found in editable control (forced command)
+#: addon/globalPlugins/indent_nav/__init__.py:1863
+#: addon/globalPlugins/indent_nav/__init__.py:1870
+msgid "No next line in the document"
+msgstr "Немає наступного рядка у документі"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1867
+msgid ""
+"Moves to the last line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+"Переходить до останнього рядка з тим самим рівнем відступу, що й поточний "
+"рядок у поточному блоці відступу."
+
+#: addon/globalPlugins/indent_nav/__init__.py:1873
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line within the current indentation block."
+msgstr ""
+"Переходить до попереднього рядка з тим самим рівнем відступу, що й поточний "
+"рядок у поточному блоці відступу."
+
+#. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
+#: addon/globalPlugins/indent_nav/__init__.py:1876
+#: addon/globalPlugins/indent_nav/__init__.py:1882
+msgid "No previous line within indentation block"
+msgstr "Немає попереднього рядка в блоці відступу"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1879
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line within the current indentation block and skipping over clutter."
+msgstr ""
+"Переходить до попереднього рядка з тим самим рівнем відступу, що й поточний "
+"рядок у поточному блоці відступу, пропускаючи зайве."
+
+#: addon/globalPlugins/indent_nav/__init__.py:1886
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line potentially in the preceding indentation block."
+msgstr ""
+"Переходить до попереднього рядка з тим самим рівнем відступу, що й поточний "
+"рядок, який потенційно може бути в попередньому блоці відступу."
+
+#. Translators: error message if previous sibling couldn't be found in editable control (forced command)
+#. Translators: error message if first sibling couldn't be found in editable control (forced command)
+#: addon/globalPlugins/indent_nav/__init__.py:1889
+#: addon/globalPlugins/indent_nav/__init__.py:1895
+msgid "No previous line in the document"
+msgstr "Немає попереднього рядка у документі"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1892
+msgid ""
+"Moves to the first line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr ""
+"Переходить до першого рядка з тим самим рівнем відступу, що й поточний рядок "
+"у поточному блоці відступу."
+
+#: addon/globalPlugins/indent_nav/__init__.py:1898
+msgid "Speak parent line."
+msgstr "Промовити батьківський рядок."
+
+#. Translators: error message if parent couldn't be found (in editable control or in browser)
+#: addon/globalPlugins/indent_nav/__init__.py:1903
+#: addon/globalPlugins/indent_nav/__init__.py:1987
+msgid "No parent of indentation block"
+msgstr "Немає батька блоку відступу"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1972
+msgid "Cannot use IndentNav not in the main editor of VSCode"
+msgstr "Неможливо використовувати IndentNav не в головному редакторі VSCode"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1978
+msgid ""
+"Moves to the next line with a greater indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+"Переходить до наступного рядка з більшим рівнем відступу, ніж поточний рядок "
+"у поточному блоці відступу."
+
+#. Translators: error message if a child couldn't be found (in editable control or in browser)
+#: addon/globalPlugins/indent_nav/__init__.py:1981
+msgid "No child block within indentation block"
+msgstr "Немає дочірнього блоку у межах блоку з відступом"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1984
+msgid ""
+"Moves to the previous line with a lesser indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+"Переходить до попереднього рядка з меншим рівнем відступу, ніж поточний "
+"рядок у поточному блоці відступу."
+
+#: addon/globalPlugins/indent_nav/__init__.py:1990
+msgid ""
+"Moves to the previous line with a greater indentation level than the current "
+"line within the current indentation block."
+msgstr ""
+"Переходить до попереднього рядка з більшим рівнем відступу, ніж поточний "
+"рядок у поточному блоці відступу."
+
+#. Translators: error message if a previous child couldn't be found (in editable control)
+#: addon/globalPlugins/indent_nav/__init__.py:1993
+msgid "No previous child block within indentation block"
+msgstr "Немає попереднього дочірнього блоку в блоці відступу"
+
+#: addon/globalPlugins/indent_nav/__init__.py:1996
+msgid ""
+"Moves to the next line with a lesser indentation level than the current line "
+"within the current indentation block."
+msgstr ""
+"Переходить до наступного рядка з меншим рівнем відступу, ніж поточний рядок "
+"у поточному блоці відступу."
+
+#. Translators: error message if previous parent couldn't be found (in editable control)
+#: addon/globalPlugins/indent_nav/__init__.py:1999
+msgid "No next parent of indentation block"
+msgstr "Немає наступного батьківського блоку відступу"
+
+#: addon/globalPlugins/indent_nav/__init__.py:2002
+msgid "Select current indentation block. Press twice to copy to clipboard."
+msgstr ""
+"Виділіть поточний блок відступу. Натисніть двічі, щоб скопіювати в буфер "
+"обміну."
+
+#: addon/globalPlugins/indent_nav/__init__.py:2004
+msgid "Indent block copied to clipboard. "
+msgstr "Блок відступу скопійовано в буфер обміну. "
+
+#: addon/globalPlugins/indent_nav/__init__.py:2007
+msgid ""
+"Select current indentation block, as well as follwoing blocks of the same "
+"level. Press twice to copy to clipboard."
+msgstr ""
+"Виділіть поточний блок відступу, а також наступні блоки того ж рівня. "
+"Натисніть двічі, щоб скопіювати в буфер обміну."
+
+#: addon/globalPlugins/indent_nav/__init__.py:2009
+msgid "Indent blocks copied to clipboard. "
+msgstr "Блоки відступу скопійовано в буфер обміну. "
+
+#: addon/globalPlugins/indent_nav/__init__.py:2027
+msgid "Nothing to select"
+msgstr "Нічого виділяти"
+
+#: addon/globalPlugins/indent_nav/__init__.py:2035
+#: addon/globalPlugins/indent_nav/__init__.py:2044
+msgid "No more indentation blocks!"
+msgstr "Більше немає блоків відступу!"
+
+#: addon/globalPlugins/indent_nav/__init__.py:2066
+msgid ""
+"Indent-paste. This will figure out indentation level in the current line and "
+"paste text from clipboard adjusting indentation level correspondingly."
+msgstr ""
+"Вставити з відступом. Ця функція визначає рівень відступу в поточному рядку "
+"і вставляє текст із буфера обміну, відповідно коригуючи рівень відступу."
+
+#: addon/globalPlugins/indent_nav/__init__.py:2072
+msgid "Some text selected! Cannot indent-paste."
+msgstr "Виділено частину тексту! Неможливо вставити з відступом."
+
+#: addon/globalPlugins/indent_nav/__init__.py:2083
+msgid "Cannot indent-paste: current line is not empty!"
+msgstr "Неможливо вставити з відступом: поточний рядок не порожній!"
+
+#: addon/globalPlugins/indent_nav/__init__.py:2110
+msgid "Pasted"
+msgstr "Вставлено"
+
+#: addon/globalPlugins/indent_nav/__init__.py:2133
+msgid "Go back in history."
+msgstr "Перейти назад в історії."
+
+#: addon/globalPlugins/indent_nav/__init__.py:2156
+msgid ")No previous line in history"
+msgstr ")Немає попереднього рядка в історії"
+
+#: addon/globalPlugins/indent_nav/__init__.py:2158
+msgid "Go forward in history."
+msgstr "Перейти вперед в історії."
+
+#: addon/globalPlugins/indent_nav/__init__.py:2165
+msgid ")No next line in history"
+msgstr ")Немає наступного рядка в історії"
+
+#: addon/globalPlugins/indent_nav/__init__.py:2231
+msgid "IndentNav QuickFind generic script"
+msgstr "Універсальний скрипт швидкого пошуку, навігації за відступами"
+
+#: addon/globalPlugins/indent_nav/__init__.py:2258
+msgid "Bookmark not found"
+msgstr "Закладку не знайдено"
+
+#: addon/globalPlugins/indent_nav/__init__.py:2281
+msgid "Bookmark not found within bounds"
+msgstr "У межах, закладку не знайдено"
+
+#: addon/globalPlugins/indent_nav/__init__.py:2319
+msgid "Speak current line"
+msgstr "Промовити поточний рядок"
+
 #. Add-on description
 #. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+#: buildVars.py:26
 msgid ""
 "Indentation Navigation addon.\n"
 "It allows NVDA users to navigate by indentation level or offset of lines or "
 "paragraphs.\n"
-"In browsers it allows to quickly find paragraphs with the same offset from "
-"the left edge of the screen, such as first level comments in a hierarchical "
-"tree of comments.\n"
 "Also while editing source code in many programming languages, it allows to "
 "jump between the lines of the same indentation level, as well as quickly "
 "find lines with greater or lesser indentation level."
@@ -39,9 +590,6 @@ msgstr ""
 "Додаток Навігація за відступами.\n"
 "Дозволяє користувачам NVDA здійснювати навігацію за рівнем відступу або "
 "зміщенням рядків чи абзаців.\n"
-"У браузерах дає можливість швидко знаходити абзаци з однаковим зміщенням "
-"від лівого краю екрана, наприклад коментарі першого рівня в ієрархічному "
-"дереві коментарів.\n"
-"Також під час редагування вихідного коду на багатьох мовах програмування "
-"цей додаток дозволяє переходити між рядками одного рівня відступу, а також "
+"Також під час редагування вихідного коду на багатьох мовах програмування цей "
+"додаток дозволяє переходити між рядками одного рівня відступу, а також "
 "швидко знаходити рядки з більшим чи меншим рівнем відступу."
