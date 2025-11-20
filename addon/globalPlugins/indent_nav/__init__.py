@@ -411,7 +411,7 @@ def initConfiguration():
         "noNextTextChimeVolume" : "integer( default=50, min=0, max=100)",
         "noNextTextMessage" : "boolean( default=False)",
         "legacyVSCode" : "boolean( default=False)",
-        "indentNavKeyMap" : "integer( default=1, min=0, max=3)",
+        "indentNavKeyMap" : "integer( default=2, min=0, max=3)",
         "clutterRegex" : f"string( default='{clutterRegex}')",
         "quickFind" : f"string( default='{defaultQuickFind}')",
         "enabled" : "boolean( default=True)",
