@@ -2191,7 +2191,10 @@ class EditableIndentNav(NVDAObject):
             pass
         try:
             productName = self.appModule.productName or ""
-            return productName.startswith("Visual Studio Code")
+            return (
+                productName.startswith("Visual Studio Code")
+                or productName.startswith("Cursor")
+            )
         except (AttributeError, NameError, RuntimeError):
             return False
 
