@@ -1,0 +1,432 @@
+# Traditional Chinese (zh_TW) translation for IndentNav package.
+# Copyright (C) 2026 THE IndentNav'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the IndentNav package.
+# Kevin Lin <kevin82222@gmail.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: IndentNav\n"
+"Report-Msgid-Bugs-To: nvda-translations@groups.io\n"
+"POT-Creation-Date: 2026-09-11 12:16+0800\n"
+"PO-Revision-Date: 2026-09-11 12:16+0800\n"
+"Last-Translator: Kevin Lin <kevin82222@gmail.com>\n"
+"Language-Team: Traditional Chinese <kevin82222@gmail.com>\n"
+"Language: zh_TW\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Laptop or legacy key map: NVDA+alt+arrows"
+msgstr "筆記型電腦或舊版鍵盤配置: NVDA+alt+方向鍵"
+
+msgid "Alt+numPad"
+msgstr "Alt+數字鍵盤"
+
+msgid ""
+"Numpad assigned to IndentNav in editables; numPad assigned to review cursor "
+"everywhere else"
+msgstr "在可編輯區域中數字鍵盤用於 IndentNav; 在其他地方數字鍵盤用於檢閱游標"
+
+msgid ""
+"Numpad assigned to IndentNav; review cursor commands remapped to alt+NumPad"
+msgstr "數字鍵盤用於 IndentNav; 檢閱游標指令改對應到 alt+數字鍵盤"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav settings"
+msgstr "IndentNav 設定"
+
+#. Key map combo box
+msgid "Keyboard shortcuts"
+msgstr "鍵盤快速鍵"
+
+#. Checkbox enabled
+msgid "Enable IndentNav"
+msgstr "啟用 IndentNav"
+
+#. Checkbox cursorSkipsSpacesAndTabs
+msgid ""
+"Put cursor on the first non-blank character in the string instead of the "
+"first character"
+msgstr "將游標放在該行第一個非空白字元，而非第一個字元"
+
+#. Translators: volume of crackling slider
+msgid "Crackling volume"
+msgstr "縮排提示音音量"
+
+#. Translators: End of document chime volume
+msgid "Volume of chime when no more sentences available"
+msgstr "沒有更多句子時提示音的音量"
+
+#. Checkboxes noNextTextMessageCheckbox
+#. Translators: Checkbox that controls spoken message when no next or previous text paragraph is available in the document
+msgid ""
+"Speak message when no next paragraph containing text available in the "
+"document"
+msgstr "當文件中沒有下一個含有文字的段落時讀出訊息"
+
+#. EditBox clutter regexp
+msgid "Clutter regular expression"
+msgstr "雜項的正規表達式"
+
+#. Checkboxes legacy VSCode
+msgid "Use legacy mode in VSCode (not recommended)"
+msgstr "在 VSCode 中使用舊版模式 (不建議)"
+
+msgid "&Install VSCode extension (recommended)"
+msgstr "安裝 VSCode 延伸模組 (建議)(&I)"
+
+#. Learn about VSCode Extension
+msgid "&Learn more about VSCode accessibility extension"
+msgstr "進一步瞭解 VSCode 無障礙延伸模組(&L)"
+
+msgid ""
+"We will install accessibility extension in default VSCode instance on your "
+"system - the one found in %PATH% environment variable.\n"
+"If you have multiple instances or a custom version of VSCode, such as VSCode "
+"Insiders, you would need to install accessibility extension manually.\n"
+"Please review output of command to make sure installation is successful.\n"
+"If successful, the extension would be launched right away and there is no "
+"need to restart VSCode.\n"
+"Are you sure you want to proceed?"
+msgstr ""
+"即將在您系統上的預設 VSCode 中安裝無障礙延伸模組，也就是 %PATH% 環境變數裡找"
+"到的那一個。\n"
+"如果您安裝了多個 VSCode，或使用自訂版本的 VSCode 例如 VSCode Insiders，您必須"
+"自行手動安裝無障礙延伸模組。\n"
+"請檢視指令的輸出以確認安裝成功。\n"
+"安裝成功後延伸模組會立即啟動，不需要重新啟動 VSCode。\n"
+"您確定要繼續嗎？"
+
+msgid "Confirmation"
+msgstr "確認"
+
+#, python-format
+msgid "Failed to compile regular expression: %s"
+msgstr "無法編譯正規表達式: %s"
+
+msgid "Regular expression error"
+msgstr "正規表達式錯誤"
+
+msgid "Edit IndentNav QuickFind bookmark"
+msgstr "編輯 IndentNav 快速尋找書籤"
+
+#. Translators: label for name
+msgid "&Display name (optional)"
+msgstr "顯示名稱 (選填)(&D)"
+
+#. Translators:  Custom keystroke button
+msgid "&Keystroke"
+msgstr "按鍵(&K)"
+
+#. Translators: pattern
+msgid "&Pattern"
+msgstr "樣式(&P)"
+
+#. Translators: label for enabled checkbox
+msgid "Bookmark enabled"
+msgstr "啟用這個書籤"
+
+#. Parent combo box
+msgid ""
+"Parent bookmark (optional; searching for this bookmark will never cross "
+"parent boundary):"
+msgstr "父書籤 (選填; 搜尋這個書籤時永遠不會越過父書籤的界線):"
+
+msgid "None"
+msgstr "無"
+
+msgid "Pattern cannot be empty!"
+msgstr "樣式不可空白！"
+
+#. Translators: This is an error message to let the user know that the pattern field is not valid.
+msgid "Bookmark entry error"
+msgstr "書籤項目錯誤"
+
+msgid "Please specify keystroke gesture."
+msgstr "請指定按鍵手勢。"
+
+#, python-format
+msgid "&Keystroke: %s"
+msgstr "按鍵(&K): %s"
+
+msgid "Keystroke: None"
+msgstr "按鍵: 無"
+
+msgid "Press desired keystroke now"
+msgstr "請立即按下想要的按鍵"
+
+#, python-format
+msgid "Invalid keystroke %s: cannot overload essential  NVDA keystrokes!"
+msgstr "無效的按鍵 %s: 不可覆蓋 NVDA 的必要按鍵！"
+
+#, python-format
+msgid ""
+"Invalid keystroke %s: Cannot use keystrokes with shift modifier for "
+"quickFind bookmarks!"
+msgstr "無效的按鍵 %s: 快速尋找書籤不可使用含 shift 的按鍵！"
+
+#. Translators: Title for the settings dialog
+msgid "IndentNav QuickFind bookmarks settings"
+msgstr "IndentNav 快速尋找書籤設定"
+
+#. bookmarks table
+msgid "&QuickFind bookmarks"
+msgstr "快速尋找書籤(&Q)"
+
+msgid "Name"
+msgstr "名稱"
+
+msgid "Enabled"
+msgstr "啟用"
+
+msgid "Gesture"
+msgstr "手勢"
+
+msgid "Pattern"
+msgstr "樣式"
+
+#. Buttons
+msgid "&Add"
+msgstr "新增(&A)"
+
+msgid "&Edit"
+msgstr "編輯(&E)"
+
+msgid "&Remove"
+msgstr "移除(&R)"
+
+msgid "Move &up"
+msgstr "上移(&U)"
+
+msgid "Move &down"
+msgstr "下移(&D)"
+
+msgid "&Sort"
+msgstr "排序(&S)"
+
+msgid "Disabled"
+msgstr "停用"
+
+#. Add-on summary, usually the user visible name of the addon.
+#. Translators: Summary for this add-on
+#. to be shown on installation and add-on information found in Add-ons Manager.
+msgid "IndentNav"
+msgstr "IndentNav 縮排導覽"
+
+msgid "Toggle IndentNav"
+msgstr "切換 IndentNav 的開或關"
+
+msgid "Please turn off num lock in order to toggle IndentNav"
+msgstr "請先關閉 num lock 才能切換 IndentNav"
+
+msgid "Enabled IndentNav"
+msgstr "已啟用 IndentNav"
+
+msgid "Disabled IndentNav"
+msgstr "已停用 IndentNav"
+
+msgid ""
+"IndentNav requires VSCode accessibility extension to be installed in order "
+"to work correctly in VSCode."
+msgstr "IndentNav 必須安裝 VSCode 無障礙延伸模組，才能在 VSCode 中正常運作。"
+
+msgid "Please install VSCode extension"
+msgstr "請安裝 VSCode 延伸模組"
+
+msgid "&Use VSCode in legacy mode without extension (not recommended)"
+msgstr "不安裝延伸模組，以舊版模式使用 VSCode (不建議)(&U)"
+
+msgid "&Cancel"
+msgstr "取消(&C)"
+
+msgid ""
+"Please enable legacy support of VSCode in IndentNav settings.\n"
+"Please note that builtin VSCode accessibility provides access to only 500 "
+"lines of code.\n"
+"As a result, in larger files IndentNav will not work correctly.\n"
+"Please use it at your own risk."
+msgstr ""
+"請在 IndentNav 設定中啟用 VSCode 舊版支援。\n"
+"請注意，VSCode 內建的無障礙功能只能存取 500 行程式碼。\n"
+"因此在較大的檔案中 IndentNav 無法正常運作。\n"
+"請自行斟酌使用。"
+
+msgid "Information"
+msgstr "資訊"
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr "移到目前縮排區塊內與目前行縮排層級相同的下一行。"
+
+#. Translators: error message if next sibling couldn't be found (in editable control or in browser)
+msgid "No next line within indentation block"
+msgstr "縮排區塊內沒有下一行"
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"within the current indentation block and skipping over clutter."
+msgstr "移到目前縮排區塊內與目前行縮排層級相同的下一行，並略過雜項。"
+
+msgid ""
+"Moves to the next line with the same indentation level as the current line "
+"potentially in the following indentation block."
+msgstr "移到與目前行縮排層級相同的下一行，該行可能位於後面的縮排區塊。"
+
+#. Translators: error message if next sibling couldn't be found in editable control (forced command)
+#. Translators: error message if last sibling couldn't be found in editable control (forced command)
+msgid "No next line in the document"
+msgstr "文件中沒有下一行"
+
+msgid ""
+"Moves to the last line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr "移到目前縮排區塊內與目前行縮排層級相同的最後一行。"
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line within the current indentation block."
+msgstr "移到目前縮排區塊內與目前行縮排層級相同的上一行。"
+
+#. Translators: error message if previous sibling couldn't be found (in editable control or in browser)
+msgid "No previous line within indentation block"
+msgstr "縮排區塊內沒有上一行"
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line within the current indentation block and skipping over clutter."
+msgstr "移到目前縮排區塊內與目前行縮排層級相同的上一行，並略過雜項。"
+
+msgid ""
+"Moves to the previous line with the same indentation level as the current "
+"line potentially in the preceding indentation block."
+msgstr "移到與目前行縮排層級相同的上一行，該行可能位於前面的縮排區塊。"
+
+#. Translators: error message if previous sibling couldn't be found in editable control (forced command)
+#. Translators: error message if first sibling couldn't be found in editable control (forced command)
+msgid "No previous line in the document"
+msgstr "文件中沒有上一行"
+
+msgid ""
+"Moves to the first line with the same indentation level as the current line "
+"within the current indentation block."
+msgstr "移到目前縮排區塊內與目前行縮排層級相同的第一行。"
+
+msgid "Speak parent line."
+msgstr "讀出父行。"
+
+#. Translators: error message if parent couldn't be found (in editable control or in browser)
+msgid "No parent of indentation block"
+msgstr "縮排區塊沒有父行"
+
+msgid "Cannot use IndentNav not in the main editor of VSCode"
+msgstr "在 VSCode 主編輯器以外的地方無法使用 IndentNav"
+
+msgid ""
+"Moves to the next line with a greater indentation level than the current "
+"line within the current indentation block."
+msgstr "移到目前縮排區塊內縮排層級大於目前行的下一行。"
+
+#. Translators: error message if a child couldn't be found (in editable control or in browser)
+msgid "No child block within indentation block"
+msgstr "縮排區塊內沒有子區塊"
+
+msgid ""
+"Moves to the previous line with a lesser indentation level than the current "
+"line within the current indentation block."
+msgstr "移到目前縮排區塊內縮排層級小於目前行的上一行。"
+
+msgid ""
+"Moves to the previous line with a greater indentation level than the current "
+"line within the current indentation block."
+msgstr "移到目前縮排區塊內縮排層級大於目前行的上一行。"
+
+#. Translators: error message if a previous child couldn't be found (in editable control)
+msgid "No previous child block within indentation block"
+msgstr "縮排區塊內沒有上一個子區塊"
+
+msgid ""
+"Moves to the next line with a lesser indentation level than the current line "
+"within the current indentation block."
+msgstr "移到目前縮排區塊內縮排層級小於目前行的下一行。"
+
+#. Translators: error message if previous parent couldn't be found (in editable control)
+msgid "No next parent of indentation block"
+msgstr "縮排區塊沒有下一個父行"
+
+msgid "Select current indentation block. Press twice to copy to clipboard."
+msgstr "選取目前的縮排區塊。連按兩次可複製到剪貼簿。"
+
+msgid "Indent block copied to clipboard. "
+msgstr "已將縮排區塊複製到剪貼簿。 "
+
+msgid ""
+"Select current indentation block, as well as follwoing blocks of the same "
+"level. Press twice to copy to clipboard."
+msgstr ""
+"選取目前的縮排區塊，以及後面所有相同層級的區塊。連按兩次可複製到剪貼簿。"
+
+msgid "Indent blocks copied to clipboard. "
+msgstr "已將多個縮排區塊複製到剪貼簿。 "
+
+msgid "Nothing to select"
+msgstr "沒有可選取的內容"
+
+msgid "No more indentation blocks!"
+msgstr "沒有更多縮排區塊！"
+
+msgid ""
+"Indent-paste. This will figure out indentation level in the current line and "
+"paste text from clipboard adjusting indentation level correspondingly."
+msgstr ""
+"縮排貼上。這會判斷目前行的縮排層級，並在貼上剪貼簿的文字時一併調整其縮排層"
+"級。"
+
+msgid "Some text selected! Cannot indent-paste."
+msgstr "已選取部分文字！無法縮排貼上。"
+
+msgid "Cannot indent-paste: current line is not empty!"
+msgstr "無法縮排貼上: 目前行不是空行！"
+
+msgid "Pasted"
+msgstr "已貼上"
+
+msgid "Go back in history."
+msgstr "在歷程記錄中往回跳。"
+
+msgid ")No previous line in history"
+msgstr "歷程記錄中沒有上一行"
+
+msgid "Go forward in history."
+msgstr "在歷程記錄中往前跳。"
+
+msgid ")No next line in history"
+msgstr "歷程記錄中沒有下一行"
+
+msgid "IndentNav QuickFind generic script"
+msgstr "IndentNav 快速尋找通用腳本"
+
+msgid "Bookmark not found"
+msgstr "找不到書籤"
+
+msgid "Bookmark not found within bounds"
+msgstr "在範圍內找不到書籤"
+
+msgid "Speak current line"
+msgstr "讀出目前行"
+
+#. Add-on description
+#. Translators: Long description to be shown for this add-on on add-on information from add-ons manager
+msgid ""
+"Indentation Navigation addon.\n"
+"It allows NVDA users to navigate by indentation level or offset of lines or "
+"paragraphs.\n"
+"Also while editing source code in many programming languages, it allows to "
+"jump between the lines of the same indentation level, as well as quickly "
+"find lines with greater or lesser indentation level."
+msgstr ""
+"縮排導覽附加元件。\n"
+"讓 NVDA 使用者依行或段落的縮排層級或位移進行導覽。\n"
+"此外，在編輯多種程式語言的原始碼時，可以在縮排層級相同的行之間跳轉，也能快速"
+"找到縮排層級更大或更小的行。"
