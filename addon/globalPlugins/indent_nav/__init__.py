@@ -92,7 +92,7 @@ else:
 
 
 # Adapted from NVDA's speech module to count tabs as blank characters.
-BLANK_CHUNK_CHARS = frozenset((" ", "\n", "\r", "\t", "\0", u"\xa0"))
+BLANK_CHUNK_CHARS = frozenset((" ", "\n", "\r", "\t", "\0", u"\xa0", u"\u3000"))
 def isBlank(text):
     return not text or set(text) <= BLANK_CHUNK_CHARS
 
@@ -1088,6 +1088,7 @@ class VSCodeNotMainEditorException(Exception):
 INDENTATION_CHARACTERS = {
     ' ': 1,
     u"\xa0": 1, # non-breaking space
+    u"\u3000": 1, # ideographic (full-width) space
     '\t': 4,
 }
 INDENTATION_CHARACTERS_STR = "".join(INDENTATION_CHARACTERS.keys())
